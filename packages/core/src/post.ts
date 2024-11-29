@@ -6,8 +6,8 @@ import type {
   AppBskyFeedGetRepostedBy,
   AppBskyFeedSearchPosts,
   AppBskyNS,
-} from '@atproto/api';
-import { Paginator } from './paginate';
+} from '@atproto/api'
+import { Paginator } from './paginate'
 
 export class Post {
   /**
@@ -24,11 +24,11 @@ export class Post {
    */
   async threads(
     params: AppBskyFeedGetPostThread.QueryParams,
-    options?: AppBskyFeedGetPostThread.CallOptions
+    options?: AppBskyFeedGetPostThread.CallOptions,
   ) {
-    const res = await this.instance.feed.getPostThread(params, options);
+    const res = await this.instance.feed.getPostThread(params, options)
 
-    return res.data;
+    return res.data
   }
 
   /**
@@ -39,16 +39,16 @@ export class Post {
    */
   likes(
     params: AppBskyFeedGetLikes.QueryParams,
-    options?: AppBskyFeedGetLikes.CallOptions
+    options?: AppBskyFeedGetLikes.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getLikes(
         { cursor, ...params },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -59,16 +59,16 @@ export class Post {
    */
   quotes(
     params: AppBskyFeedGetQuotes.QueryParams,
-    options?: AppBskyFeedGetQuotes.CallOptions
+    options?: AppBskyFeedGetQuotes.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getQuotes(
         { cursor, ...params },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -79,20 +79,21 @@ export class Post {
    */
   repostedBy(
     params: AppBskyFeedGetRepostedBy.QueryParams,
-    options?: AppBskyFeedGetRepostedBy.CallOptions
+    options?: AppBskyFeedGetRepostedBy.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getRepostedBy(
         { cursor, ...params },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
    * Find posts matching search criteria, returning views of those posts.
+   * @param instance The instance of the `AppBskyNS` class.
    * @param params The query parameters.
    * @param options Additional options.
    * @returns The posts paginator.
@@ -100,16 +101,16 @@ export class Post {
   static search(
     instance: AppBskyNS,
     params: AppBskyFeedSearchPosts.QueryParams,
-    options?: AppBskyFeedSearchPosts.CallOptions
+    options?: AppBskyFeedSearchPosts.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await instance.feed.searchPosts(
         { cursor, ...params },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -122,10 +123,10 @@ export class Post {
   static async getMany(
     instance: AppBskyNS,
     posts: string[],
-    options?: AppBskyFeedGetPosts.CallOptions
+    options?: AppBskyFeedGetPosts.CallOptions,
   ) {
-    const res = await instance.feed.getPosts({ uris: posts }, options);
+    const res = await instance.feed.getPosts({ uris: posts }, options)
 
-    return res.data.posts;
+    return res.data.posts
   }
 }

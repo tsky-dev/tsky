@@ -2,7 +2,7 @@ import type {
   AppBskyActorGetPreferences,
   AppBskyActorPutPreferences,
   AppBskyNS,
-} from '@atproto/api';
+} from '@atproto/api'
 
 export class Preferences {
   /**
@@ -17,9 +17,9 @@ export class Preferences {
    * @returns The private preferences attached to the account.
    */
   async get(options?: AppBskyActorGetPreferences.CallOptions) {
-    const res = await this.instance.actor.getPreferences(undefined, options);
+    const res = await this.instance.actor.getPreferences(undefined, options)
 
-    return res.data.preferences;
+    return res.data.preferences
   }
 
   /**
@@ -30,8 +30,8 @@ export class Preferences {
    */
   async set(
     preferences: AppBskyActorPutPreferences.InputSchema['preferences'],
-    options?: AppBskyActorPutPreferences.CallOptions
+    options?: AppBskyActorPutPreferences.CallOptions,
   ) {
-    await this.instance.actor.putPreferences({ preferences }, options);
+    await this.instance.actor.putPreferences({ preferences }, options)
   }
 }

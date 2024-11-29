@@ -1,0 +1,11 @@
+[build]
+publish = ".vitepress/dist"
+command = "pnpm build"
+base = "/docs/"
+
+# Allow previewing docs
+[[redirects]]
+from = "/docs/*"
+to = "/:splat"
+status = 200
+force = true

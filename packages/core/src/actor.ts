@@ -16,9 +16,9 @@ import type {
   AppBskyGraphUnmuteActorList,
   AppBskyGraphUnmuteThread,
   AppBskyNS,
-} from '@atproto/api';
-import { Paginator } from './paginate';
-import { Preferences } from './preference';
+} from '@atproto/api'
+import { Paginator } from './paginate'
+import { Preferences } from './preference'
 
 export class BaseActor {
   /**
@@ -37,10 +37,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      });
+      })
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -52,10 +52,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      });
+      })
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -67,10 +67,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      });
+      })
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -82,10 +82,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      });
+      })
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -93,17 +93,17 @@ export class BaseActor {
    */
   async relationships(
     others?: string[],
-    options?: AppBskyGraphGetRelationships.CallOptions
+    options?: AppBskyGraphGetRelationships.CallOptions,
   ) {
     const res = await this.instance.graph.getRelationships(
       {
         actor: this.actor,
         others,
       },
-      options
-    );
+      options,
+    )
 
-    return res.data;
+    return res.data
   }
 
   /**
@@ -113,11 +113,11 @@ export class BaseActor {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, actor: this.actor, limit },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -127,11 +127,11 @@ export class BaseActor {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getActorLikes(
         { cursor, actor: this.actor, limit },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -139,20 +139,20 @@ export class BaseActor {
    */
   feed(
     params: AppBskyFeedGetAuthorFeed.QueryParams,
-    options?: AppBskyFeedGetAuthorFeed.CallOptions
+    options?: AppBskyFeedGetAuthorFeed.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, ...params, actor: this.actor },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   thread(thread: string) {
-    return new Thread(this.instance, thread);
+    return new Thread(this.instance, thread)
   }
 }
 
@@ -163,14 +163,14 @@ class Thread {
    * Mutes a thread preventing notifications from the thread and any of its children. Mutes are private in Bluesky. Requires auth.
    */
   mute(options?: AppBskyGraphMuteThread.CallOptions) {
-    return this.instance.graph.muteThread({ root: this.thread }, options);
+    return this.instance.graph.muteThread({ root: this.thread }, options)
   }
 
   /**
    * Unmutes the specified thread. Requires auth.
    */
   unmute(options?: AppBskyGraphUnmuteThread.CallOptions) {
-    return this.instance.graph.unmuteThread({ root: this.thread }, options);
+    return this.instance.graph.unmuteThread({ root: this.thread }, options)
   }
 }
 
@@ -179,14 +179,14 @@ export class Actor extends BaseActor {
    * Creates a mute relationship for the specified account. Mutes are private in Bluesky. Requires auth.
    */
   mute(options?: AppBskyGraphMuteActor.CallOptions) {
-    return this.instance.graph.muteActor({ actor: this.actor }, options);
+    return this.instance.graph.muteActor({ actor: this.actor }, options)
   }
 
   /**
    * Unmutes the specified account. Requires auth.
    */
   unmute(options?: AppBskyGraphUnmuteActor.CallOptions) {
-    return this.instance.graph.unmuteActor({ actor: this.actor }, options);
+    return this.instance.graph.unmuteActor({ actor: this.actor }, options)
   }
 
   /**
@@ -195,10 +195,10 @@ export class Actor extends BaseActor {
   static muteMany(
     instance: AppBskyNS,
     actors: string[],
-    options?: AppBskyGraphMuteActorList.CallOptions
+    options?: AppBskyGraphMuteActorList.CallOptions,
   ) {
     // FIXME: Shouldn't this take an array?
-    return instance.graph.muteActorList({ list: actors[0] }, options);
+    return instance.graph.muteActorList({ list: actors[0] }, options)
   }
 
   /**
@@ -207,10 +207,10 @@ export class Actor extends BaseActor {
   static unmuteMany(
     instance: AppBskyNS,
     actors: string[],
-    options?: AppBskyGraphUnmuteActorList.CallOptions
+    options?: AppBskyGraphUnmuteActorList.CallOptions,
   ) {
     // FIXME: Shouldn't this take an array?
-    return instance.graph.unmuteActorList({ list: actors[0] }, options);
+    return instance.graph.unmuteActorList({ list: actors[0] }, options)
   }
 }
 
@@ -219,8 +219,8 @@ export class User extends BaseActor {
    * Enumerates accounts which follow a specified account (actor) and are followed by the viewer.
    */
   knowFollowers(
-    params: { actor: string; limit?: number },
-    options?: AppBskyGraphGetKnownFollowers.CallOptions
+    params: { actor: string, limit?: number },
+    options?: AppBskyGraphGetKnownFollowers.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.graph.getKnownFollowers(
@@ -228,11 +228,11 @@ export class User extends BaseActor {
           cursor,
           ...params,
         },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -240,7 +240,7 @@ export class User extends BaseActor {
    */
   blockedLists(
     limit?: number,
-    options?: AppBskyGraphGetListBlocks.CallOptions
+    options?: AppBskyGraphGetListBlocks.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.graph.getListBlocks(
@@ -248,11 +248,11 @@ export class User extends BaseActor {
           cursor,
           limit,
         },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -265,11 +265,11 @@ export class User extends BaseActor {
           cursor,
           limit,
         },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -282,19 +282,19 @@ export class User extends BaseActor {
           cursor,
           limit,
         },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   suggestions() {
-    return new Suggestions(this.instance);
+    return new Suggestions(this.instance)
   }
 
   preferences() {
-    return new Preferences(this.instance);
+    return new Preferences(this.instance)
   }
 }
 
@@ -309,10 +309,10 @@ class Suggestions {
       const res = await this.instance.actor.getSuggestions({
         cursor,
         limit,
-      });
+      })
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -320,14 +320,14 @@ class Suggestions {
    */
   afterFollowing(
     actor: string,
-    options?: AppBskyGraphGetSuggestedFollowsByActor.CallOptions
+    options?: AppBskyGraphGetSuggestedFollowsByActor.CallOptions,
   ) {
     return this.instance.graph.getSuggestedFollowsByActor(
       {
         actor,
       },
-      options
-    );
+      options,
+    )
   }
 
   /**
@@ -337,10 +337,10 @@ class Suggestions {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getSuggestedFeeds(
         { cursor, limit },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 }

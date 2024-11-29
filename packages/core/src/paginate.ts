@@ -1,14 +1,14 @@
-type CursorResponse = {
-  cursor?: string;
-  [key: string]: unknown;
-};
+interface CursorResponse {
+  cursor?: string
+  [key: string]: unknown
+}
 
 /**
  * A paginator for fetching data from a cursor-based API.
  * @template T The type of the cursor response.
  */
 export class Paginator<T extends CursorResponse> {
-  readonly values: T[] = [];
+  readonly values: T[] = []
 
   /**
    * Creates a new instance of the Paginator class.
@@ -17,10 +17,10 @@ export class Paginator<T extends CursorResponse> {
    */
   constructor(
     private onNext: (cursor?: string) => Promise<T>,
-    defaultValues?: T[]
+    defaultValues?: T[],
   ) {
     if (defaultValues) {
-      this.values = defaultValues;
+      this.values = defaultValues
     }
 
     // TODO: Should we call this here to get the first value?
@@ -32,7 +32,7 @@ export class Paginator<T extends CursorResponse> {
    * @returns A new paginator with the same values.
    */
   clone() {
-    return new Paginator(this.onNext, this.values);
+    return new Paginator(this.onNext, this.values)
   }
 
   /**
@@ -40,19 +40,20 @@ export class Paginator<T extends CursorResponse> {
    * @returns The data for the next page. If there is no more data, returns `null`.
    */
   async next() {
-    const hasValues = this.values.length > 0;
+    const hasValues = this.values.length > 0
 
     const cursor = hasValues
       ? this.values[this.values.length - 1].cursor
-      : undefined;
+      : undefined
 
     // When we are at the end of the list
-    if (hasValues && !cursor) return null;
+    if (hasValues && !cursor)
+      return null
 
-    const data = await this.onNext(cursor);
+    const data = await this.onNext(cursor)
 
-    this.values.push(data);
+    this.values.push(data)
 
-    return data;
+    return data
   }
 }
