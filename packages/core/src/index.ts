@@ -5,14 +5,21 @@ import type {
   AppBskyActorGetProfile,
   AppBskyActorSearchActorsTypeahead,
   AppBskyActorSearchActors,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class TSky {
+  /**
+   * Creates a new instance of the TSky class.
+   * @param instance The instance of the `AppBskyNS` class.
+   */
   constructor(private instance: AppBskyNS) {}
 
   /**
    * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
+   * @param identifier The atproto identifier of the actor.
+   * @param options Additional options.
+   * @returns The detailed profile view of the actor.
    */
   profile(
     identifier: string,
@@ -20,12 +27,20 @@ export class TSky {
   ): Promise<AppBskyActorDefs.ProfileViewDetailed>;
   /**
    * Get detailed profile views of multiple actors.
+   * @param identifiers The atproto identifiers of the actors.
+   * @param options Additional options.
    */
   profile(
     identifiers: string[],
     options?: AppBskyActorGetProfiles.CallOptions
   ): Promise<AppBskyActorDefs.ProfileViewDetailed[]>;
 
+  /**
+   * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
+   * @param identifier The atproto identifier or identifiers of the actor/s.
+   * @param options Additional options.
+   * @returns The detailed profile view of the actor/s.
+   */
   async profile(
     identifier: string | string[],
     options?:
@@ -51,6 +66,9 @@ export class TSky {
 
   /**
    * Find actor suggestions for a prefix search term. Expected use is for auto-completion during text field entry. Does not require auth.
+   * @param params The query parameters.
+   * @param options Additional options.
+   * @returns The actor suggestions.
    */
   async typeahead(
     params: AppBskyActorSearchActorsTypeahead.QueryParams,
@@ -66,6 +84,9 @@ export class TSky {
 
   /**
    * Find actors (profiles) matching search criteria. Does not require auth.
+   * @param params The query parameters.
+   * @param options Additional options.
+   * @returns The paginator for the search results.
    */
   async search(
     params: AppBskyActorSearchActors.QueryParams = {},

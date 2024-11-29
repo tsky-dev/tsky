@@ -3,14 +3,16 @@ import type {
   AppBskyGraphGetStarterPacks,
   AppBskyGraphSearchStarterPacks,
   AppBskyNS,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class StarterPack {
   constructor(private instance: AppBskyNS, private uri: string) {}
 
   /**
    * Gets a view of a starter pack.
+   * @param options Additional options.
+   * @returns The starter pack view.
    */
   async about(options?: AppBskyGraphGetStarterPack.CallOptions) {
     const res = await this.instance.graph.getStarterPack(
@@ -25,6 +27,10 @@ export class StarterPack {
 
   /**
    * Search for starter packs.
+   * @param query The search query.
+   * @param limit The maximum number of items to return per page.
+   * @param options Additional options.
+   * @returns The starter pack search paginator.
    */
   static search(
     instance: AppBskyNS,
@@ -48,6 +54,9 @@ export class StarterPack {
 
   /**
    * Get views for a list of starter packs.
+   * @param starterpacks The atproto identifiers of the starter packs.
+   * @param options Additional options.
+   * @returns The starter pack views.
    */
   static async getMany(
     instance: AppBskyNS,

@@ -7,10 +7,14 @@ import type {
   AppBskyFeedGetTimeline,
   AppBskyFeedSendInteractions,
   AppBskyNS,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class Feed {
+  /**
+   * Creates a new instance of the Feed class.
+   * @param instance The instance of the `AppBskyNS` class.
+   */
   constructor(private instance: AppBskyNS) {}
 
   /**
@@ -89,7 +93,7 @@ class FeedGenerator {
   feed(
     feeds: string[],
     options?: AppBskyFeedGetFeedGenerators.CallOptions
-  ): Promise<AppBskyFeedGetFeedGenerators.OutputSchema["feeds"]>;
+  ): Promise<AppBskyFeedGetFeedGenerators.OutputSchema['feeds']>;
 
   async feed(
     feed: string | string[],

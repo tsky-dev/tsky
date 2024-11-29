@@ -5,13 +5,24 @@ import type {
   AppBskyVideoUploadVideo,
   AppBskyVideoDefs,
   BlobRef,
-} from "@atproto/api";
+} from '@atproto/api';
+
+export type VideoJobState =
+  | 'JOB_STATE_COMPLETED'
+  | 'JOB_STATE_FAILED'
+  | (string & {});
 
 export class Video {
+  /**
+   * Creates a new instance of the Video class.
+   * @param instance The instance of the `AppBskyNS` class.
+   */
   constructor(private instance: AppBskyNS) {}
 
   /**
    * Get video upload limits for the authenticated user.
+   * @param options Additional options.
+   * @returns The video upload limits.
    */
   async limit(options?: AppBskyVideoGetUploadLimits.CallOptions) {
     const res = await this.instance.video.getUploadLimits({}, options);
@@ -21,6 +32,9 @@ export class Video {
 
   /**
    * Get status details for a video processing job.
+   * @param jobId The job ID.
+   * @param options Additional options.
+   * @returns The status details for the video processing job.
    */
   async status(jobId: string, options?: AppBskyVideoGetJobStatus.CallOptions) {
     const res = await this.instance.video.getJobStatus({ jobId }, options);
@@ -30,6 +44,9 @@ export class Video {
 
   /**
    * Upload a video to be processed then stored on the PDS.
+   * @param data The video upload data.
+   * @param options Additional options.
+   * @returns The status of the video processing job.
    */
   async upload(
     data: AppBskyVideoUploadVideo.InputSchema,
@@ -45,7 +62,7 @@ class JobStatus {
   jobId: string;
   did: string;
   /** The state of the video processing job. All values not listed as a known value indicate that the job is in process. */
-  state: "JOB_STATE_COMPLETED" | "JOB_STATE_FAILED" | (string & {});
+  state: VideoJobState;
   /** Progress within the current processing state. */
   progress?: number;
   blob?: BlobRef;
@@ -66,6 +83,7 @@ class JobStatus {
 
   /**
    * Update status details for a video processing job.
+   * @param options Additional options.
    */
   async refresh(options?: AppBskyVideoGetJobStatus.CallOptions) {
     const res = await this.instance.video.getJobStatus(

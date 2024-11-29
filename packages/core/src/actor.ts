@@ -16,12 +16,17 @@ import type {
   AppBskyGraphUnmuteActorList,
   AppBskyGraphUnmuteThread,
   AppBskyNS,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
-import { Preferences } from "./preference";
+} from '@atproto/api';
+import { Paginator } from './paginate';
+import { Preferences } from './preference';
 
 export class BaseActor {
-  constructor(readonly instance: AppBskyNS, readonly actor: string) {}
+  /**
+   * Creates a new instance of the Actor class.
+   * @param instance The instance of the `AppBskyNS` class.
+   * @param actor The atproto identifier of the actor.
+   */
+  constructor(readonly instance: AppBskyNS, readonly actor: AtIdentifier) {}
 
   /**
    * Get a list of starter packs created by the actor.
