@@ -8,5 +8,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tsky-dev/tsky.git"
+  },
+  "scripts": {
+    "lint": "pnpm --filter tsky run lint",
+    "lint:fix": "pnpm --filter tsky run lint:fix"
   }
 }

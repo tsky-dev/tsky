@@ -1,11 +1,11 @@
 import type {
   AppBskyNS,
+  AppBskyVideoDefs,
   AppBskyVideoGetJobStatus,
   AppBskyVideoGetUploadLimits,
   AppBskyVideoUploadVideo,
-  AppBskyVideoDefs,
   BlobRef,
-} from "@atproto/api";
+} from '@atproto/api'
 
 export class Video {
   constructor(private instance: AppBskyNS) {}
@@ -14,18 +14,18 @@ export class Video {
    * Get video upload limits for the authenticated user.
    */
   async limit(options?: AppBskyVideoGetUploadLimits.CallOptions) {
-    const res = await this.instance.video.getUploadLimits({}, options);
+    const res = await this.instance.video.getUploadLimits({}, options)
 
-    return res.data;
+    return res.data
   }
 
   /**
    * Get status details for a video processing job.
    */
   async status(jobId: string, options?: AppBskyVideoGetJobStatus.CallOptions) {
-    const res = await this.instance.video.getJobStatus({ jobId }, options);
+    const res = await this.instance.video.getJobStatus({ jobId }, options)
 
-    return new JobStatus(this.instance, res.data.jobStatus);
+    return new JobStatus(this.instance, res.data.jobStatus)
   }
 
   /**
@@ -33,35 +33,35 @@ export class Video {
    */
   async upload(
     data: AppBskyVideoUploadVideo.InputSchema,
-    options?: AppBskyVideoUploadVideo.CallOptions
+    options?: AppBskyVideoUploadVideo.CallOptions,
   ) {
-    const res = await this.instance.video.uploadVideo(data, options);
+    const res = await this.instance.video.uploadVideo(data, options)
 
-    return new JobStatus(this.instance, res.data.jobStatus);
+    return new JobStatus(this.instance, res.data.jobStatus)
   }
 }
 
 class JobStatus {
-  jobId: string;
-  did: string;
+  jobId: string
+  did: string
   /** The state of the video processing job. All values not listed as a known value indicate that the job is in process. */
-  state: "JOB_STATE_COMPLETED" | "JOB_STATE_FAILED" | (string & {});
+  state: 'JOB_STATE_COMPLETED' | 'JOB_STATE_FAILED' | (string & {})
   /** Progress within the current processing state. */
-  progress?: number;
-  blob?: BlobRef;
-  error?: string;
-  message?: string;
+  progress?: number
+  blob?: BlobRef
+  error?: string
+  message?: string
 
   constructor(private instance: AppBskyNS, data: AppBskyVideoDefs.JobStatus) {
-    this.jobId = data.jobId;
-    this.did = data.did;
+    this.jobId = data.jobId
+    this.did = data.did
 
-    this.state = data.state;
+    this.state = data.state
 
-    this.progress = data.progress;
-    this.blob = data.blob;
-    this.error = data.error;
-    this.message = data.message;
+    this.progress = data.progress
+    this.blob = data.blob
+    this.error = data.error
+    this.message = data.message
   }
 
   /**
@@ -70,14 +70,14 @@ class JobStatus {
   async refresh(options?: AppBskyVideoGetJobStatus.CallOptions) {
     const res = await this.instance.video.getJobStatus(
       { jobId: this.jobId },
-      options
-    );
+      options,
+    )
 
-    this.state = res.data.jobStatus.state;
+    this.state = res.data.jobStatus.state
 
-    this.progress = res.data.jobStatus.progress;
-    this.blob = res.data.jobStatus.blob;
-    this.error = res.data.jobStatus.error;
-    this.message = res.data.jobStatus.message;
+    this.progress = res.data.jobStatus.progress
+    this.blob = res.data.jobStatus.blob
+    this.error = res.data.jobStatus.error
+    this.message = res.data.jobStatus.message
   }
 }
