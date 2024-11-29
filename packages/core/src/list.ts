@@ -2,8 +2,8 @@ import type {
   AppBskyFeedGetListFeed,
   AppBskyGraphGetList,
   AppBskyNS,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
+} from '@atproto/api'
+import { Paginator } from './paginate'
 
 export class BskyList {
   constructor(private instance: AppBskyNS, private uri: string) {}
@@ -19,11 +19,11 @@ export class BskyList {
           list: this.uri,
           limit,
         },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -37,10 +37,10 @@ export class BskyList {
           list: this.uri,
           limit,
         },
-        options
-      );
+        options,
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 }
