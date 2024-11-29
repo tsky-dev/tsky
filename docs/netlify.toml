@@ -2,6 +2,7 @@
 publish = "dist"
 command = "pnpm build"
 base = "/docs/"
+publish = "/docs/.vitepress/dist/"
 
 # Allow previewing docs
 [[redirects]]
