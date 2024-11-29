@@ -1,4 +1,12 @@
 {
   "name": "tsky-workspace",
-  "version": "0.1.0"
+  "type": "module",
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.14.2",
+  "license": "MIT",
+  "homepage": "https://tsky.dev/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsky-dev/tsky.git"
+  }
 }
