@@ -6,9 +6,26 @@ outline: deep
 
 ## Installation
 
-```bash
-$ npm add tsky
+::: code-group
+
+```sh [npm]
+$ npm add -D tsky
 ```
+
+```sh [pnpm]
+$ pnpm add -D tsky
+```
+
+```sh [yarn]
+$ yarn add -D tsky
+```
+
+```sh [bun]
+$ bun add -D tsky
+```
+
+:::
+
 
 ## Usage
 
