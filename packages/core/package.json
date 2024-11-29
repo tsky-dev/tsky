@@ -2,6 +2,11 @@
   "name": "tsky",
   "version": "0.1.0",
   "license": "MIT",
+  "scripts": {
+    "lint": "echo TODO",
+    "test": "echo \"Error: no test specified\"",
+    "test:typescript": "tsc --noEmit"
+  },
   "devDependencies": {
     "@atproto/api": "^0.13.18",
     "tsx": "^4.19.2",
