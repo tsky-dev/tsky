@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Discord Chat
-    url: https://discord.gg/JuFDMrTRSD # TODO update with chat.nimbus.town later
+    url: https://discord.gg/CaF2tzGJke
     about: Ask questions and discuss with other users in real time.
   - name: Questions & Discussions
     url: https://github.com/tsky-dev/tsky/discussions
