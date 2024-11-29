@@ -4,12 +4,17 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "predev": "typedoc",
     "dev": "vitepress dev",
-    "build": "vitepress build",
+    "prebuild": "typedoc",
+		"build": "vitepress build",
     "preview": "vitepress preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "typedoc": "^0.27.1",
+    "typedoc-plugin-markdown": "^4.3.0",
+    "typedoc-vitepress-theme": "^1.1.0",
     "vitepress": "^1.5.0"
   }
 }
