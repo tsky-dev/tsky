@@ -1,0 +1,10 @@
+{
+  "name": "tsky",
+  "version": "0.1.0",
+  "license": "MIT",
+  "devDependencies": {
+    "@atproto/api": "^0.13.18",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
