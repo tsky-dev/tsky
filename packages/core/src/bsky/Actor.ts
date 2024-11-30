@@ -23,26 +23,34 @@ export class Actor extends BaseActor {
   }
 
   /**
-   * Creates a mute relationship for the specified list of accounts. Mutes are private in Bluesky. Requires auth.
+   * Mute an entire list (specified by AT-URI) of actors. This creates a mute relationship for all actors
+   * on the specified list. Mutes are private on Bluesky. Requires auth.
+   *
+   * @param instance The AppBskyNS instance
+   * @param listUri The AT-URI of the list to mute (e.g. at://did:plc:123/app.bsky.graph.list/456)
+   * @param options Optional API call options
    */
-  static muteMany(
+  static muteList(
     instance: AppBskyNS,
-    actors: string[],
-    options?: AppBskyGraphMuteActorList.CallOptions,
+    listUri: string, // AT-URI of the list, not an array of actors
+    options?: AppBskyGraphMuteActorList.CallOptions
   ) {
-    // FIXME: Shouldn't this take an array?
-    return instance.graph.muteActorList({ list: actors[0] }, options);
+    return instance.graph.muteActorList({ list: listUri }, options);
   }
 
   /**
-   * Unmutes the specified list of accounts. Requires auth.
+   * Unmute an entire list (specified by AT-URI) of actors. This removes the mute relationship for all actors
+   * on the specified list. Requires auth.
+   *
+   * @param instance The AppBskyNS instance
+   * @param listUri The AT-URI of the list to unmute (e.g. at://did:plc:123/app.bsky.graph.list/456)
+   * @param options Optional API call options
    */
-  static unmuteMany(
+  static unmuteList(
     instance: AppBskyNS,
-    actors: string[],
-    options?: AppBskyGraphUnmuteActorList.CallOptions,
+    listUri: string, // AT-URI of the list, not an array of actors
+    options?: AppBskyGraphUnmuteActorList.CallOptions
   ) {
-    // FIXME: Shouldn't this take an array?
-    return instance.graph.unmuteActorList({ list: actors[0] }, options);
+    return instance.graph.unmuteActorList({ list: listUri }, options);
   }
 }
