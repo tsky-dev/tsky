@@ -39,8 +39,7 @@
     {
       "groupName": "lint",
       "matchPackageNames": [
-        "@antfu/eslint-config",
-        "eslint",
+        "@biomejs/biome",
         "prettier"
       ]
     },
