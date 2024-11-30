@@ -1,8 +1,8 @@
-<h1 align="center">TSky</h1>
-
 <p align="center">
   <img src=".github/assets/tsky-logo.png" width="200" height="200">
 </p>
+
+<h1 align="center">TSky</h1>
 
 <p align="center">
   A lightweight, fast, universal and typed Bluesky API wrapper for Apps & Bots.
