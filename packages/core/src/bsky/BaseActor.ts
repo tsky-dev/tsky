@@ -1,5 +1,5 @@
 import { AppBskyFeedGetActorFeeds, AppBskyFeedGetActorLikes, AppBskyFeedGetAuthorFeed, AppBskyGraphGetRelationships, AppBskyNS } from "@atproto/api";
-import { Paginator } from "~/tsky/paginate";
+import { Paginator } from "~/tsky/Paginator";
 import { Thread } from "./Thread";
 
 export class BaseActor {

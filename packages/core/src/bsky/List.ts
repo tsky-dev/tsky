@@ -3,7 +3,7 @@ import type {
   AppBskyGraphGetList,
   AppBskyNS,
 } from '@atproto/api';
-import { Paginator } from '~/tsky/paginate';
+import { Paginator } from '~/tsky/Paginator';
 
 export class BskyList {
   constructor(

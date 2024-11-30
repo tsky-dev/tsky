@@ -1,2 +1,2 @@
-export * from './paginate'
-export * from './tsky'
+export * from './Paginator'
+export * from './TSky'

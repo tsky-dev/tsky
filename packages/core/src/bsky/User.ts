@@ -1,6 +1,6 @@
 import { AppBskyGraphGetKnownFollowers, AppBskyGraphGetListBlocks, AppBskyGraphGetListMutes, AppBskyGraphGetMutes } from "@atproto/api";
 import { BaseActor } from "./BaseActor";
-import { Paginator } from "~/tsky/paginate";
+import { Paginator } from "~/tsky/Paginator";
 import { Suggestions } from "./Suggestions";
 import { Preferences } from "./Preferences";
 

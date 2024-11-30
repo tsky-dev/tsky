@@ -1,5 +1,5 @@
 import { AppBskyFeedGetSuggestedFeeds, AppBskyGraphGetSuggestedFollowsByActor, AppBskyNS } from "@atproto/api";
-import { Paginator } from "~/tsky/paginate";
+import { Paginator } from "~/tsky/Paginator";
 
 export class Suggestions {
   constructor(private instance: AppBskyNS) {}

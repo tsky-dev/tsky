@@ -6,7 +6,7 @@ import type {
   AppBskyActorSearchActorsTypeahead,
   AppBskyNS,
 } from '@atproto/api';
-import { Paginator } from './paginate';
+import { Paginator } from './Paginator';
 
 export class TSky {
   constructor(private instance: AppBskyNS) {}
