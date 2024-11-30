@@ -8,27 +8,12 @@ importers:
 
   .:
     devDependencies:
-      '@biomejs/biome':
-        specifier: ^1.9.4
-        version: 1.9.4
-      nano-staged:
-        specifier: ^0.8.0
-        version: 0.8.0
-
-  docs:
-    devDependencies:
-      vitepress:
-        specifier: ^1.5.0
-        version: 1.5.0(@algolia/client-search@5.15.0)(postcss@8.4.49)(search-insights@2.17.3)(typescript@5.7.2)
-
-  packages/core:
-    devDependencies:
       '@antfu/eslint-config':
         specifier: ^3.11.2
         version: 3.11.2(@typescript-eslint/utils@8.16.0(eslint@8.57.1)(typescript@5.7.2))(@vue/compiler-sfc@3.5.13)(eslint@8.57.1)(typescript@5.7.2)
-      '@atproto/api':
-        specifier: ^0.13.18
-        version: 0.13.18
+      '@biomejs/biome':
+        specifier: ^1.9.4
+        version: 1.9.4
       '@eslint/js':
         specifier: ^9.15.0
         version: 9.15.0
@@ -44,6 +29,24 @@ importers:
       eslint-plugin-promise:
         specifier: ^6.0.0
         version: 6.6.0(eslint@8.57.1)
+      nano-staged:
+        specifier: ^0.8.0
+        version: 0.8.0
+      typescript-eslint:
+        specifier: ^8.16.0
+        version: 8.16.0(eslint@8.57.1)(typescript@5.7.2)
+
+  docs:
+    devDependencies:
+      vitepress:
+        specifier: ^1.5.0
+        version: 1.5.0(@algolia/client-search@5.15.0)(postcss@8.4.49)(search-insights@2.17.3)(typescript@5.7.2)
+
+  packages/core:
+    devDependencies:
+      '@atproto/api':
+        specifier: ^0.13.18
+        version: 0.13.18
       globals:
         specifier: ^15.12.0
         version: 15.12.0
@@ -53,9 +56,6 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
-      typescript-eslint:
-        specifier: ^8.16.0
-        version: 8.16.0(eslint@8.57.1)(typescript@5.7.2)
 
 packages:
 
