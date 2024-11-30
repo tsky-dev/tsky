@@ -33,7 +33,7 @@ export class Actor extends BaseActor {
   static muteList(
     instance: AppBskyNS,
     listUri: string, // AT-URI of the list, not an array of actors
-    options?: AppBskyGraphMuteActorList.CallOptions
+    options?: AppBskyGraphMuteActorList.CallOptions,
   ) {
     return instance.graph.muteActorList({ list: listUri }, options);
   }
@@ -49,7 +49,7 @@ export class Actor extends BaseActor {
   static unmuteList(
     instance: AppBskyNS,
     listUri: string, // AT-URI of the list, not an array of actors
-    options?: AppBskyGraphUnmuteActorList.CallOptions
+    options?: AppBskyGraphUnmuteActorList.CallOptions,
   ) {
     return instance.graph.unmuteActorList({ list: listUri }, options);
   }
