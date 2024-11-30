@@ -1,11 +1,26 @@
 {
   "name": "tsky",
-  "version": "0.1.0",
+  "type": "module",
+  "version": "0.0.1",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    }
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "test": "echo \"Error: no test specified\"",
+    "test": "vitest",
     "test:typescript": "tsc --noEmit"
   },
   "devDependencies": {
@@ -19,6 +34,7 @@
     "globals": "^15.12.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.16.0"
+    "typescript-eslint": "^8.16.0",
+    "vitest": "^2.1.6"
   }
 }
