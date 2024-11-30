@@ -15,6 +15,10 @@
     "lint:fix": "pnpm --filter tsky run lint:fix"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4"
+    "@biomejs/biome": "^1.9.4",
+    "nano-staged": "^0.8.0"
+  },
+  "nano-staged": {
+    "*.{js,ts,cjs,mjs}": "pnpm run format && pnpm run lint:fix"
   }
 }
