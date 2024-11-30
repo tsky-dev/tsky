@@ -26,17 +26,15 @@ $ bun add -D tsky
 
 :::
 
-
 ## Usage
 
 ```ts
 import { Tsky } from 'tsky'
 
+const app = new AppBskyNS() // TODO
+const tsky = new Tsky(app)
 
-const app = new AppBskyNS(); // TODO
-const tsky = new Tsky(app);
+const profile = await tsky.profile('did:plc:giohuovwawlijq7jkuysq5dd')
 
-const profile = await tsky.profile('did:plc:giohuovwawlijq7jkuysq5dd');
-
-console.log(profile.handle);
+console.log(profile.handle)
 ```
