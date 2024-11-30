@@ -5,25 +5,35 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "default": {
+      "import": {
         "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
       }
     }
   },
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "pkgroll",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "test": "vitest",
     "test:typescript": "tsc --noEmit"
   },
+  "dependencies": {
+    "@atproto/api": "^0.13.18"
+  },
   "devDependencies": {
-    "@atproto/api": "^0.13.18",
     "globals": "^15.12.0",
+    "pkgroll": "^2.5.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.6"

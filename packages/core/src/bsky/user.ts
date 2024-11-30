@@ -4,10 +4,10 @@ import type {
   AppBskyGraphGetListMutes,
   AppBskyGraphGetMutes,
 } from '@atproto/api';
-import { Paginator } from '~/tsky/Paginator';
-import { BaseActor } from './BaseActor';
-import { Preferences } from './Preferences';
-import { Suggestions } from './Suggestions';
+import { Paginator } from '~/tsky/paginator';
+import { BaseActor } from './baseActor';
+import { Preferences } from './preferences';
+import { Suggestions } from './suggestions';
 
 export class User extends BaseActor {
   /**
