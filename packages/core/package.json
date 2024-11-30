@@ -1,16 +1,39 @@
 {
   "name": "tsky",
-  "version": "0.1.0",
+  "type": "module",
+  "version": "0.1.0-alpha.0",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "pkgroll",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "test": "echo \"Error: no test specified\"",
     "test:typescript": "tsc --noEmit"
   },
+  "dependencies": {
+    "@atproto/api": "^0.13.18"
+  },
   "devDependencies": {
-    "@atproto/api": "^0.13.18",
     "globals": "^15.12.0",
+    "pkgroll": "^2.5.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
