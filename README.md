@@ -42,13 +42,9 @@ const profile = await tsky.profile('did:plc:giohuovwawlijq7jkuysq5dd');
 console.log(profile.handle);
 ```
 
-## Documentation
-
-You can find the documentation (TODO: Add link to TSky docs)
-
 ## Links
 
-- [📚 TSky Documentation](#)
+- [📚 TSky Documentation](#) (TODO: add docs link)
 - [🦋 Nimbus on Bluesky](https://bsky.app/profile/nimbus.town)
 
 ## Contributing
