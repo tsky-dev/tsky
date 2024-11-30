@@ -2,7 +2,7 @@ import type {
   AppBskyActorGetPreferences,
   AppBskyActorPutPreferences,
   AppBskyNS,
-} from "@atproto/api";
+} from '@atproto/api';
 
 export class Preferences {
   constructor(private instance: AppBskyNS) {}
@@ -20,8 +20,8 @@ export class Preferences {
    * Set the private preferences attached to the account.
    */
   async set(
-    preferences: AppBskyActorPutPreferences.InputSchema["preferences"],
-    options?: AppBskyActorPutPreferences.CallOptions
+    preferences: AppBskyActorPutPreferences.InputSchema['preferences'],
+    options?: AppBskyActorPutPreferences.CallOptions,
   ) {
     await this.instance.actor.putPreferences({ preferences }, options);
   }

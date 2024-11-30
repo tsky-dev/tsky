@@ -3,13 +3,22 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "lint": "echo TODO",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
     "test": "echo \"Error: no test specified\"",
     "test:typescript": "tsc --noEmit"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^3.11.2",
     "@atproto/api": "^0.13.18",
+    "@eslint/js": "^9.15.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
+    "globals": "^15.12.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.16.0"
   }
 }

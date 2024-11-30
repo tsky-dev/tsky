@@ -1,11 +1,11 @@
 import type {
   AppBskyNS,
+  AppBskyVideoDefs,
   AppBskyVideoGetJobStatus,
   AppBskyVideoGetUploadLimits,
   AppBskyVideoUploadVideo,
-  AppBskyVideoDefs,
   BlobRef,
-} from "@atproto/api";
+} from '@atproto/api';
 
 export class Video {
   constructor(private instance: AppBskyNS) {}
@@ -33,7 +33,7 @@ export class Video {
    */
   async upload(
     data: AppBskyVideoUploadVideo.InputSchema,
-    options?: AppBskyVideoUploadVideo.CallOptions
+    options?: AppBskyVideoUploadVideo.CallOptions,
   ) {
     const res = await this.instance.video.uploadVideo(data, options);
 
@@ -45,14 +45,17 @@ class JobStatus {
   jobId: string;
   did: string;
   /** The state of the video processing job. All values not listed as a known value indicate that the job is in process. */
-  state: "JOB_STATE_COMPLETED" | "JOB_STATE_FAILED" | (string & {});
+  state: 'JOB_STATE_COMPLETED' | 'JOB_STATE_FAILED' | (string & {});
   /** Progress within the current processing state. */
   progress?: number;
   blob?: BlobRef;
   error?: string;
   message?: string;
 
-  constructor(private instance: AppBskyNS, data: AppBskyVideoDefs.JobStatus) {
+  constructor(
+    private instance: AppBskyNS,
+    data: AppBskyVideoDefs.JobStatus,
+  ) {
     this.jobId = data.jobId;
     this.did = data.did;
 
@@ -70,7 +73,7 @@ class JobStatus {
   async refresh(options?: AppBskyVideoGetJobStatus.CallOptions) {
     const res = await this.instance.video.getJobStatus(
       { jobId: this.jobId },
-      options
+      options,
     );
 
     this.state = res.data.jobStatus.state;

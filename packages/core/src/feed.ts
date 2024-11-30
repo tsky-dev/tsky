@@ -7,8 +7,8 @@ import type {
   AppBskyFeedGetTimeline,
   AppBskyFeedSendInteractions,
   AppBskyNS,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class Feed {
   constructor(private instance: AppBskyNS) {}
@@ -18,12 +18,12 @@ export class Feed {
    */
   async getFeed(
     params: AppBskyFeedGetFeed.QueryParams,
-    options?: AppBskyFeedGetFeed.CallOptions
+    options?: AppBskyFeedGetFeed.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getFeed(
         { cursor, ...params },
-        options
+        options,
       );
 
       return res.data;
@@ -35,12 +35,12 @@ export class Feed {
    */
   timeline(
     params: AppBskyFeedGetTimeline.QueryParams,
-    options?: AppBskyFeedGetTimeline.CallOptions
+    options?: AppBskyFeedGetTimeline.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getTimeline(
         { cursor, ...params },
-        options
+        options,
       );
 
       return res.data;
@@ -52,7 +52,7 @@ export class Feed {
    */
   async sendInteractions(
     data?: AppBskyFeedSendInteractions.InputSchema,
-    options?: AppBskyFeedSendInteractions.CallOptions
+    options?: AppBskyFeedSendInteractions.CallOptions,
   ) {
     const res = await this.instance.feed.sendInteractions(data, options);
 
@@ -81,26 +81,26 @@ class FeedGenerator {
    */
   feed(
     feed: string,
-    options?: AppBskyFeedGetFeedGenerator.CallOptions
+    options?: AppBskyFeedGetFeedGenerator.CallOptions,
   ): Promise<AppBskyFeedGetFeedGenerator.OutputSchema>;
   /**
    * Get information about a list of feed generators.
    */
   feed(
     feeds: string[],
-    options?: AppBskyFeedGetFeedGenerators.CallOptions
-  ): Promise<AppBskyFeedGetFeedGenerators.OutputSchema["feeds"]>;
+    options?: AppBskyFeedGetFeedGenerators.CallOptions,
+  ): Promise<AppBskyFeedGetFeedGenerators.OutputSchema['feeds']>;
 
   async feed(
     feed: string | string[],
     options?:
       | AppBskyFeedGetFeedGenerator.CallOptions
-      | AppBskyFeedGetFeedGenerators.CallOptions
+      | AppBskyFeedGetFeedGenerators.CallOptions,
   ) {
     if (Array.isArray(feed)) {
       const res = await this.instance.feed.getFeedGenerators(
         { feeds: feed },
-        options
+        options,
       );
 
       return res.data.feeds;
@@ -116,12 +116,12 @@ class FeedGenerator {
    */
   skeleton(
     params: AppBskyFeedGetFeedSkeleton.QueryParams,
-    options?: AppBskyFeedGetFeedSkeleton.CallOptions
+    options?: AppBskyFeedGetFeedSkeleton.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getFeedSkeleton(
         { cursor, ...params },
-        options
+        options,
       );
 
       return res.data;

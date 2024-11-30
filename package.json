@@ -1,4 +1,24 @@
 {
   "name": "tsky-workspace",
-  "version": "0.1.0"
+  "type": "module",
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.14.2",
+  "license": "MIT",
+  "homepage": "https://tsky.dev/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsky-dev/tsky.git"
+  },
+  "scripts": {
+    "docs:dev": "pnpm run --filter tsky-docs dev",
+    "docs:build": "pnpm run --filter tsky-docs build",
+    "docs:preview": "pnpm run --filter tsky-docs preview",
+    "docs:test": "pnpm run --filter tsky-docs test"
+    "format": "biome check --write .",
+    "lint": "pnpm --filter tsky run lint",
+    "lint:fix": "pnpm --filter tsky run lint:fix"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
 }
