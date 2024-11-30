@@ -1,7 +1,7 @@
 {
   "name": "tsky",
   "type": "module",
-  "version": "0.1.0-alpha.0",
+  "version": "0.0.1",
   "license": "MIT",
   "exports": {
     ".": {
@@ -23,7 +23,7 @@
     "build": "pkgroll",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "test": "echo \"Error: no test specified\"",
+    "test": "vitest",
     "test:typescript": "tsc --noEmit"
   },
   "dependencies": {
@@ -33,6 +33,7 @@
     "globals": "^15.12.0",
     "pkgroll": "^2.5.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.6"
   }
 }

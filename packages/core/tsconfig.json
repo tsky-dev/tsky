@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
+    "target": "ESNext",
     "lib": ["ESNext"],
     "useDefineForClassFields": false,
     "experimentalDecorators": true,
@@ -18,7 +18,16 @@
     "noEmit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "dist/",
+    "sourceMap": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
   },
   "include": ["./src/**/*", "./tests/**/*", "./test-utils/**/*"],
   "typedocOptions": {
