@@ -1,8 +1,8 @@
 interface Session {
-  token: string;
+  fetchHandler: (pathname: string, init?: RequestInit) => Promise<Response>;
 }
 
-export class SessionManager {
+export class PasswordSession implements Session {
   token?: string;
 
   constructor(private _baseUrl: string) {
@@ -27,18 +27,18 @@ export class SessionManager {
     // If it's not, do nothing
   }
 
-  async fetch(endpoint: string, options: RequestInit) {
+  async fetchHandler(endpoint: string, init?: RequestInit) {
     await this.refreshSessionIfNecessary();
 
     const url = new URL(endpoint, this.baseUrl);
-    const headers = new Headers(options.headers);
+    const headers = new Headers(init?.headers);
 
     if (!headers.has('authorization')) {
       headers.set('authorization', `Bearer ${this.token}`);
     }
 
     const response = await fetch(url, {
-      ...options,
+      ...init,
       headers,
     });
 
