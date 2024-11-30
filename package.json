@@ -10,7 +10,11 @@
     "url": "git+https://github.com/tsky-dev/tsky.git"
   },
   "scripts": {
+    "format": "biome check --write .",
     "lint": "pnpm --filter tsky run lint",
     "lint:fix": "pnpm --filter tsky run lint:fix"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
   }
 }

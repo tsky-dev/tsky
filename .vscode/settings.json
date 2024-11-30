@@ -1,7 +1,7 @@
 {
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  
-   // Disable the default formatter, use eslint instead
+
+  // Disable the default formatter, use eslint instead
   "prettier.enable": false,
   "editor.formatOnSave": false,
 
@@ -10,7 +10,7 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "never"
   },
-  
+
   // Silent the stylistic rules in you IDE, but still auto fix them
   "eslint.rules.customizations": [
     { "rule": "style/*", "severity": "off" },

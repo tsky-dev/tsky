@@ -2,7 +2,7 @@ import type {
   AppBskyActorGetPreferences,
   AppBskyActorPutPreferences,
   AppBskyNS,
-} from '@atproto/api'
+} from '@atproto/api';
 
 export class Preferences {
   constructor(private instance: AppBskyNS) {}
@@ -11,9 +11,9 @@ export class Preferences {
    * Get private preferences attached to the current account. Expected use is synchronization between multiple devices, and import/export during account migration. Requires auth.
    */
   async get(options?: AppBskyActorGetPreferences.CallOptions) {
-    const res = await this.instance.actor.getPreferences(undefined, options)
+    const res = await this.instance.actor.getPreferences(undefined, options);
 
-    return res.data.preferences
+    return res.data.preferences;
   }
 
   /**
@@ -23,6 +23,6 @@ export class Preferences {
     preferences: AppBskyActorPutPreferences.InputSchema['preferences'],
     options?: AppBskyActorPutPreferences.CallOptions,
   ) {
-    await this.instance.actor.putPreferences({ preferences }, options)
+    await this.instance.actor.putPreferences({ preferences }, options);
   }
 }
