@@ -5,7 +5,7 @@ import type {
   AppBskyGraphUnmuteActorList,
   AppBskyNS,
 } from '@atproto/api';
-import { BaseActor } from './BaseActor';
+import { BaseActor } from './baseActor';
 
 export class Actor extends BaseActor {
   /**

@@ -5,8 +5,8 @@ import type {
   AppBskyGraphGetRelationships,
   AppBskyNS,
 } from '@atproto/api';
-import { Paginator } from '~/tsky/Paginator';
-import { Thread } from './Thread';
+import { Paginator } from '~/tsky/paginator';
+import { Thread } from './thread';
 
 export class BaseActor {
   constructor(
