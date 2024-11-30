@@ -39,7 +39,7 @@ export class Feed {
     options?: AppBskyFeedGetTimeline.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
-      const res = await this.client.request('app.bsky.feed.getTimeline', 'GET', {
+      const res = await this.client.request<AppBskyFeedGetTimeline.QueryParams, AppBskyFeedGetTimeline.OutputSchema>('app.bsky.feed.getTimeline', 'GET', {
         cursor,
         ...params,
       });

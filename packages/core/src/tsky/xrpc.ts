@@ -49,12 +49,18 @@ export class XrpcError extends Error {
       return new XrpcError(response.status, data.error, data.message);
     }
 
-    return new XrpcError(
-      response.status,
-      response.statusText,
-      response.statusText,
-    );
+    return new XrpcError(response.status, response.statusText);
   }
+}
+
+function dropEmptyValues<T extends Record<string, string>>(obj: T): T {
+  const _obj = { ...obj };
+  for (const key of Object.keys(_obj)) {
+    if (_obj[key] === undefined) {
+      delete _obj[key];
+    }
+  }
+  return _obj;
 }
 
 export class XrpcClient {
@@ -64,7 +70,7 @@ export class XrpcClient {
     this.session = session;
   }
 
-  async request<P = Record<string, string>, R = Record<string, string>>(
+  async request<P = Record<string, string>, R = unknown>(
     nsid: string,
     method: 'GET' | 'POST' = 'GET',
     params?: P,
@@ -72,7 +78,7 @@ export class XrpcClient {
     data: R;
     headers: Record<string, string>;
   }> {
-    const searchParams = new URLSearchParams(params ?? []);
+    const searchParams = new URLSearchParams(dropEmptyValues(params ?? {}));
 
     const response = await this.session.fetchHandler(
       `/xrpc/${nsid}?${searchParams.toString()}`,

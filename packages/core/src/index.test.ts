@@ -46,7 +46,9 @@ describe('tSky', () => {
       expect(paginator).toBeDefined();
       expect(paginator.values).toBeDefined();
       expect(paginator.values).toBeInstanceOf(Array);
-      expect(paginator.values).toHaveLength(0);
+      expect(paginator.values.length).toBe(1); // we should get the first page from the paginator
+      expect(paginator.values[0].feed.length).toBeGreaterThan(0); // alice has some posts ;)
+      expect(paginator.values[0].feed[0]).toHaveProperty('post');
     });
   });
 });
