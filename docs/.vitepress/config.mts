@@ -33,7 +33,7 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/tsky-dev/tsky' },
-      { icon: 'discord', link: 'https://discord.gg/f7XWweBJQP' },
+      { icon: 'discord', link: 'https://chat.tsky.dev' },
       { icon: 'bluesky', link: 'https://bsky.app/profile/tsky.dev' },
     ],
 

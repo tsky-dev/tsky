@@ -9,3 +9,10 @@ from = "/docs/*"
 to = "/:splat"
 status = 200
 force = true
+
+# Redirect to Discord server
+[[redirects]]
+from = "https://chat.tsky.dev"
+to = "https://discord.gg/f7XWweBJQP"
+status = 301
+force = true
