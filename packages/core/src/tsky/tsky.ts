@@ -1,10 +1,8 @@
 import type {
-  AppBskyActorDefs,
-  AppBskyActorGetProfile,
-  AppBskyActorGetProfiles,
   AppBskyActorSearchActors,
   AppBskyActorSearchActorsTypeahead,
 } from '@atproto/api';
+import { Feed } from '~/bsky';
 import { Paginator } from './paginator';
 import type { Session } from './session';
 import { XrpcClient } from './xrpc';
@@ -19,36 +17,16 @@ export class TSky {
   /**
    * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
    */
-  profile(
-    identifier: string,
-    options?: AppBskyActorGetProfile.CallOptions,
-  ): Promise<AppBskyActorDefs.ProfileViewDetailed>;
-  /**
-   * Get detailed profile views of multiple actors.
-   */
-  profile(
-    identifiers: string[],
-    options?: AppBskyActorGetProfiles.CallOptions,
-  ): Promise<AppBskyActorDefs.ProfileViewDetailed[]>;
-
-  async profile(
-    identifier: string | string[],
-    options?:
-      | AppBskyActorGetProfile.CallOptions
-      | AppBskyActorGetProfiles.CallOptions,
-  ) {
-    if (Array.isArray(identifier)) {
-      const profiles = await Promise.all(
-        identifier.map((i) => this.profile(i, options)),
-      );
-      return profiles;
-    }
-
+  async profile(identifier: string | string[]) {
     const res = await this.xrpc.request('app.bsky.actor.getProfile', 'GET', {
       actor: identifier,
     });
 
     return res.data;
+  }
+
+  get feed() {
+    return new Feed(this.xrpc);
   }
 
   /**

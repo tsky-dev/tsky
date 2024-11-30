@@ -64,15 +64,15 @@ export class XrpcClient {
     this.session = session;
   }
 
-  async request<T>(
+  async request<P = Record<string, string>, R = Record<string, string>>(
     nsid: string,
-    method = 'GET',
-    params?: Record<string, string>,
+    method: 'GET' | 'POST' = 'GET',
+    params?: P,
   ): Promise<{
-    data: T;
+    data: R;
     headers: Record<string, string>;
   }> {
-    const searchParams = new URLSearchParams(params);
+    const searchParams = new URLSearchParams(params ?? []);
 
     const response = await this.session.fetchHandler(
       `/xrpc/${nsid}?${searchParams.toString()}`,

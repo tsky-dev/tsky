@@ -29,4 +29,24 @@ describe('tSky', () => {
     expect(profile).toBeDefined();
     expect(profile).toHaveProperty('handle', TEST_CREDENTIALS.alice.handle);
   });
+
+  describe('feed', () => {
+    it('.timeline()', async () => {
+      const session = new PasswordSession(TEST_ENDPOINT);
+      await session.login(TEST_CREDENTIALS.alice.did, TEST_CREDENTIALS.alice.appPassword);
+
+      const tSky = new TSky(session);
+
+      const paginator = tSky.feed.timeline({
+        limit: 30,
+      });
+
+      await paginator.next();
+
+      expect(paginator).toBeDefined();
+      expect(paginator.values).toBeDefined();
+      expect(paginator.values).toBeInstanceOf(Array);
+      expect(paginator.values).toHaveLength(0);
+    });
+  });
 });

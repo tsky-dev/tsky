@@ -9,9 +9,10 @@ import type {
   AppBskyNS,
 } from '@atproto/api';
 import { Paginator } from '~/tsky/paginator';
+import type { XrpcClient } from '~/tsky/xrpc';
 
 export class Feed {
-  constructor(private instance: AppBskyNS) {}
+  constructor(private client: XrpcClient) {}
 
   /**
    * Get a hydrated feed from an actor's selected feed generator. Implemented by App View.
@@ -21,10 +22,10 @@ export class Feed {
     options?: AppBskyFeedGetFeed.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
-      const res = await this.instance.feed.getFeed(
-        { cursor, ...params },
-        options,
-      );
+      const res = await this.client.request('app.bsky.feed.getFeed', 'GET', {
+        cursor,
+        ...params,
+      });
 
       return res.data;
     });
@@ -38,10 +39,10 @@ export class Feed {
     options?: AppBskyFeedGetTimeline.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
-      const res = await this.instance.feed.getTimeline(
-        { cursor, ...params },
-        options,
-      );
+      const res = await this.client.request('app.bsky.feed.getTimeline', 'GET', {
+        cursor,
+        ...params,
+      });
 
       return res.data;
     });
