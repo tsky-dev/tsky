@@ -1,15 +1,20 @@
-import type { AppBskyGraphGetKnownFollowers, AppBskyGraphGetListBlocks, AppBskyGraphGetListMutes, AppBskyGraphGetMutes } from '@atproto/api'
-import { Paginator } from '~/tsky/Paginator'
-import { BaseActor } from './BaseActor'
-import { Preferences } from './Preferences'
-import { Suggestions } from './Suggestions'
+import type {
+  AppBskyGraphGetKnownFollowers,
+  AppBskyGraphGetListBlocks,
+  AppBskyGraphGetListMutes,
+  AppBskyGraphGetMutes,
+} from '@atproto/api';
+import { Paginator } from '~/tsky/Paginator';
+import { BaseActor } from './BaseActor';
+import { Preferences } from './Preferences';
+import { Suggestions } from './Suggestions';
 
 export class User extends BaseActor {
   /**
    * Enumerates accounts which follow a specified account (actor) and are followed by the viewer.
    */
   knownFollowers(
-    params: { actor: string, limit?: number },
+    params: { actor: string; limit?: number },
     options?: AppBskyGraphGetKnownFollowers.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
@@ -19,10 +24,10 @@ export class User extends BaseActor {
           ...params,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -39,10 +44,10 @@ export class User extends BaseActor {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -56,10 +61,10 @@ export class User extends BaseActor {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -73,17 +78,17 @@ export class User extends BaseActor {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   suggestions() {
-    return new Suggestions(this.instance)
+    return new Suggestions(this.instance);
   }
 
   preferences() {
-    return new Preferences(this.instance)
+    return new Preferences(this.instance);
   }
 }

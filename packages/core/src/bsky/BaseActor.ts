@@ -1,6 +1,12 @@
-import type { AppBskyFeedGetActorFeeds, AppBskyFeedGetActorLikes, AppBskyFeedGetAuthorFeed, AppBskyGraphGetRelationships, AppBskyNS } from '@atproto/api'
-import { Paginator } from '~/tsky/Paginator'
-import { Thread } from './Thread'
+import type {
+  AppBskyFeedGetActorFeeds,
+  AppBskyFeedGetActorLikes,
+  AppBskyFeedGetAuthorFeed,
+  AppBskyGraphGetRelationships,
+  AppBskyNS,
+} from '@atproto/api';
+import { Paginator } from '~/tsky/Paginator';
+import { Thread } from './Thread';
 
 export class BaseActor {
   constructor(
@@ -17,10 +23,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -32,10 +38,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -47,10 +53,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -62,10 +68,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -81,9 +87,9 @@ export class BaseActor {
         others,
       },
       options,
-    )
+    );
 
-    return res.data
+    return res.data;
   }
 
   /**
@@ -94,10 +100,10 @@ export class BaseActor {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, actor: this.actor, limit },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -108,10 +114,10 @@ export class BaseActor {
       const res = await this.instance.feed.getActorLikes(
         { cursor, actor: this.actor, limit },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -125,13 +131,13 @@ export class BaseActor {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, ...params, actor: this.actor },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   thread(thread: string) {
-    return new Thread(this.instance, thread)
+    return new Thread(this.instance, thread);
   }
 }

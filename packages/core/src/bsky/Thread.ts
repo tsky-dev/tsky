@@ -1,4 +1,8 @@
-import { AppBskyGraphMuteThread, AppBskyGraphUnmuteThread, AppBskyNS } from "@atproto/api";
+import type {
+  AppBskyGraphMuteThread,
+  AppBskyGraphUnmuteThread,
+  AppBskyNS,
+} from '@atproto/api';
 
 export class Thread {
   constructor(
