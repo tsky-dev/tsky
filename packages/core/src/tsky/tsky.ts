@@ -13,7 +13,11 @@ import { XrpcClient } from './xrpc';
 export class TSky {
   xrpc: XrpcClient;
 
-  constructor({ url, identifier, password }: { url: string; identifier: string; password: string }) {
+  constructor({
+    url,
+    identifier,
+    password,
+  }: { url: string; identifier: string; password: string }) {
     const session = new SessionManager(url);
     this.xrpc = new XrpcClient(session);
   }
@@ -40,11 +44,15 @@ export class TSky {
       | AppBskyActorGetProfiles.CallOptions,
   ) {
     if (Array.isArray(identifier)) {
-      const profiles = await Promise.all(identifier.map(i => this.profile(i, options)));
+      const profiles = await Promise.all(
+        identifier.map((i) => this.profile(i, options)),
+      );
       return profiles;
     }
 
-    const res = await this.xrpc.request('app.bsky.actor.getProfile', 'GET', { actor: identifier });
+    const res = await this.xrpc.request('app.bsky.actor.getProfile', 'GET', {
+      actor: identifier,
+    });
 
     return res.data;
   }

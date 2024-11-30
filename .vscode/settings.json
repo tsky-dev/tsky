@@ -1,6 +1,5 @@
 {
-  // "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.defaultFormatter": "biomejs.biome",
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
 
   // Disable the default formatter, use eslint instead
   "prettier.enable": false,
@@ -11,9 +10,7 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "never",
     "source.fixAll.biome": "explicit",
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports.biome": "explicit",
-    "quickfix.biome": "explicit"
+    "source.organizeImports.biome": "explicit"
   },
 
   // Silent the stylistic rules in you IDE, but still auto fix them
