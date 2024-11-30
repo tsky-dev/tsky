@@ -8,7 +8,7 @@ import type {
   AppBskyFeedSendInteractions,
   AppBskyNS,
 } from '@atproto/api';
-import { Paginator } from '~/tsky/Paginator';
+import { Paginator } from '~/tsky/paginator';
 
 export class Feed {
   constructor(private instance: AppBskyNS) {}

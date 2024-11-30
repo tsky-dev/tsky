@@ -7,7 +7,7 @@ import type {
   AppBskyFeedSearchPosts,
   AppBskyNS,
 } from '@atproto/api';
-import { Paginator } from '~/tsky/Paginator';
+import { Paginator } from '~/tsky/paginator';
 
 export class Post {
   constructor(private instance: AppBskyNS) {}
