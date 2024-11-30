@@ -1,14 +1,14 @@
-type CursorResponse = {
+interface CursorResponse {
   cursor?: string;
   [key: string]: unknown;
-};
+}
 
 export class Paginator<T extends CursorResponse> {
   readonly values: T[] = [];
 
   constructor(
     private onNext: (cursor?: string) => Promise<T>,
-    defaultValues?: T[]
+    defaultValues?: T[],
   ) {
     if (defaultValues) {
       this.values = defaultValues;

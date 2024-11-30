@@ -3,11 +3,14 @@ import type {
   AppBskyGraphGetStarterPacks,
   AppBskyGraphSearchStarterPacks,
   AppBskyNS,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class StarterPack {
-  constructor(private instance: AppBskyNS, private uri: string) {}
+  constructor(
+    private instance: AppBskyNS,
+    private uri: string,
+  ) {}
 
   /**
    * Gets a view of a starter pack.
@@ -17,7 +20,7 @@ export class StarterPack {
       {
         starterPack: this.uri,
       },
-      options
+      options,
     );
 
     return res.data;
@@ -30,7 +33,7 @@ export class StarterPack {
     instance: AppBskyNS,
     query: string,
     limit?: number,
-    options?: AppBskyGraphSearchStarterPacks.CallOptions
+    options?: AppBskyGraphSearchStarterPacks.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await instance.graph.searchStarterPacks(
@@ -39,7 +42,7 @@ export class StarterPack {
           q: query,
           limit,
         },
-        options
+        options,
       );
 
       return res.data;
@@ -52,11 +55,11 @@ export class StarterPack {
   static async getMany(
     instance: AppBskyNS,
     starterpacks: string[],
-    options?: AppBskyGraphGetStarterPacks.CallOptions
+    options?: AppBskyGraphGetStarterPacks.CallOptions,
   ) {
     const res = await instance.graph.getStarterPacks(
       { uris: starterpacks },
-      options
+      options,
     );
 
     return res.data;

@@ -16,12 +16,15 @@ import type {
   AppBskyGraphUnmuteActorList,
   AppBskyGraphUnmuteThread,
   AppBskyNS,
-} from "@atproto/api";
-import { Paginator } from "./paginate";
-import { Preferences } from "./preference";
+} from '@atproto/api';
+import { Paginator } from './paginate';
+import { Preferences } from './preference';
 
 export class BaseActor {
-  constructor(readonly instance: AppBskyNS, readonly actor: string) {}
+  constructor(
+    readonly instance: AppBskyNS,
+    readonly actor: string,
+  ) {}
 
   /**
    * Get a list of starter packs created by the actor.
@@ -88,14 +91,14 @@ export class BaseActor {
    */
   async relationships(
     others?: string[],
-    options?: AppBskyGraphGetRelationships.CallOptions
+    options?: AppBskyGraphGetRelationships.CallOptions,
   ) {
     const res = await this.instance.graph.getRelationships(
       {
         actor: this.actor,
         others,
       },
-      options
+      options,
     );
 
     return res.data;
@@ -108,7 +111,7 @@ export class BaseActor {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, actor: this.actor, limit },
-        options
+        options,
       );
 
       return res.data;
@@ -122,7 +125,7 @@ export class BaseActor {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getActorLikes(
         { cursor, actor: this.actor, limit },
-        options
+        options,
       );
 
       return res.data;
@@ -134,12 +137,12 @@ export class BaseActor {
    */
   feed(
     params: AppBskyFeedGetAuthorFeed.QueryParams,
-    options?: AppBskyFeedGetAuthorFeed.CallOptions
+    options?: AppBskyFeedGetAuthorFeed.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, ...params, actor: this.actor },
-        options
+        options,
       );
 
       return res.data;
@@ -152,7 +155,10 @@ export class BaseActor {
 }
 
 class Thread {
-  constructor(private instance: AppBskyNS, private thread: string) {}
+  constructor(
+    private instance: AppBskyNS,
+    private thread: string,
+  ) {}
 
   /**
    * Mutes a thread preventing notifications from the thread and any of its children. Mutes are private in Bluesky. Requires auth.
@@ -190,7 +196,7 @@ export class Actor extends BaseActor {
   static muteMany(
     instance: AppBskyNS,
     actors: string[],
-    options?: AppBskyGraphMuteActorList.CallOptions
+    options?: AppBskyGraphMuteActorList.CallOptions,
   ) {
     // FIXME: Shouldn't this take an array?
     return instance.graph.muteActorList({ list: actors[0] }, options);
@@ -202,7 +208,7 @@ export class Actor extends BaseActor {
   static unmuteMany(
     instance: AppBskyNS,
     actors: string[],
-    options?: AppBskyGraphUnmuteActorList.CallOptions
+    options?: AppBskyGraphUnmuteActorList.CallOptions,
   ) {
     // FIXME: Shouldn't this take an array?
     return instance.graph.unmuteActorList({ list: actors[0] }, options);
@@ -215,7 +221,7 @@ export class User extends BaseActor {
    */
   knowFollowers(
     params: { actor: string; limit?: number },
-    options?: AppBskyGraphGetKnownFollowers.CallOptions
+    options?: AppBskyGraphGetKnownFollowers.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.graph.getKnownFollowers(
@@ -223,7 +229,7 @@ export class User extends BaseActor {
           cursor,
           ...params,
         },
-        options
+        options,
       );
 
       return res.data;
@@ -235,7 +241,7 @@ export class User extends BaseActor {
    */
   blockedLists(
     limit?: number,
-    options?: AppBskyGraphGetListBlocks.CallOptions
+    options?: AppBskyGraphGetListBlocks.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
       const res = await this.instance.graph.getListBlocks(
@@ -243,7 +249,7 @@ export class User extends BaseActor {
           cursor,
           limit,
         },
-        options
+        options,
       );
 
       return res.data;
@@ -260,7 +266,7 @@ export class User extends BaseActor {
           cursor,
           limit,
         },
-        options
+        options,
       );
 
       return res.data;
@@ -277,7 +283,7 @@ export class User extends BaseActor {
           cursor,
           limit,
         },
-        options
+        options,
       );
 
       return res.data;
@@ -315,13 +321,13 @@ class Suggestions {
    */
   afterFollowing(
     actor: string,
-    options?: AppBskyGraphGetSuggestedFollowsByActor.CallOptions
+    options?: AppBskyGraphGetSuggestedFollowsByActor.CallOptions,
   ) {
     return this.instance.graph.getSuggestedFollowsByActor(
       {
         actor,
       },
-      options
+      options,
     );
   }
 
@@ -332,7 +338,7 @@ class Suggestions {
     return new Paginator(async (cursor) => {
       const res = await this.instance.feed.getSuggestedFeeds(
         { cursor, limit },
-        options
+        options,
       );
 
       return res.data;
