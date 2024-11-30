@@ -5,8 +5,8 @@ import type {
   AppBskyActorSearchActors,
   AppBskyActorSearchActorsTypeahead,
   AppBskyNS,
-} from '@atproto/api'
-import { Paginator } from './paginate'
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class TSky {
   constructor(private instance: AppBskyNS) {}
@@ -16,15 +16,15 @@ export class TSky {
    */
   profile(
     identifier: string,
-    options?: AppBskyActorGetProfile.CallOptions
-  ): Promise<AppBskyActorDefs.ProfileViewDetailed>
+    options?: AppBskyActorGetProfile.CallOptions,
+  ): Promise<AppBskyActorDefs.ProfileViewDetailed>;
   /**
    * Get detailed profile views of multiple actors.
    */
   profile(
     identifiers: string[],
-    options?: AppBskyActorGetProfiles.CallOptions
-  ): Promise<AppBskyActorDefs.ProfileViewDetailed[]>
+    options?: AppBskyActorGetProfiles.CallOptions,
+  ): Promise<AppBskyActorDefs.ProfileViewDetailed[]>;
 
   async profile(
     identifier: string | string[],
@@ -36,17 +36,17 @@ export class TSky {
       const res = await this.instance.actor.getProfiles(
         { actors: identifier },
         options,
-      )
+      );
 
-      return res.data.profiles
+      return res.data.profiles;
     }
 
     const res = await this.instance.actor.getProfile(
       { actor: identifier[0] },
       options,
-    )
+    );
 
-    return res.data
+    return res.data;
   }
 
   /**
@@ -59,9 +59,9 @@ export class TSky {
     const res = await this.instance.actor.searchActorsTypeahead(
       params,
       options,
-    )
+    );
 
-    return res.data.actors
+    return res.data.actors;
   }
 
   /**
@@ -78,9 +78,9 @@ export class TSky {
           ...params,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 }

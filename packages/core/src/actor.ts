@@ -16,12 +16,15 @@ import type {
   AppBskyGraphUnmuteActorList,
   AppBskyGraphUnmuteThread,
   AppBskyNS,
-} from '@atproto/api'
-import { Paginator } from './paginate'
-import { Preferences } from './preference'
+} from '@atproto/api';
+import { Paginator } from './paginate';
+import { Preferences } from './preference';
 
 export class BaseActor {
-  constructor(readonly instance: AppBskyNS, readonly actor: string) {}
+  constructor(
+    readonly instance: AppBskyNS,
+    readonly actor: string,
+  ) {}
 
   /**
    * Get a list of starter packs created by the actor.
@@ -32,10 +35,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -47,10 +50,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -62,10 +65,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -77,10 +80,10 @@ export class BaseActor {
         cursor,
         actor: this.actor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -96,9 +99,9 @@ export class BaseActor {
         others,
       },
       options,
-    )
+    );
 
-    return res.data
+    return res.data;
   }
 
   /**
@@ -109,10 +112,10 @@ export class BaseActor {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, actor: this.actor, limit },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -123,10 +126,10 @@ export class BaseActor {
       const res = await this.instance.feed.getActorLikes(
         { cursor, actor: this.actor, limit },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -140,32 +143,35 @@ export class BaseActor {
       const res = await this.instance.feed.getActorFeeds(
         { cursor, ...params, actor: this.actor },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   thread(thread: string) {
-    return new Thread(this.instance, thread)
+    return new Thread(this.instance, thread);
   }
 }
 
 class Thread {
-  constructor(private instance: AppBskyNS, private thread: string) {}
+  constructor(
+    private instance: AppBskyNS,
+    private thread: string,
+  ) {}
 
   /**
    * Mutes a thread preventing notifications from the thread and any of its children. Mutes are private in Bluesky. Requires auth.
    */
   mute(options?: AppBskyGraphMuteThread.CallOptions) {
-    return this.instance.graph.muteThread({ root: this.thread }, options)
+    return this.instance.graph.muteThread({ root: this.thread }, options);
   }
 
   /**
    * Unmutes the specified thread. Requires auth.
    */
   unmute(options?: AppBskyGraphUnmuteThread.CallOptions) {
-    return this.instance.graph.unmuteThread({ root: this.thread }, options)
+    return this.instance.graph.unmuteThread({ root: this.thread }, options);
   }
 }
 
@@ -174,14 +180,14 @@ export class Actor extends BaseActor {
    * Creates a mute relationship for the specified account. Mutes are private in Bluesky. Requires auth.
    */
   mute(options?: AppBskyGraphMuteActor.CallOptions) {
-    return this.instance.graph.muteActor({ actor: this.actor }, options)
+    return this.instance.graph.muteActor({ actor: this.actor }, options);
   }
 
   /**
    * Unmutes the specified account. Requires auth.
    */
   unmute(options?: AppBskyGraphUnmuteActor.CallOptions) {
-    return this.instance.graph.unmuteActor({ actor: this.actor }, options)
+    return this.instance.graph.unmuteActor({ actor: this.actor }, options);
   }
 
   /**
@@ -193,7 +199,7 @@ export class Actor extends BaseActor {
     options?: AppBskyGraphMuteActorList.CallOptions,
   ) {
     // FIXME: Shouldn't this take an array?
-    return instance.graph.muteActorList({ list: actors[0] }, options)
+    return instance.graph.muteActorList({ list: actors[0] }, options);
   }
 
   /**
@@ -205,7 +211,7 @@ export class Actor extends BaseActor {
     options?: AppBskyGraphUnmuteActorList.CallOptions,
   ) {
     // FIXME: Shouldn't this take an array?
-    return instance.graph.unmuteActorList({ list: actors[0] }, options)
+    return instance.graph.unmuteActorList({ list: actors[0] }, options);
   }
 }
 
@@ -214,7 +220,7 @@ export class User extends BaseActor {
    * Enumerates accounts which follow a specified account (actor) and are followed by the viewer.
    */
   knowFollowers(
-    params: { actor: string, limit?: number },
+    params: { actor: string; limit?: number },
     options?: AppBskyGraphGetKnownFollowers.CallOptions,
   ) {
     return new Paginator(async (cursor) => {
@@ -224,10 +230,10 @@ export class User extends BaseActor {
           ...params,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -244,10 +250,10 @@ export class User extends BaseActor {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -261,10 +267,10 @@ export class User extends BaseActor {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -278,18 +284,18 @@ export class User extends BaseActor {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   suggestions() {
-    return new Suggestions(this.instance)
+    return new Suggestions(this.instance);
   }
 
   preferences() {
-    return new Preferences(this.instance)
+    return new Preferences(this.instance);
   }
 }
 
@@ -304,10 +310,10 @@ class Suggestions {
       const res = await this.instance.actor.getSuggestions({
         cursor,
         limit,
-      })
+      });
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -322,7 +328,7 @@ class Suggestions {
         actor,
       },
       options,
-    )
+    );
   }
 
   /**
@@ -333,9 +339,9 @@ class Suggestions {
       const res = await this.instance.feed.getSuggestedFeeds(
         { cursor, limit },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 }

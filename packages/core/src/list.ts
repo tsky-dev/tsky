@@ -2,11 +2,14 @@ import type {
   AppBskyFeedGetListFeed,
   AppBskyGraphGetList,
   AppBskyNS,
-} from '@atproto/api'
-import { Paginator } from './paginate'
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class BskyList {
-  constructor(private instance: AppBskyNS, private uri: string) {}
+  constructor(
+    private instance: AppBskyNS,
+    private uri: string,
+  ) {}
 
   /**
    * Gets a 'view' (with additional context) of a specified list.
@@ -20,10 +23,10 @@ export class BskyList {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -38,9 +41,9 @@ export class BskyList {
           limit,
         },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 }
