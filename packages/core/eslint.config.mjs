@@ -10,6 +10,7 @@ export default antfu(
     rules: {
       'perfectionist/sort-named-imports': 'off',
       'antfu/if-newline': 'off',
+      'perfectionist/sort-exports': 'off',
     },
   },
 );
