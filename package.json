@@ -10,6 +10,7 @@
     "url": "git+https://github.com/tsky-dev/tsky.git"
   },
   "scripts": {
+    "check": "biome check",
     "format": "biome check --write .",
     "lint": "eslint ./packages ./docs",
     "lint:fix": "eslint . --fix"
