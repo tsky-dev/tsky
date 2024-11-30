@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint:fix": "eslint ./src --fix",
+    "test": "echo \"Error: no test specified\"",
+    "test:typescript": "tsc --noEmit"
   },
   "devDependencies": {
     "@atproto/api": "^0.13.18",
