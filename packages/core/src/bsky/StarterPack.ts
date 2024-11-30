@@ -4,7 +4,7 @@ import type {
   AppBskyGraphSearchStarterPacks,
   AppBskyNS,
 } from '@atproto/api';
-import { Paginator } from './paginate';
+import { Paginator } from '~/tsky/Paginator';
 
 export class StarterPack {
   constructor(
