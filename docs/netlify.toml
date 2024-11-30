@@ -13,6 +13,6 @@ force = true
 # Redirect to Discord server
 [[redirects]]
 from = "https://chat.tsky.dev"
-to = "https://discord.com/invite/PRv6QhWu"
+to = "https://discord.gg/KPD7XPUZn3"
 status = 301
 force = true
