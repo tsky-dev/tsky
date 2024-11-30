@@ -1,13 +1,13 @@
 import type {
   AppBskyFeedGetLikes,
-  AppBskyFeedGetPosts,
   AppBskyFeedGetPostThread,
+  AppBskyFeedGetPosts,
   AppBskyFeedGetQuotes,
   AppBskyFeedGetRepostedBy,
   AppBskyFeedSearchPosts,
   AppBskyNS,
-} from '@atproto/api'
-import { Paginator } from './paginate'
+} from '@atproto/api';
+import { Paginator } from './paginate';
 
 export class Post {
   constructor(private instance: AppBskyNS) {}
@@ -19,9 +19,9 @@ export class Post {
     params: AppBskyFeedGetPostThread.QueryParams,
     options?: AppBskyFeedGetPostThread.CallOptions,
   ) {
-    const res = await this.instance.feed.getPostThread(params, options)
+    const res = await this.instance.feed.getPostThread(params, options);
 
-    return res.data
+    return res.data;
   }
 
   /**
@@ -35,10 +35,10 @@ export class Post {
       const res = await this.instance.feed.getLikes(
         { cursor, ...params },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -52,10 +52,10 @@ export class Post {
       const res = await this.instance.feed.getQuotes(
         { cursor, ...params },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -69,10 +69,10 @@ export class Post {
       const res = await this.instance.feed.getRepostedBy(
         { cursor, ...params },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -87,10 +87,10 @@ export class Post {
       const res = await instance.feed.searchPosts(
         { cursor, ...params },
         options,
-      )
+      );
 
-      return res.data
-    })
+      return res.data;
+    });
   }
 
   /**
@@ -101,8 +101,8 @@ export class Post {
     posts: string[],
     options?: AppBskyFeedGetPosts.CallOptions,
   ) {
-    const res = await instance.feed.getPosts({ uris: posts }, options)
+    const res = await instance.feed.getPosts({ uris: posts }, options);
 
-    return res.data.posts
+    return res.data.posts;
   }
 }
