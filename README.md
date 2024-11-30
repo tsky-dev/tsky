@@ -8,8 +8,6 @@
   A lightweight, fast, universal and typed Bluesky API wrapper for Apps & Bots.
 </p>
 
----
-
 TSky is a lightweight, fast, universal and typed Bluesky API wrapper for Apps & Bots. It's designed to be easy to use, lightweight and straightforward to use. It's built with TypeScript and has full type support.
 
 It was primarily built for the [Nimbus Client](https://github.com/nimbus-town/nimbus) but can be used in any other project that requires Bluesky API integration.
