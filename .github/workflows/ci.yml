@@ -42,3 +42,6 @@ jobs:
       
       - name: 📦 Build
         run: pnpm -r build
+      
+      # - name: 🚢 Continuous Release
+      #   run: pnpm dlx pkg-pr-new publish './packages/core'
