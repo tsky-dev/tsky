@@ -1,28 +1,40 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "moduleDetection": "force",
+    "lib": ["ESNext"],
     "useDefineForClassFields": false,
+    "experimentalDecorators": true,
     "baseUrl": ".",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "paths": {
       "~/*": ["src/*"]
     },
-    "resolveJsonModule": true,
-    "allowJs": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "declaration": false,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "allowJs": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "declaration": true,
     "outDir": "dist/",
     "sourceMap": true,
-    "esModuleInterop": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["./src/**/*", "./tests/**/*", "./test-utils/**/*"],
+  "typedocOptions": {
+    "out": "./docs",
+    "theme": "default",
+    "exclude": "**/+(__tests__|__mocks__)/*",
+    "excludePrivate": true,
+    "excludeProtected": true
+  }
 }

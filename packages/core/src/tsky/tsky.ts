@@ -6,7 +6,7 @@ import type {
   AppBskyActorSearchActorsTypeahead,
 } from '@atproto/api';
 import { AppBskyNS } from '@atproto/api';
-import { Paginator } from './Paginator';
+import { Paginator } from './paginator';
 import { SessionManager } from './session';
 import { XrpcClient } from './xrpc';
 
