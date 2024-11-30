@@ -219,7 +219,7 @@ export class User extends BaseActor {
   /**
    * Enumerates accounts which follow a specified account (actor) and are followed by the viewer.
    */
-  knowFollowers(
+  knownFollowers(
     params: { actor: string; limit?: number },
     options?: AppBskyGraphGetKnownFollowers.CallOptions,
   ) {
