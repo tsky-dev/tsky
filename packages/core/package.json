@@ -5,20 +5,24 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "types": {
-        "import": "./dist/index.d.ts",
-        "require": "./dist/index.d.cts"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       },
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "pkgroll",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "test": "echo \"Error: no test specified\"",
@@ -28,12 +32,8 @@
     "@atproto/api": "^0.13.18"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-typescript": "^12.1.1",
     "globals": "^15.12.0",
-    "rollup": "^4.27.4",
-    "rollup-plugin-auto-external": "^2.0.0",
-    "rollup-plugin-dts": "^6.1.1",
+    "pkgroll": "^2.5.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
