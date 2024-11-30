@@ -5,20 +5,14 @@ import type {
   AppBskyActorSearchActors,
   AppBskyActorSearchActorsTypeahead,
 } from '@atproto/api';
-import { AppBskyNS } from '@atproto/api';
 import { Paginator } from './paginator';
-import { SessionManager } from './session';
+import type { Session } from './session';
 import { XrpcClient } from './xrpc';
 
 export class TSky {
   xrpc: XrpcClient;
 
-  constructor({
-    url,
-    identifier,
-    password,
-  }: { url: string; identifier: string; password: string }) {
-    const session = new SessionManager(url);
+  constructor(session: Session) {
     this.xrpc = new XrpcClient(session);
   }
 

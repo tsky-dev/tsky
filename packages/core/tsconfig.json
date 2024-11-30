@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
+    "moduleDetection": "force",
     "useDefineForClassFields": false,
     "experimentalDecorators": true,
     "baseUrl": ".",
@@ -10,24 +11,23 @@
     "paths": {
       "~/*": ["src/*"]
     },
+    "resolveJsonModule": true,
+    "allowJs": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
-    "declaration": false,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "moduleDetection": "force",
-    "resolveJsonModule": true,
-    "allowJs": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "declaration": false,
+    "noEmit": true,
     "outDir": "dist/",
     "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    "skipLibCheck": true
   },
   "include": ["./src/**/*", "./tests/**/*", "./test-utils/**/*"],
   "typedocOptions": {

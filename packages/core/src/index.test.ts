@@ -1,35 +1,32 @@
 import { describe, expect, it } from 'vitest';
 import { TSky } from './index';
-
-const ALICE_DID = 'did:plc:jguhdmnjclquqf5lsvkyxqy3';
-const BOB_DID = 'did:plc:2ig7akkyfq256j42uxvc4g2h';
+import { PasswordSession } from './tsky/session';
 
 const env = process.env;
 const TEST_CREDENTIALS = {
   alice: {
-    handle: 'tSky',
-    did: ALICE_DID,
+    handle: 'alice.tsky.dev',
+    did: 'did:plc:jguhdmnjclquqf5lsvkyxqy3',
     appPassword: env.ALICE_APP_PASSWORD,
   },
   bob: {
-    handle: 'tSky',
-    did: BOB_DID,
+    handle: 'bob.tsky.dev',
+    did: 'did:plc:2ig7akkyfq256j42uxvc4g2h',
     appPassword: env.BOB_APP_PASSWORD,
   },
 };
 const TEST_ENDPOINT = 'https://bsky.social';
 
 describe('tSky', () => {
-  const tSky = new TSky({
-    url: TEST_ENDPOINT,
-    identifier: TEST_CREDENTIALS.alice.did,
-    password: TEST_CREDENTIALS.alice.appPassword,
-  });
+  it('.profile()', async () => {
+    const session = new PasswordSession(TEST_ENDPOINT);
+    await session.login(TEST_CREDENTIALS.alice.did, TEST_CREDENTIALS.alice.appPassword);
 
-  it('get Profile', async () => {
-    const profile = await tSky.profile(ALICE_DID);
+    const tSky = new TSky(session);
+
+    const profile = await tSky.profile(TEST_CREDENTIALS.alice.did);
 
     expect(profile).toBeDefined();
-    expect(profile).toHaveProperty('handle', 'alice.tsky.dev');
+    expect(profile).toHaveProperty('handle', TEST_CREDENTIALS.alice.handle);
   });
 });
