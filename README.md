@@ -45,6 +45,7 @@ console.log(profile.handle);
 ## Links
 
 - [📚 TSky Documentation](#) (TODO: add docs link)
+- [🦋 TSky on Bluesky](https://bsky.app/profile/tsky.dev)
 - [🦋 Nimbus on Bluesky](https://bsky.app/profile/nimbus.town)
 
 ## Contributing
