@@ -4,19 +4,12 @@ import type {
   AppBskyActorGetProfiles,
   AppBskyActorSearchActors,
   AppBskyActorSearchActorsTypeahead,
+  AppBskyNS,
 } from '@atproto/api';
-import { AppBskyNS } from '@atproto/api';
 import { Paginator } from './Paginator';
-import { SessionManager } from './session';
-import { XrpcClient } from './xrpc';
 
 export class TSky {
-  xrpc: XrpcClient;
-
-  constructor({ url, identifier, password }: { url: string; identifier: string; password: string }) {
-    const session = new SessionManager(url);
-    this.xrpc = new XrpcClient(session);
-  }
+  constructor(private instance: AppBskyNS) {}
 
   /**
    * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
@@ -40,11 +33,18 @@ export class TSky {
       | AppBskyActorGetProfiles.CallOptions,
   ) {
     if (Array.isArray(identifier)) {
-      const profiles = await Promise.all(identifier.map(i => this.profile(i, options)));
-      return profiles;
+      const res = await this.instance.actor.getProfiles(
+        { actors: identifier },
+        options,
+      );
+
+      return res.data.profiles;
     }
 
-    const res = await this.xrpc.request('app.bsky.actor.getProfile', 'GET', { actor: identifier });
+    const res = await this.instance.actor.getProfile(
+      { actor: identifier[0] },
+      options,
+    );
 
     return res.data;
   }
