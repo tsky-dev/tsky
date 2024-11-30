@@ -1,16 +1,39 @@
 {
   "name": "tsky",
-  "version": "0.1.0",
+  "type": "module",
+  "version": "0.1.0-alpha.0",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "types": {
+        "import": "./dist/index.d.ts",
+        "require": "./dist/index.d.cts"
+      },
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
   "scripts": {
+    "build": "rollup -c",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "test": "echo \"Error: no test specified\"",
     "test:typescript": "tsc --noEmit"
   },
+  "dependencies": {
+    "@atproto/api": "^0.13.18"
+  },
   "devDependencies": {
-    "@atproto/api": "^0.13.18",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-typescript": "^12.1.1",
     "globals": "^15.12.0",
+    "rollup": "^4.27.4",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-dts": "^6.1.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
