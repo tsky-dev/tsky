@@ -1,5 +1,5 @@
-import { AppBskyFeedGetSuggestedFeeds, AppBskyGraphGetSuggestedFollowsByActor, AppBskyNS } from "@atproto/api";
-import { Paginator } from "~/tsky/Paginator";
+import type { AppBskyFeedGetSuggestedFeeds, AppBskyGraphGetSuggestedFollowsByActor, AppBskyNS } from '@atproto/api'
+import { Paginator } from '~/tsky/Paginator'
 
 export class Suggestions {
   constructor(private instance: AppBskyNS) {}
@@ -12,10 +12,10 @@ export class Suggestions {
       const res = await this.instance.actor.getSuggestions({
         cursor,
         limit,
-      });
+      })
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 
   /**
@@ -30,7 +30,7 @@ export class Suggestions {
         actor,
       },
       options,
-    );
+    )
   }
 
   /**
@@ -41,9 +41,9 @@ export class Suggestions {
       const res = await this.instance.feed.getSuggestedFeeds(
         { cursor, limit },
         options,
-      );
+      )
 
-      return res.data;
-    });
+      return res.data
+    })
   }
 }
