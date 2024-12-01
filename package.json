@@ -21,16 +21,22 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.11.2",
+    "@atproto/lex-cli": "^0.5.2",
     "@biomejs/biome": "^1.9.4",
     "@eslint/js": "^9.15.0",
+    "@types/node": "^22.10.1",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
     "eslint-plugin-promise": "^6.0.0",
     "nano-staged": "^0.8.0",
+    "tar": "^7.4.3",
+    "tsx": "^4.19.2",
     "typescript-eslint": "^8.16.0"
   },
   "nano-staged": {
-    "*.{js,ts,cjs,mjs}": ["biome check --write --"]
+    "*.{js,ts,cjs,mjs}": [
+      "biome check --write --"
+    ]
   }
 }
