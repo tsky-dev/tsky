@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [TSky](classes/TSky.md)
+| Class | Description |
+| ------ | ------ |
+| [TSky](classes/TSky.md) | - |

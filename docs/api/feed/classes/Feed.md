@@ -4,13 +4,15 @@
 
 [tsky](../../index.md) / [feed](../index.md) / Feed
 
-# Class: Feed
+# Feed
 
 ## Constructors
 
 ### new Feed()
 
-> **new Feed**(`instance`): [`Feed`](Feed.md)
+```ts
+new Feed(instance): Feed
+```
 
 #### Parameters
 
@@ -24,13 +26,15 @@
 
 #### Defined in
 
-[feed.ts:14](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/feed.ts#L14)
+[feed.ts:14](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/feed.ts#L14)
 
 ## Methods
 
 ### generator()
 
-> **generator**(): `FeedGenerator`
+```ts
+generator(): FeedGenerator
+```
 
 #### Returns
 
@@ -38,13 +42,15 @@
 
 #### Defined in
 
-[feed.ts:62](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/feed.ts#L62)
+[feed.ts:62](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/feed.ts#L62)
 
 ***
 
 ### getFeed()
 
-> **getFeed**(`params`, `options`?): `Promise`\<[`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>\>
+```ts
+getFeed(params, options?): Promise<Paginator<OutputSchema>>
+```
 
 Get a hydrated feed from an actor's selected feed generator. Implemented by App View.
 
@@ -64,13 +70,15 @@ Get a hydrated feed from an actor's selected feed generator. Implemented by App 
 
 #### Defined in
 
-[feed.ts:19](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/feed.ts#L19)
+[feed.ts:19](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/feed.ts#L19)
 
 ***
 
 ### sendInteractions()
 
-> **sendInteractions**(`data`?, `options`?): `Promise`\<`OutputSchema`\>
+```ts
+sendInteractions(data?, options?): Promise<OutputSchema>
+```
 
 Send information about interactions with feed items back to the feed generator that served them.
 
@@ -90,13 +98,15 @@ Send information about interactions with feed items back to the feed generator t
 
 #### Defined in
 
-[feed.ts:53](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/feed.ts#L53)
+[feed.ts:53](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/feed.ts#L53)
 
 ***
 
 ### timeline()
 
-> **timeline**(`params`, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+timeline(params, options?): Paginator<OutputSchema>
+```
 
 Get a view of the requesting account's home timeline. This is expected to be some form of reverse-chronological feed.
 
@@ -116,4 +126,4 @@ Get a view of the requesting account's home timeline. This is expected to be som
 
 #### Defined in
 
-[feed.ts:36](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/feed.ts#L36)
+[feed.ts:36](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/feed.ts#L36)

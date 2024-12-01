@@ -4,13 +4,15 @@
 
 [tsky](../../index.md) / [index](../index.md) / TSky
 
-# Class: TSky
+# TSky
 
 ## Constructors
 
 ### new TSky()
 
-> **new TSky**(`instance`): [`TSky`](TSky.md)
+```ts
+new TSky(instance): TSky
+```
 
 #### Parameters
 
@@ -24,7 +26,7 @@
 
 #### Defined in
 
-[index.ts:12](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/index.ts#L12)
+[index.ts:12](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/index.ts#L12)
 
 ## Methods
 
@@ -32,7 +34,9 @@
 
 #### Call Signature
 
-> **profile**(`identifier`, `options`?): `Promise`\<`ProfileViewDetailed`\>
+```ts
+profile(identifier, options?): Promise<ProfileViewDetailed>
+```
 
 Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
 
@@ -52,11 +56,13 @@ Get detailed profile view of an actor. Does not require auth, but contains relev
 
 ##### Defined in
 
-[index.ts:17](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/index.ts#L17)
+[index.ts:17](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/index.ts#L17)
 
 #### Call Signature
 
-> **profile**(`identifiers`, `options`?): `Promise`\<`ProfileViewDetailed`[]\>
+```ts
+profile(identifiers, options?): Promise<ProfileViewDetailed[]>
+```
 
 Get detailed profile views of multiple actors.
 
@@ -76,13 +82,15 @@ Get detailed profile views of multiple actors.
 
 ##### Defined in
 
-[index.ts:24](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/index.ts#L24)
+[index.ts:24](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/index.ts#L24)
 
 ***
 
 ### search()
 
-> **search**(`params`, `options`?): `Promise`\<[`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>\>
+```ts
+search(params, options?): Promise<Paginator<OutputSchema>>
+```
 
 Find actors (profiles) matching search criteria. Does not require auth.
 
@@ -102,13 +110,15 @@ Find actors (profiles) matching search criteria. Does not require auth.
 
 #### Defined in
 
-[index.ts:70](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/index.ts#L70)
+[index.ts:70](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/index.ts#L70)
 
 ***
 
 ### typeahead()
 
-> **typeahead**(`params`, `options`?): `Promise`\<`ProfileViewBasic`[]\>
+```ts
+typeahead(params, options?): Promise<ProfileViewBasic[]>
+```
 
 Find actor suggestions for a prefix search term. Expected use is for auto-completion during text field entry. Does not require auth.
 
@@ -128,4 +138,4 @@ Find actor suggestions for a prefix search term. Expected use is for auto-comple
 
 #### Defined in
 
-[index.ts:55](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/index.ts#L55)
+[index.ts:55](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/index.ts#L55)

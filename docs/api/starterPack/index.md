@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [StarterPack](classes/StarterPack.md)
+| Class | Description |
+| ------ | ------ |
+| [StarterPack](classes/StarterPack.md) | - |

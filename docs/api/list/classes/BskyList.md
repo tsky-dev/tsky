@@ -4,13 +4,15 @@
 
 [tsky](../../index.md) / [list](../index.md) / BskyList
 
-# Class: BskyList
+# BskyList
 
 ## Constructors
 
 ### new BskyList()
 
-> **new BskyList**(`instance`, `uri`): [`BskyList`](BskyList.md)
+```ts
+new BskyList(instance, uri): BskyList
+```
 
 #### Parameters
 
@@ -28,13 +30,15 @@
 
 #### Defined in
 
-[list.ts:9](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/list.ts#L9)
+[list.ts:9](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/list.ts#L9)
 
 ## Methods
 
 ### about()
 
-> **about**(`limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+about(limit?, options?): Paginator<OutputSchema>
+```
 
 Gets a 'view' (with additional context) of a specified list.
 
@@ -54,13 +58,15 @@ Gets a 'view' (with additional context) of a specified list.
 
 #### Defined in
 
-[list.ts:14](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/list.ts#L14)
+[list.ts:14](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/list.ts#L14)
 
 ***
 
 ### feed()
 
-> **feed**(`limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+feed(limit?, options?): Paginator<OutputSchema>
+```
 
 Get a feed of recent posts from a list (posts and reposts from any actors on the list). Does not require auth.
 
@@ -80,4 +86,4 @@ Get a feed of recent posts from a list (posts and reposts from any actors on the
 
 #### Defined in
 
-[list.ts:32](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/list.ts#L32)
+[list.ts:32](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/list.ts#L32)

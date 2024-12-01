@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [Post](classes/Post.md)
+| Class | Description |
+| ------ | ------ |
+| [Post](classes/Post.md) | - |

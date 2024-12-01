@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [Paginator](classes/Paginator.md)
+| Class | Description |
+| ------ | ------ |
+| [Paginator](classes/Paginator.md) | - |

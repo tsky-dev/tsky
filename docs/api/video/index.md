@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [Video](classes/Video.md)
+| Class | Description |
+| ------ | ------ |
+| [Video](classes/Video.md) | - |
