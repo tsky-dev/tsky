@@ -11,7 +11,7 @@
     "url": "git+https://github.com/tsky-dev/tsky.git"
   },
   "scripts": {
-    "build": "pnpm run --filter tsky build",
+    "build": "pnpm run --filter @tsky/core build",
     "docs:dev": "pnpm run --filter @tsky/docs dev",
     "docs:build": "pnpm run --filter @tsky/docs build",
     "docs:preview": "pnpm run --filter @tsky/docs preview",
