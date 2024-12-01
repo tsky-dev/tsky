@@ -4,13 +4,15 @@
 
 [tsky](../../index.md) / [post](../index.md) / Post
 
-# Class: Post
+# Post
 
 ## Constructors
 
 ### new Post()
 
-> **new Post**(`instance`): [`Post`](Post.md)
+```ts
+new Post(instance): Post
+```
 
 #### Parameters
 
@@ -24,13 +26,15 @@
 
 #### Defined in
 
-[post.ts:13](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/post.ts#L13)
+[post.ts:13](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/post.ts#L13)
 
 ## Methods
 
 ### likes()
 
-> **likes**(`params`, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+likes(params, options?): Paginator<OutputSchema>
+```
 
 Get like records which reference a subject (by AT-URI and CID).
 
@@ -50,13 +54,15 @@ Get like records which reference a subject (by AT-URI and CID).
 
 #### Defined in
 
-[post.ts:30](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/post.ts#L30)
+[post.ts:30](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/post.ts#L30)
 
 ***
 
 ### quotes()
 
-> **quotes**(`params`, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+quotes(params, options?): Paginator<OutputSchema>
+```
 
 Get a list of quotes for a given post.
 
@@ -76,13 +82,15 @@ Get a list of quotes for a given post.
 
 #### Defined in
 
-[post.ts:47](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/post.ts#L47)
+[post.ts:47](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/post.ts#L47)
 
 ***
 
 ### repostedBy()
 
-> **repostedBy**(`params`, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+repostedBy(params, options?): Paginator<OutputSchema>
+```
 
 Get a list of reposts for a given post.
 
@@ -102,13 +110,15 @@ Get a list of reposts for a given post.
 
 #### Defined in
 
-[post.ts:64](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/post.ts#L64)
+[post.ts:64](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/post.ts#L64)
 
 ***
 
 ### threads()
 
-> **threads**(`params`, `options`?): `Promise`\<`OutputSchema`\>
+```ts
+threads(params, options?): Promise<OutputSchema>
+```
 
 Get posts in a thread. Does not require auth, but additional metadata and filtering will be applied for authed requests.
 
@@ -128,13 +138,18 @@ Get posts in a thread. Does not require auth, but additional metadata and filter
 
 #### Defined in
 
-[post.ts:18](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/post.ts#L18)
+[post.ts:18](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/post.ts#L18)
 
 ***
 
 ### getMany()
 
-> `static` **getMany**(`instance`, `posts`, `options`?): `Promise`\<`PostView`[]\>
+```ts
+static getMany(
+   instance, 
+   posts, 
+options?): Promise<PostView[]>
+```
 
 Gets post views for a specified list of posts (by AT-URI). This is sometimes referred to as 'hydrating' a 'feed skeleton'.
 
@@ -158,13 +173,18 @@ Gets post views for a specified list of posts (by AT-URI). This is sometimes ref
 
 #### Defined in
 
-[post.ts:99](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/post.ts#L99)
+[post.ts:99](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/post.ts#L99)
 
 ***
 
 ### search()
 
-> `static` **search**(`instance`, `params`, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+static search(
+   instance, 
+   params, 
+options?): Paginator<OutputSchema>
+```
 
 Find posts matching search criteria, returning views of those posts.
 
@@ -188,4 +208,4 @@ Find posts matching search criteria, returning views of those posts.
 
 #### Defined in
 
-[post.ts:81](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/post.ts#L81)
+[post.ts:81](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/post.ts#L81)

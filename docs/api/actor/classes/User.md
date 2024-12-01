@@ -4,7 +4,7 @@
 
 [tsky](../../index.md) / [actor](../index.md) / User
 
-# Class: User
+# User
 
 ## Extends
 
@@ -14,7 +14,9 @@
 
 ### new User()
 
-> **new User**(`instance`, `actor`): [`User`](User.md)
+```ts
+new User(instance, actor): User
+```
 
 #### Parameters
 
@@ -36,13 +38,15 @@
 
 #### Defined in
 
-[actor.ts:24](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L24)
+[actor.ts:24](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L24)
 
 ## Properties
 
 ### actor
 
-> `readonly` **actor**: `string`
+```ts
+readonly actor: string;
+```
 
 #### Inherited from
 
@@ -50,13 +54,15 @@
 
 #### Defined in
 
-[actor.ts:24](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L24)
+[actor.ts:24](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L24)
 
 ***
 
 ### instance
 
-> `readonly` **instance**: `AppBskyNS`
+```ts
+readonly instance: AppBskyNS;
+```
 
 #### Inherited from
 
@@ -64,13 +70,15 @@
 
 #### Defined in
 
-[actor.ts:24](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L24)
+[actor.ts:24](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L24)
 
 ## Methods
 
 ### blockedLists()
 
-> **blockedLists**(`limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+blockedLists(limit?, options?): Paginator<OutputSchema>
+```
 
 Get mod lists that the requesting account (actor) is blocking. Requires auth.
 
@@ -90,13 +98,15 @@ Get mod lists that the requesting account (actor) is blocking. Requires auth.
 
 #### Defined in
 
-[actor.ts:236](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L236)
+[actor.ts:236](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L236)
 
 ***
 
 ### feed()
 
-> **feed**(`params`, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+feed(params, options?): Paginator<OutputSchema>
+```
 
 Get a list of feeds (feed generator records) created by the actor (in the actor's repo).
 
@@ -120,13 +130,15 @@ Get a list of feeds (feed generator records) created by the actor (in the actor'
 
 #### Defined in
 
-[actor.ts:135](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L135)
+[actor.ts:135](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L135)
 
 ***
 
 ### feeds()
 
-> **feeds**(`limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+feeds(limit?, options?): Paginator<OutputSchema>
+```
 
 Get a view of an actor's 'author feed' (post and reposts by the author). Does not require auth.
 
@@ -150,13 +162,15 @@ Get a view of an actor's 'author feed' (post and reposts by the author). Does no
 
 #### Defined in
 
-[actor.ts:107](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L107)
+[actor.ts:107](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L107)
 
 ***
 
 ### followers()
 
-> **followers**(`limit`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+followers(limit?): Paginator<OutputSchema>
+```
 
 Enumerates accounts which follow a specified account (actor).
 
@@ -176,13 +190,15 @@ Enumerates accounts which follow a specified account (actor).
 
 #### Defined in
 
-[actor.ts:44](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L44)
+[actor.ts:44](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L44)
 
 ***
 
 ### follows()
 
-> **follows**(`limit`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+follows(limit?): Paginator<OutputSchema>
+```
 
 Enumerates accounts which a specified account (actor) follows.
 
@@ -202,13 +218,15 @@ Enumerates accounts which a specified account (actor) follows.
 
 #### Defined in
 
-[actor.ts:59](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L59)
+[actor.ts:59](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L59)
 
 ***
 
 ### knowFollowers()
 
-> **knowFollowers**(`params`, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+knowFollowers(params, options?): Paginator<OutputSchema>
+```
 
 Enumerates accounts which follow a specified account (actor) and are followed by the viewer.
 
@@ -234,13 +252,15 @@ Enumerates accounts which follow a specified account (actor) and are followed by
 
 #### Defined in
 
-[actor.ts:216](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L216)
+[actor.ts:216](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L216)
 
 ***
 
 ### likes()
 
-> **likes**(`limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+likes(limit?, options?): Paginator<OutputSchema>
+```
 
 Get a list of posts liked by an actor. Requires auth, actor must be the requesting account.
 
@@ -264,13 +284,15 @@ Get a list of posts liked by an actor. Requires auth, actor must be the requesti
 
 #### Defined in
 
-[actor.ts:121](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L121)
+[actor.ts:121](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L121)
 
 ***
 
 ### lists()
 
-> **lists**(`limit`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+lists(limit?): Paginator<OutputSchema>
+```
 
 Enumerates the lists created by a specified account (actor).
 
@@ -290,13 +312,15 @@ Enumerates the lists created by a specified account (actor).
 
 #### Defined in
 
-[actor.ts:74](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L74)
+[actor.ts:74](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L74)
 
 ***
 
 ### mutedLists()
 
-> **mutedLists**(`limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+mutedLists(limit?, options?): Paginator<OutputSchema>
+```
 
 Enumerates mod lists that the requesting account (actor) currently has muted. Requires auth.
 
@@ -316,13 +340,15 @@ Enumerates mod lists that the requesting account (actor) currently has muted. Re
 
 #### Defined in
 
-[actor.ts:256](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L256)
+[actor.ts:256](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L256)
 
 ***
 
 ### mutedProfiles()
 
-> **mutedProfiles**(`limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+mutedProfiles(limit?, options?): Paginator<OutputSchema>
+```
 
 Enumerates accounts that the requesting account (actor) currently has muted. Requires auth.
 
@@ -342,13 +368,15 @@ Enumerates accounts that the requesting account (actor) currently has muted. Req
 
 #### Defined in
 
-[actor.ts:273](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L273)
+[actor.ts:273](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L273)
 
 ***
 
 ### preferences()
 
-> **preferences**(): [`Preferences`](../../preference/classes/Preferences.md)
+```ts
+preferences(): Preferences
+```
 
 #### Returns
 
@@ -356,13 +384,15 @@ Enumerates accounts that the requesting account (actor) currently has muted. Req
 
 #### Defined in
 
-[actor.ts:291](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L291)
+[actor.ts:291](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L291)
 
 ***
 
 ### relationships()
 
-> **relationships**(`others`?, `options`?): `Promise`\<`OutputSchema`\>
+```ts
+relationships(others?, options?): Promise<OutputSchema>
+```
 
 Enumerates public relationships between one account, and a list of other accounts. Does not require auth.
 
@@ -386,13 +416,15 @@ Enumerates public relationships between one account, and a list of other account
 
 #### Defined in
 
-[actor.ts:89](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L89)
+[actor.ts:89](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L89)
 
 ***
 
 ### starterPacks()
 
-> **starterPacks**(`limit`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+starterPacks(limit?): Paginator<OutputSchema>
+```
 
 Get a list of starter packs created by the actor.
 
@@ -412,13 +444,15 @@ Get a list of starter packs created by the actor.
 
 #### Defined in
 
-[actor.ts:29](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L29)
+[actor.ts:29](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L29)
 
 ***
 
 ### suggestions()
 
-> **suggestions**(): `Suggestions`
+```ts
+suggestions(): Suggestions
+```
 
 #### Returns
 
@@ -426,13 +460,15 @@ Get a list of starter packs created by the actor.
 
 #### Defined in
 
-[actor.ts:287](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L287)
+[actor.ts:287](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L287)
 
 ***
 
 ### thread()
 
-> **thread**(`thread`): `Thread`
+```ts
+thread(thread): Thread
+```
 
 #### Parameters
 
@@ -450,4 +486,4 @@ Get a list of starter packs created by the actor.
 
 #### Defined in
 
-[actor.ts:149](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/actor.ts#L149)
+[actor.ts:149](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/actor.ts#L149)

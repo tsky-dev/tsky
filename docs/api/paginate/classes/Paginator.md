@@ -4,7 +4,7 @@
 
 [tsky](../../index.md) / [paginate](../index.md) / Paginator
 
-# Class: Paginator\<T\>
+# Paginator\<T\>
 
 ## Type Parameters
 
@@ -14,7 +14,9 @@
 
 ### new Paginator()
 
-> **new Paginator**\<`T`\>(`onNext`, `defaultValues`?): [`Paginator`](Paginator.md)\<`T`\>
+```ts
+new Paginator<T>(onNext, defaultValues?): Paginator<T>
+```
 
 #### Parameters
 
@@ -32,23 +34,27 @@
 
 #### Defined in
 
-[paginate.ts:9](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/paginate.ts#L9)
+[paginate.ts:9](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/paginate.ts#L9)
 
 ## Properties
 
 ### values
 
-> `readonly` **values**: `T`[] = `[]`
+```ts
+readonly values: T[] = [];
+```
 
 #### Defined in
 
-[paginate.ts:7](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/paginate.ts#L7)
+[paginate.ts:7](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/paginate.ts#L7)
 
 ## Methods
 
 ### clone()
 
-> **clone**(): [`Paginator`](Paginator.md)\<`T`\>
+```ts
+clone(): Paginator<T>
+```
 
 #### Returns
 
@@ -56,13 +62,15 @@
 
 #### Defined in
 
-[paginate.ts:21](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/paginate.ts#L21)
+[paginate.ts:21](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/paginate.ts#L21)
 
 ***
 
 ### next()
 
-> **next**(): `Promise`\<`null` \| `T`\>
+```ts
+next(): Promise<null | T>
+```
 
 #### Returns
 
@@ -70,4 +78,4 @@
 
 #### Defined in
 
-[paginate.ts:25](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/paginate.ts#L25)
+[paginate.ts:25](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/paginate.ts#L25)

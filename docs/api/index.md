@@ -8,12 +8,14 @@ A BlueSky API Wrapper
 
 ## Modules
 
-- [actor](actor/index.md)
-- [feed](feed/index.md)
-- [index](index/index.md)
-- [list](list/index.md)
-- [paginate](paginate/index.md)
-- [post](post/index.md)
-- [preference](preference/index.md)
-- [starterPack](starterPack/index.md)
-- [video](video/index.md)
+| Module | Description |
+| ------ | ------ |
+| [actor](actor/index.md) | - |
+| [feed](feed/index.md) | - |
+| [index](index/index.md) | - |
+| [list](list/index.md) | - |
+| [paginate](paginate/index.md) | - |
+| [post](post/index.md) | - |
+| [preference](preference/index.md) | - |
+| [starterPack](starterPack/index.md) | - |
+| [video](video/index.md) | - |

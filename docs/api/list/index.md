@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [BskyList](classes/BskyList.md)
+| Class | Description |
+| ------ | ------ |
+| [BskyList](classes/BskyList.md) | - |

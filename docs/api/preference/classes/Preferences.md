@@ -4,13 +4,15 @@
 
 [tsky](../../index.md) / [preference](../index.md) / Preferences
 
-# Class: Preferences
+# Preferences
 
 ## Constructors
 
 ### new Preferences()
 
-> **new Preferences**(`instance`): [`Preferences`](Preferences.md)
+```ts
+new Preferences(instance): Preferences
+```
 
 #### Parameters
 
@@ -24,13 +26,15 @@
 
 #### Defined in
 
-[preference.ts:8](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/preference.ts#L8)
+[preference.ts:8](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/preference.ts#L8)
 
 ## Methods
 
 ### get()
 
-> **get**(`options`?): `Promise`\<`Preferences`\>
+```ts
+get(options?): Promise<Preferences>
+```
 
 Get private preferences attached to the current account. Expected use is synchronization between multiple devices, and import/export during account migration. Requires auth.
 
@@ -46,13 +50,15 @@ Get private preferences attached to the current account. Expected use is synchro
 
 #### Defined in
 
-[preference.ts:13](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/preference.ts#L13)
+[preference.ts:13](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/preference.ts#L13)
 
 ***
 
 ### set()
 
-> **set**(`preferences`, `options`?): `Promise`\<`void`\>
+```ts
+set(preferences, options?): Promise<void>
+```
 
 Set the private preferences attached to the account.
 
@@ -72,4 +78,4 @@ Set the private preferences attached to the account.
 
 #### Defined in
 
-[preference.ts:22](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/preference.ts#L22)
+[preference.ts:22](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/preference.ts#L22)

@@ -4,13 +4,15 @@
 
 [tsky](../../index.md) / [video](../index.md) / Video
 
-# Class: Video
+# Video
 
 ## Constructors
 
 ### new Video()
 
-> **new Video**(`instance`): [`Video`](Video.md)
+```ts
+new Video(instance): Video
+```
 
 #### Parameters
 
@@ -24,13 +26,15 @@
 
 #### Defined in
 
-[video.ts:11](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/video.ts#L11)
+[video.ts:11](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/video.ts#L11)
 
 ## Methods
 
 ### limit()
 
-> **limit**(`options`?): `Promise`\<`OutputSchema`\>
+```ts
+limit(options?): Promise<OutputSchema>
+```
 
 Get video upload limits for the authenticated user.
 
@@ -46,13 +50,15 @@ Get video upload limits for the authenticated user.
 
 #### Defined in
 
-[video.ts:16](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/video.ts#L16)
+[video.ts:16](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/video.ts#L16)
 
 ***
 
 ### status()
 
-> **status**(`jobId`, `options`?): `Promise`\<`JobStatus`\>
+```ts
+status(jobId, options?): Promise<JobStatus>
+```
 
 Get status details for a video processing job.
 
@@ -72,13 +78,15 @@ Get status details for a video processing job.
 
 #### Defined in
 
-[video.ts:25](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/video.ts#L25)
+[video.ts:25](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/video.ts#L25)
 
 ***
 
 ### upload()
 
-> **upload**(`data`, `options`?): `Promise`\<`JobStatus`\>
+```ts
+upload(data, options?): Promise<JobStatus>
+```
 
 Upload a video to be processed then stored on the PDS.
 
@@ -98,4 +106,4 @@ Upload a video to be processed then stored on the PDS.
 
 #### Defined in
 
-[video.ts:34](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/video.ts#L34)
+[video.ts:34](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/video.ts#L34)

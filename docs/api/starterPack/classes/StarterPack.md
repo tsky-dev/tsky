@@ -4,13 +4,15 @@
 
 [tsky](../../index.md) / [starterPack](../index.md) / StarterPack
 
-# Class: StarterPack
+# StarterPack
 
 ## Constructors
 
 ### new StarterPack()
 
-> **new StarterPack**(`instance`, `uri`): [`StarterPack`](StarterPack.md)
+```ts
+new StarterPack(instance, uri): StarterPack
+```
 
 #### Parameters
 
@@ -28,13 +30,15 @@
 
 #### Defined in
 
-[starterPack.ts:10](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/starterPack.ts#L10)
+[starterPack.ts:10](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/starterPack.ts#L10)
 
 ## Methods
 
 ### about()
 
-> **about**(`options`?): `Promise`\<`OutputSchema`\>
+```ts
+about(options?): Promise<OutputSchema>
+```
 
 Gets a view of a starter pack.
 
@@ -50,13 +54,18 @@ Gets a view of a starter pack.
 
 #### Defined in
 
-[starterPack.ts:15](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/starterPack.ts#L15)
+[starterPack.ts:15](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/starterPack.ts#L15)
 
 ***
 
 ### getMany()
 
-> `static` **getMany**(`instance`, `starterpacks`, `options`?): `Promise`\<`OutputSchema`\>
+```ts
+static getMany(
+   instance, 
+   starterpacks, 
+options?): Promise<OutputSchema>
+```
 
 Get views for a list of starter packs.
 
@@ -80,13 +89,19 @@ Get views for a list of starter packs.
 
 #### Defined in
 
-[starterPack.ts:52](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/starterPack.ts#L52)
+[starterPack.ts:52](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/starterPack.ts#L52)
 
 ***
 
 ### search()
 
-> `static` **search**(`instance`, `query`, `limit`?, `options`?): [`Paginator`](../../paginate/classes/Paginator.md)\<`OutputSchema`\>
+```ts
+static search(
+   instance, 
+   query, 
+   limit?, 
+options?): Paginator<OutputSchema>
+```
 
 Search for starter packs.
 
@@ -114,4 +129,4 @@ Search for starter packs.
 
 #### Defined in
 
-[starterPack.ts:29](https://github.com/anbraten/tsky/blob/d41f31ef5ffd7e02d6eae90f23a8982db2e99629/packages/core/src/starterPack.ts#L29)
+[starterPack.ts:29](https://github.com/taskylizard/tsky-fork-typedoc-pr/blob/a5370df6192d679fcbec429e409a79d61db0f356/packages/core/src/starterPack.ts#L29)

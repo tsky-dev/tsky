@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [Feed](classes/Feed.md)
+| Class | Description |
+| ------ | ------ |
+| [Feed](classes/Feed.md) | - |

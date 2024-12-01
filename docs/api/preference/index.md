@@ -10,4 +10,6 @@
 
 ### Classes
 
-- [Preferences](classes/Preferences.md)
+| Class | Description |
+| ------ | ------ |
+| [Preferences](classes/Preferences.md) | - |
