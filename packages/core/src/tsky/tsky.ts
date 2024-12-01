@@ -8,7 +8,7 @@ import type {
 } from '@atproto/api';
 import { Paginator } from './paginator';
 
-export class TSky {
+export class Tsky {
   constructor(private instance: AppBskyNS) {}
 
   /**
