@@ -2,6 +2,9 @@
   "name": "@tsky/lexicons",
   "type": "module",
   "version": "0.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@atproto/lexicon": "^0.4.3",
     "@atproto/xrpc": "^0.6.4",
