@@ -7,9 +7,9 @@
     "predev": "typedoc",
     "dev": "vitepress dev",
     "prebuild": "typedoc",
-		"build": "vitepress build",
+    "build": "vitepress build",
     "preview": "vitepress preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "devDependencies": {
     "typedoc": "^0.27.1",
