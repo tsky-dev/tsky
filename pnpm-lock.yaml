@@ -76,6 +76,18 @@ importers:
         specifier: ^2.1.6
         version: 2.1.6(@types/node@22.10.1)
 
+  packages/lexicons:
+    dependencies:
+      '@atproto/lexicon':
+        specifier: ^0.4.3
+        version: 0.4.3
+      '@atproto/xrpc':
+        specifier: ^0.6.4
+        version: 0.6.4
+      multiformats:
+        specifier: ^13.3.1
+        version: 13.3.1
+
 packages:
 
   '@algolia/autocomplete-core@1.17.7':
@@ -2310,6 +2322,9 @@ packages:
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
+
+  multiformats@13.3.1:
+    resolution: {integrity: sha512-QxowxTNwJ3r5RMctoGA5p13w5RbRT2QDkoM+yFlqfLiioBp78nhDjnRLvmSBI9+KAqN4VdgOVWM9c0CHd86m3g==}
 
   multiformats@9.9.0:
     resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
@@ -5614,6 +5629,8 @@ snapshots:
       ufo: 1.5.4
 
   ms@2.1.3: {}
+
+  multiformats@13.3.1: {}
 
   multiformats@9.9.0: {}
 

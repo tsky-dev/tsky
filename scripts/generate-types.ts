@@ -6,7 +6,7 @@ import process from 'node:process';
 import * as tar from 'tar';
 
 const LEXICONS_DIR = 'lexicons';
-const TYPES_DIR = 'packages/core/src/lexicons';
+const TYPES_DIR = 'packages/lexicons';
 const REPO = 'bluesky-social/atproto';
 
 async function findJsonFiles(dir: string): Promise<string[]> {

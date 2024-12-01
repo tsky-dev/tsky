@@ -1,4 +1,4 @@
 atproto.tar.gz
 node_modules/
 dist/
-lexicons/
+/lexicons/
