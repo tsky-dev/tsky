@@ -1,7 +1,7 @@
 {
   "name": "@tsky/lexicons",
-  "version": "0.0.1",
   "type": "module",
+  "version": "0.0.1",
   "dependencies": {
     "@atproto/lexicon": "^0.4.3",
     "@atproto/xrpc": "^0.6.4",
