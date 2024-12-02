@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "TSky"
-  text: "A BlueSky API client for nimble apps and tools"
-  tagline: A BlueSky API client for nimble apps and tools
+  name: "tsky"
+  text: "A Bluesky API client for nimble apps and tools"
+  tagline: A Bluesky API client for nimble apps and tools
   actions:
     - theme: brand
       text: Get Started
