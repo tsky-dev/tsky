@@ -5,6 +5,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "build": "tsx ./scripts/generate-types.ts"
+  },
   "dependencies": {
     "@atproto/lexicon": "^0.4.3",
     "@atproto/xrpc": "^0.6.4",
