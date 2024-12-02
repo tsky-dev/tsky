@@ -3,10 +3,14 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import * as tar from 'tar';
 
-const LEXICONS_DIR = 'lexicons';
-const TYPES_DIR = 'packages/lexicons';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const LEXICONS_DIR = path.resolve(__dirname, '../lexicons');
+const TYPES_DIR = path.resolve(__dirname, '../src');
 const REPO = 'bluesky-social/atproto';
 
 async function findJsonFiles(dir: string): Promise<string[]> {
@@ -53,7 +57,7 @@ async function main() {
     }
 
     // Create a temporary file for the tar download
-    const tarFile = 'atproto.tar.gz';
+    const tarFile = path.join(LEXICONS_DIR, 'atproto.tar.gz');
     await fs.writeFile(tarFile, Buffer.from(await response.arrayBuffer()));
 
     // Extract only lexicon files
@@ -80,6 +84,7 @@ async function main() {
       `pnpm lex gen-api ${TYPES_DIR} ${lexiconFiles.join(' ')}`,
       {
         stdio: 'inherit',
+        cwd: TYPES_DIR,
       },
     );
 
