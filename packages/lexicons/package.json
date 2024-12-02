@@ -9,5 +9,12 @@
     "@atproto/lexicon": "^0.4.3",
     "@atproto/xrpc": "^0.6.4",
     "multiformats": "^13.3.1"
+  },
+  "devDependencies": {
+    "@atproto/lex-cli": "^0.5.2",
+    "@types/node": "^22.10.1",
+    "tar": "^7.4.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }

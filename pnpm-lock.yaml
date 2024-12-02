@@ -11,18 +11,12 @@ importers:
       '@antfu/eslint-config':
         specifier: ^3.11.2
         version: 3.11.2(@typescript-eslint/utils@8.16.0(eslint@8.57.1)(typescript@5.7.2))(@vue/compiler-sfc@3.5.13)(eslint@8.57.1)(typescript@5.7.2)(vitest@2.1.6(@types/node@22.10.1))
-      '@atproto/lex-cli':
-        specifier: ^0.5.2
-        version: 0.5.2
       '@biomejs/biome':
         specifier: ^1.9.4
         version: 1.9.4
       '@eslint/js':
         specifier: ^9.15.0
         version: 9.15.0
-      '@types/node':
-        specifier: ^22.10.1
-        version: 22.10.1
       eslint:
         specifier: ^8.57.1
         version: 8.57.1
@@ -38,12 +32,6 @@ importers:
       nano-staged:
         specifier: ^0.8.0
         version: 0.8.0
-      tar:
-        specifier: ^7.4.3
-        version: 7.4.3
-      tsx:
-        specifier: ^4.19.2
-        version: 4.19.2
       typescript-eslint:
         specifier: ^8.16.0
         version: 8.16.0(eslint@8.57.1)(typescript@5.7.2)
@@ -87,6 +75,22 @@ importers:
       multiformats:
         specifier: ^13.3.1
         version: 13.3.1
+    devDependencies:
+      '@atproto/lex-cli':
+        specifier: ^0.5.2
+        version: 0.5.2
+      '@types/node':
+        specifier: ^22.10.1
+        version: 22.10.1
+      tar:
+        specifier: ^7.4.3
+        version: 7.4.3
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
 
 packages:
 
