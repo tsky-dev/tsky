@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress';
+import typedocSidebar from '../api/typedoc-sidebar.json';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -12,15 +13,7 @@ export default defineConfig({
 
     sidebar: [
       { text: 'Getting Started', link: '/getting-started' },
-      {
-        text: 'API Reference',
-        link: '/api',
-        items: [
-          { text: 'new Tsky', link: '/api#tsky' },
-          { text: 'tsky.profile', link: '/api#profile' },
-          { text: 'tsky.typeahead', link: '/api#typeahead' },
-        ],
-      },
+      { text: 'API', items: typedocSidebar },
       {
         text: 'Examples',
         link: '/examples',
