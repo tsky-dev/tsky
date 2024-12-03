@@ -48,7 +48,7 @@ async function downloadLexicons() {
   await tar.x({
     file: tarFile,
     cwd: LEXICONS_DIR,
-    filter: (path) => path.includes('/lexicons/'),
+    filter: path => path.includes('/lexicons/'),
     strip: 2,
   });
 
@@ -108,7 +108,8 @@ async function main() {
     });
 
     console.log('Done! Types generated at', TYPES_OUTPUT_PATH);
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error:', error);
     process.exit(1);
   }

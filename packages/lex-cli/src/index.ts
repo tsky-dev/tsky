@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import process from 'node:process';
-import { Builtins, Command, Option, Cli } from 'clipanion';
+import { Builtins, Cli, Command, Option } from 'clipanion';
 import pc from 'picocolors';
 import prettier from 'prettier';
 import * as t from 'typanion';
