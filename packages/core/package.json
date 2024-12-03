@@ -23,6 +23,7 @@
   "types": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
+    "dev": "pkgroll --watch",
     "build": "pkgroll",
     "test": "vitest",
     "test:typescript": "tsc --noEmit"
