@@ -16,7 +16,6 @@ const LEX_CLI_PATH = path.resolve(__dirname, '../../lex-cli/dist/index.js');
 const REPO = 'bluesky-social/atproto';
 
 async function downloadLexicons() {
-  // Get latest commit SHA for lexicons
   console.log('Getting latest lexicon commit...');
   const shaResponse = await fetch(
     `https://api.github.com/repos/${REPO}/commits?path=lexicons/`,
@@ -31,7 +30,6 @@ async function downloadLexicons() {
     throw new Error('No commits found for lexicons');
   }
 
-  // Download specific commit's lexicons
   console.log('Downloading lexicons from atproto...');
   const response = await fetch(
     `https://github.com/${REPO}/archive/${sha}.tar.gz`,
@@ -40,11 +38,9 @@ async function downloadLexicons() {
     throw new Error(`Failed to download lexicons: ${response.statusText}`);
   }
 
-  // Create a temporary file for the tar download
   const tarFile = path.join(LEXICONS_DIR, 'atproto.tar.gz');
   await fs.writeFile(tarFile, Buffer.from(await response.arrayBuffer()));
 
-  // Extract only lexicon files
   await tar.x({
     file: tarFile,
     cwd: LEXICONS_DIR,
@@ -52,20 +48,16 @@ async function downloadLexicons() {
     strip: 2,
   });
 
-  // Clean up tar file
   await fs.unlink(tarFile);
 }
 
 async function main() {
   try {
-    // Ensure directories exist
     await fs.mkdir(LEXICONS_DIR, { recursive: true });
     await fs.mkdir(path.dirname(TYPES_OUTPUT_PATH), { recursive: true });
 
-    // Download latest lexicons
     await downloadLexicons();
 
-    // Define glob patterns for lexicon JSON files
     const globPatterns = [
       'app/bsky/**/*.json',
       'chat/bsky/**/*.json',
@@ -73,7 +65,6 @@ async function main() {
       'tools/ozone/**/*.json',
     ];
 
-    // Find all matching lexicon files
     const lexiconFiles = await glob(globPatterns, {
       cwd: LEXICONS_DIR,
       absolute: true,
@@ -83,7 +74,6 @@ async function main() {
       throw new Error('No lexicon files found');
     }
 
-    // Ensure lex-cli is built
     console.log('Building lex-cli...');
     execSync('pnpm --filter @tsky/lex-cli build', {
       stdio: 'inherit',
