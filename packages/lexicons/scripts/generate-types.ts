@@ -93,7 +93,7 @@ async function main() {
     const command = [
       'node',
       LEX_CLI_PATH,
-      'generate-main',
+      'generate-types',
       ...lexiconFiles,
       '-o',
       TYPES_OUTPUT_PATH,
