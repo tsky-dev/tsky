@@ -1,6 +1,6 @@
-import type { Procedures, Queries, Records } from './lib/lexicons';
+import type { Procedures, Queries, Records } from './lib/lexicons.js';
 
-export * from './lib/lexicons';
+export * from './lib/lexicons.js';
 
 // --- Core utility types ---
 export type LexiconUnion<T> = T[keyof T];
