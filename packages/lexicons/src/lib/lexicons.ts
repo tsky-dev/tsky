@@ -14,15 +14,15 @@ export declare namespace Brand {
   const Type: unique symbol;
 
   /** Get the intended `$type` field */
-  type GetType<T extends { [Type]?: string }> = NonNullable<T[typeof Type]>;
+  type GetType<T extends { [Type]: string }> = T[typeof Type];
 
   /** Creates a union of objects where it's discriminated by `$type` field. */
-  type Union<T extends { [Type]?: string }> = T extends any
+  type Union<T extends { [Type]: string }> = T extends any
     ? T & { $type: GetType<T> }
     : never;
 
   /** Omits the type branding from object */
-  type Omit<T extends { [Type]?: string }> = ObjectOmit<T, typeof Type>;
+  type Omit<T extends { [Type]: string }> = ObjectOmit<T, typeof Type>;
 }
 
 /** Base AT Protocol schema types */
@@ -61,19 +61,19 @@ export declare namespace At {
 }
 export declare namespace AppBskyActorDefs {
   interface AdultContentPref {
-    [Brand.Type]?: "app.bsky.actor.defs#adultContentPref";
+    [Brand.Type]: "app.bsky.actor.defs#adultContentPref";
     /** \@default false */
     enabled: boolean;
   }
   /** If set, an active progress guide. Once completed, can be set to undefined. Should have unspecced fields tracking progress. */
   interface BskyAppProgressGuide {
-    [Brand.Type]?: "app.bsky.actor.defs#bskyAppProgressGuide";
+    [Brand.Type]: "app.bsky.actor.defs#bskyAppProgressGuide";
     /** Maximum string length: 100 */
     guide: string;
   }
   /** A grab bag of state that's specific to the bsky.app program. Third-party apps shouldn't use this. */
   interface BskyAppStatePref {
-    [Brand.Type]?: "app.bsky.actor.defs#bskyAppStatePref";
+    [Brand.Type]: "app.bsky.actor.defs#bskyAppStatePref";
     activeProgressGuide?: BskyAppProgressGuide;
     /**
      * Storage for NUXs the user has encountered.
@@ -88,14 +88,14 @@ export declare namespace AppBskyActorDefs {
     queuedNudges?: string[];
   }
   interface ContentLabelPref {
-    [Brand.Type]?: "app.bsky.actor.defs#contentLabelPref";
+    [Brand.Type]: "app.bsky.actor.defs#contentLabelPref";
     label: string;
     visibility: "hide" | "ignore" | "show" | "warn" | (string & {});
     /** Which labeler does this preference apply to? If undefined, applies globally. */
     labelerDid?: At.DID;
   }
   interface FeedViewPref {
-    [Brand.Type]?: "app.bsky.actor.defs#feedViewPref";
+    [Brand.Type]: "app.bsky.actor.defs#feedViewPref";
     /** The URI of the feed, or an identifier which describes the feed. */
     feed: string;
     /** Hide quote posts in the feed. */
@@ -113,12 +113,12 @@ export declare namespace AppBskyActorDefs {
     hideReposts?: boolean;
   }
   interface HiddenPostsPref {
-    [Brand.Type]?: "app.bsky.actor.defs#hiddenPostsPref";
+    [Brand.Type]: "app.bsky.actor.defs#hiddenPostsPref";
     /** A list of URIs of posts the account owner has hidden. */
     items: At.Uri[];
   }
   interface InterestsPref {
-    [Brand.Type]?: "app.bsky.actor.defs#interestsPref";
+    [Brand.Type]: "app.bsky.actor.defs#interestsPref";
     /**
      * A list of tags which describe the account owner's interests gathered during onboarding.
      * Maximum array length: 100
@@ -129,7 +129,7 @@ export declare namespace AppBskyActorDefs {
   }
   /** The subject's followers whom you also follow */
   interface KnownFollowers {
-    [Brand.Type]?: "app.bsky.actor.defs#knownFollowers";
+    [Brand.Type]: "app.bsky.actor.defs#knownFollowers";
     count: number;
     /**
      * Minimum array length: 0
@@ -138,16 +138,16 @@ export declare namespace AppBskyActorDefs {
     followers: ProfileViewBasic[];
   }
   interface LabelerPrefItem {
-    [Brand.Type]?: "app.bsky.actor.defs#labelerPrefItem";
+    [Brand.Type]: "app.bsky.actor.defs#labelerPrefItem";
     did: At.DID;
   }
   interface LabelersPref {
-    [Brand.Type]?: "app.bsky.actor.defs#labelersPref";
+    [Brand.Type]: "app.bsky.actor.defs#labelersPref";
     labelers: LabelerPrefItem[];
   }
   /** A word that the account owner has muted. */
   interface MutedWord {
-    [Brand.Type]?: "app.bsky.actor.defs#mutedWord";
+    [Brand.Type]: "app.bsky.actor.defs#mutedWord";
     /** The intended targets of the muted word. */
     targets: AppBskyActorDefs.MutedWordTarget[];
     /**
@@ -166,7 +166,7 @@ export declare namespace AppBskyActorDefs {
     id?: string;
   }
   interface MutedWordsPref {
-    [Brand.Type]?: "app.bsky.actor.defs#mutedWordsPref";
+    [Brand.Type]: "app.bsky.actor.defs#mutedWordsPref";
     /** A list of words the account owner has muted. */
     items: AppBskyActorDefs.MutedWord[];
   }
@@ -177,7 +177,7 @@ export declare namespace AppBskyActorDefs {
   type MutedWordTarget = "content" | "tag" | (string & {});
   /** A new user experiences (NUX) storage object */
   interface Nux {
-    [Brand.Type]?: "app.bsky.actor.defs#nux";
+    [Brand.Type]: "app.bsky.actor.defs#nux";
     /** \@default false */
     completed: boolean;
     /** Maximum string length: 100 */
@@ -192,7 +192,7 @@ export declare namespace AppBskyActorDefs {
     expiresAt?: string;
   }
   interface PersonalDetailsPref {
-    [Brand.Type]?: "app.bsky.actor.defs#personalDetailsPref";
+    [Brand.Type]: "app.bsky.actor.defs#personalDetailsPref";
     /** The birth date of account owner. */
     birthDate?: string;
   }
@@ -211,7 +211,7 @@ export declare namespace AppBskyActorDefs {
     | ThreadViewPref
   >[];
   interface ProfileAssociated {
-    [Brand.Type]?: "app.bsky.actor.defs#profileAssociated";
+    [Brand.Type]: "app.bsky.actor.defs#profileAssociated";
     chat?: ProfileAssociatedChat;
     feedgens?: number;
     labeler?: boolean;
@@ -219,11 +219,11 @@ export declare namespace AppBskyActorDefs {
     starterPacks?: number;
   }
   interface ProfileAssociatedChat {
-    [Brand.Type]?: "app.bsky.actor.defs#profileAssociatedChat";
+    [Brand.Type]: "app.bsky.actor.defs#profileAssociatedChat";
     allowIncoming: "all" | "following" | "none" | (string & {});
   }
   interface ProfileView {
-    [Brand.Type]?: "app.bsky.actor.defs#profileView";
+    [Brand.Type]: "app.bsky.actor.defs#profileView";
     did: At.DID;
     handle: At.Handle;
     associated?: ProfileAssociated;
@@ -244,7 +244,7 @@ export declare namespace AppBskyActorDefs {
     viewer?: ViewerState;
   }
   interface ProfileViewBasic {
-    [Brand.Type]?: "app.bsky.actor.defs#profileViewBasic";
+    [Brand.Type]: "app.bsky.actor.defs#profileViewBasic";
     did: At.DID;
     handle: At.Handle;
     associated?: ProfileAssociated;
@@ -259,7 +259,7 @@ export declare namespace AppBskyActorDefs {
     viewer?: ViewerState;
   }
   interface ProfileViewDetailed {
-    [Brand.Type]?: "app.bsky.actor.defs#profileViewDetailed";
+    [Brand.Type]: "app.bsky.actor.defs#profileViewDetailed";
     did: At.DID;
     handle: At.Handle;
     associated?: ProfileAssociated;
@@ -286,24 +286,24 @@ export declare namespace AppBskyActorDefs {
     viewer?: ViewerState;
   }
   interface SavedFeed {
-    [Brand.Type]?: "app.bsky.actor.defs#savedFeed";
+    [Brand.Type]: "app.bsky.actor.defs#savedFeed";
     id: string;
     pinned: boolean;
     type: "feed" | "list" | "timeline" | (string & {});
     value: string;
   }
   interface SavedFeedsPref {
-    [Brand.Type]?: "app.bsky.actor.defs#savedFeedsPref";
+    [Brand.Type]: "app.bsky.actor.defs#savedFeedsPref";
     pinned: At.Uri[];
     saved: At.Uri[];
     timelineIndex?: number;
   }
   interface SavedFeedsPrefV2 {
-    [Brand.Type]?: "app.bsky.actor.defs#savedFeedsPrefV2";
+    [Brand.Type]: "app.bsky.actor.defs#savedFeedsPrefV2";
     items: AppBskyActorDefs.SavedFeed[];
   }
   interface ThreadViewPref {
-    [Brand.Type]?: "app.bsky.actor.defs#threadViewPref";
+    [Brand.Type]: "app.bsky.actor.defs#threadViewPref";
     /** Show followed users at the top of all replies. */
     prioritizeFollowedUsers?: boolean;
     /** Sorting mode for threads. */
@@ -317,7 +317,7 @@ export declare namespace AppBskyActorDefs {
   }
   /** Metadata about the requesting account's relationship with the subject account. Only has meaningful content for authed requests. */
   interface ViewerState {
-    [Brand.Type]?: "app.bsky.actor.defs#viewerState";
+    [Brand.Type]: "app.bsky.actor.defs#viewerState";
     blockedBy?: boolean;
     blocking?: At.Uri;
     blockingByList?: AppBskyGraphDefs.ListViewBasic;
@@ -464,7 +464,7 @@ export declare namespace AppBskyActorSearchActorsTypeahead {
 export declare namespace AppBskyEmbedDefs {
   /** width:height represents an aspect ratio. It may be approximate, and may not correspond to absolute dimensions in any given unit. */
   interface AspectRatio {
-    [Brand.Type]?: "app.bsky.embed.defs#aspectRatio";
+    [Brand.Type]: "app.bsky.embed.defs#aspectRatio";
     /** Minimum: 1 */
     height: number;
     /** Minimum: 1 */
@@ -475,22 +475,22 @@ export declare namespace AppBskyEmbedDefs {
 export declare namespace AppBskyEmbedExternal {
   /** A representation of some externally linked content (eg, a URL and 'card'), embedded in a Bluesky record (eg, a post). */
   interface Main {
-    [Brand.Type]?: "app.bsky.embed.external";
+    [Brand.Type]: "app.bsky.embed.external";
     external: External;
   }
   interface External {
-    [Brand.Type]?: "app.bsky.embed.external#external";
+    [Brand.Type]: "app.bsky.embed.external#external";
     description: string;
     title: string;
     uri: string;
     thumb?: At.Blob;
   }
   interface View {
-    [Brand.Type]?: "app.bsky.embed.external#view";
+    [Brand.Type]: "app.bsky.embed.external#view";
     external: ViewExternal;
   }
   interface ViewExternal {
-    [Brand.Type]?: "app.bsky.embed.external#viewExternal";
+    [Brand.Type]: "app.bsky.embed.external#viewExternal";
     description: string;
     title: string;
     uri: string;
@@ -500,24 +500,24 @@ export declare namespace AppBskyEmbedExternal {
 
 export declare namespace AppBskyEmbedImages {
   interface Main {
-    [Brand.Type]?: "app.bsky.embed.images";
+    [Brand.Type]: "app.bsky.embed.images";
     /** Maximum array length: 4 */
     images: Image[];
   }
   interface Image {
-    [Brand.Type]?: "app.bsky.embed.images#image";
+    [Brand.Type]: "app.bsky.embed.images#image";
     /** Alt text description of the image, for accessibility. */
     alt: string;
     image: At.Blob;
     aspectRatio?: AppBskyEmbedDefs.AspectRatio;
   }
   interface View {
-    [Brand.Type]?: "app.bsky.embed.images#view";
+    [Brand.Type]: "app.bsky.embed.images#view";
     /** Maximum array length: 4 */
     images: ViewImage[];
   }
   interface ViewImage {
-    [Brand.Type]?: "app.bsky.embed.images#viewImage";
+    [Brand.Type]: "app.bsky.embed.images#viewImage";
     /** Alt text description of the image, for accessibility. */
     alt: string;
     /** Fully-qualified URL where a large version of the image can be fetched. May or may not be the exact original blob. For example, CDN location provided by the App View. */
@@ -530,11 +530,11 @@ export declare namespace AppBskyEmbedImages {
 
 export declare namespace AppBskyEmbedRecord {
   interface Main {
-    [Brand.Type]?: "app.bsky.embed.record";
+    [Brand.Type]: "app.bsky.embed.record";
     record: ComAtprotoRepoStrongRef.Main;
   }
   interface View {
-    [Brand.Type]?: "app.bsky.embed.record#view";
+    [Brand.Type]: "app.bsky.embed.record#view";
     record: Brand.Union<
       | ViewBlocked
       | ViewDetached
@@ -547,23 +547,23 @@ export declare namespace AppBskyEmbedRecord {
     >;
   }
   interface ViewBlocked {
-    [Brand.Type]?: "app.bsky.embed.record#viewBlocked";
+    [Brand.Type]: "app.bsky.embed.record#viewBlocked";
     author: AppBskyFeedDefs.BlockedAuthor;
     blocked: boolean;
     uri: At.Uri;
   }
   interface ViewDetached {
-    [Brand.Type]?: "app.bsky.embed.record#viewDetached";
+    [Brand.Type]: "app.bsky.embed.record#viewDetached";
     detached: boolean;
     uri: At.Uri;
   }
   interface ViewNotFound {
-    [Brand.Type]?: "app.bsky.embed.record#viewNotFound";
+    [Brand.Type]: "app.bsky.embed.record#viewNotFound";
     notFound: boolean;
     uri: At.Uri;
   }
   interface ViewRecord {
-    [Brand.Type]?: "app.bsky.embed.record#viewRecord";
+    [Brand.Type]: "app.bsky.embed.record#viewRecord";
     author: AppBskyActorDefs.ProfileViewBasic;
     cid: At.CID;
     indexedAt: string;
@@ -587,7 +587,7 @@ export declare namespace AppBskyEmbedRecord {
 
 export declare namespace AppBskyEmbedRecordWithMedia {
   interface Main {
-    [Brand.Type]?: "app.bsky.embed.recordWithMedia";
+    [Brand.Type]: "app.bsky.embed.recordWithMedia";
     media: Brand.Union<
       | AppBskyEmbedExternal.Main
       | AppBskyEmbedImages.Main
@@ -596,7 +596,7 @@ export declare namespace AppBskyEmbedRecordWithMedia {
     record: AppBskyEmbedRecord.Main;
   }
   interface View {
-    [Brand.Type]?: "app.bsky.embed.recordWithMedia#view";
+    [Brand.Type]: "app.bsky.embed.recordWithMedia#view";
     media: Brand.Union<
       | AppBskyEmbedExternal.View
       | AppBskyEmbedImages.View
@@ -608,7 +608,7 @@ export declare namespace AppBskyEmbedRecordWithMedia {
 
 export declare namespace AppBskyEmbedVideo {
   interface Main {
-    [Brand.Type]?: "app.bsky.embed.video";
+    [Brand.Type]: "app.bsky.embed.video";
     video: At.Blob;
     /**
      * Alt text description of the video, for accessibility.
@@ -621,12 +621,12 @@ export declare namespace AppBskyEmbedVideo {
     captions?: Caption[];
   }
   interface Caption {
-    [Brand.Type]?: "app.bsky.embed.video#caption";
+    [Brand.Type]: "app.bsky.embed.video#caption";
     file: At.Blob;
     lang: string;
   }
   interface View {
-    [Brand.Type]?: "app.bsky.embed.video#view";
+    [Brand.Type]: "app.bsky.embed.video#view";
     cid: At.CID;
     playlist: string;
     /**
@@ -641,12 +641,12 @@ export declare namespace AppBskyEmbedVideo {
 
 export declare namespace AppBskyFeedDefs {
   interface BlockedAuthor {
-    [Brand.Type]?: "app.bsky.feed.defs#blockedAuthor";
+    [Brand.Type]: "app.bsky.feed.defs#blockedAuthor";
     did: At.DID;
     viewer?: AppBskyActorDefs.ViewerState;
   }
   interface BlockedPost {
-    [Brand.Type]?: "app.bsky.feed.defs#blockedPost";
+    [Brand.Type]: "app.bsky.feed.defs#blockedPost";
     author: BlockedAuthor;
     blocked: boolean;
     uri: At.Uri;
@@ -656,7 +656,7 @@ export declare namespace AppBskyFeedDefs {
   type ClickthroughItem = "app.bsky.feed.defs#clickthroughItem";
   type ClickthroughReposter = "app.bsky.feed.defs#clickthroughReposter";
   interface FeedViewPost {
-    [Brand.Type]?: "app.bsky.feed.defs#feedViewPost";
+    [Brand.Type]: "app.bsky.feed.defs#feedViewPost";
     post: PostView;
     /**
      * Context provided by feed generator that may be passed back alongside interactions.
@@ -667,7 +667,7 @@ export declare namespace AppBskyFeedDefs {
     reply?: ReplyRef;
   }
   interface GeneratorView {
-    [Brand.Type]?: "app.bsky.feed.defs#generatorView";
+    [Brand.Type]: "app.bsky.feed.defs#generatorView";
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     did: At.DID;
@@ -688,11 +688,11 @@ export declare namespace AppBskyFeedDefs {
     viewer?: GeneratorViewerState;
   }
   interface GeneratorViewerState {
-    [Brand.Type]?: "app.bsky.feed.defs#generatorViewerState";
+    [Brand.Type]: "app.bsky.feed.defs#generatorViewerState";
     like?: At.Uri;
   }
   interface Interaction {
-    [Brand.Type]?: "app.bsky.feed.defs#interaction";
+    [Brand.Type]: "app.bsky.feed.defs#interaction";
     event?:
       | "app.bsky.feed.defs#clickthroughAuthor"
       | "app.bsky.feed.defs#clickthroughEmbed"
@@ -721,12 +721,12 @@ export declare namespace AppBskyFeedDefs {
   type InteractionSeen = "app.bsky.feed.defs#interactionSeen";
   type InteractionShare = "app.bsky.feed.defs#interactionShare";
   interface NotFoundPost {
-    [Brand.Type]?: "app.bsky.feed.defs#notFoundPost";
+    [Brand.Type]: "app.bsky.feed.defs#notFoundPost";
     notFound: boolean;
     uri: At.Uri;
   }
   interface PostView {
-    [Brand.Type]?: "app.bsky.feed.defs#postView";
+    [Brand.Type]: "app.bsky.feed.defs#postView";
     author: AppBskyActorDefs.ProfileViewBasic;
     cid: At.CID;
     indexedAt: string;
@@ -748,15 +748,15 @@ export declare namespace AppBskyFeedDefs {
     viewer?: ViewerState;
   }
   interface ReasonPin {
-    [Brand.Type]?: "app.bsky.feed.defs#reasonPin";
+    [Brand.Type]: "app.bsky.feed.defs#reasonPin";
   }
   interface ReasonRepost {
-    [Brand.Type]?: "app.bsky.feed.defs#reasonRepost";
+    [Brand.Type]: "app.bsky.feed.defs#reasonRepost";
     by: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
   }
   interface ReplyRef {
-    [Brand.Type]?: "app.bsky.feed.defs#replyRef";
+    [Brand.Type]: "app.bsky.feed.defs#replyRef";
     parent: Brand.Union<BlockedPost | NotFoundPost | PostView>;
     root: Brand.Union<BlockedPost | NotFoundPost | PostView>;
     /** When parent is a reply to another post, this is the author of that post. */
@@ -765,7 +765,7 @@ export declare namespace AppBskyFeedDefs {
   type RequestLess = "app.bsky.feed.defs#requestLess";
   type RequestMore = "app.bsky.feed.defs#requestMore";
   interface SkeletonFeedPost {
-    [Brand.Type]?: "app.bsky.feed.defs#skeletonFeedPost";
+    [Brand.Type]: "app.bsky.feed.defs#skeletonFeedPost";
     post: At.Uri;
     /**
      * Context that will be passed through to client and may be passed to feed generator back alongside interactions.
@@ -775,28 +775,28 @@ export declare namespace AppBskyFeedDefs {
     reason?: Brand.Union<SkeletonReasonPin | SkeletonReasonRepost>;
   }
   interface SkeletonReasonPin {
-    [Brand.Type]?: "app.bsky.feed.defs#skeletonReasonPin";
+    [Brand.Type]: "app.bsky.feed.defs#skeletonReasonPin";
   }
   interface SkeletonReasonRepost {
-    [Brand.Type]?: "app.bsky.feed.defs#skeletonReasonRepost";
+    [Brand.Type]: "app.bsky.feed.defs#skeletonReasonRepost";
     repost: At.Uri;
   }
   interface ThreadgateView {
-    [Brand.Type]?: "app.bsky.feed.defs#threadgateView";
+    [Brand.Type]: "app.bsky.feed.defs#threadgateView";
     cid?: At.CID;
     lists?: AppBskyGraphDefs.ListViewBasic[];
     record?: unknown;
     uri?: At.Uri;
   }
   interface ThreadViewPost {
-    [Brand.Type]?: "app.bsky.feed.defs#threadViewPost";
+    [Brand.Type]: "app.bsky.feed.defs#threadViewPost";
     post: PostView;
     parent?: Brand.Union<BlockedPost | NotFoundPost | ThreadViewPost>;
     replies?: Brand.Union<BlockedPost | NotFoundPost | ThreadViewPost>[];
   }
   /** Metadata about the requesting account's relationship with the subject content. Only has meaningful content for authed requests. */
   interface ViewerState {
-    [Brand.Type]?: "app.bsky.feed.defs#viewerState";
+    [Brand.Type]: "app.bsky.feed.defs#viewerState";
     embeddingDisabled?: boolean;
     like?: At.Uri;
     pinned?: boolean;
@@ -816,11 +816,11 @@ export declare namespace AppBskyFeedDescribeFeedGenerator {
     links?: Links;
   }
   interface Feed {
-    [Brand.Type]?: "app.bsky.feed.describeFeedGenerator#feed";
+    [Brand.Type]: "app.bsky.feed.describeFeedGenerator#feed";
     uri: At.Uri;
   }
   interface Links {
-    [Brand.Type]?: "app.bsky.feed.describeFeedGenerator#links";
+    [Brand.Type]: "app.bsky.feed.describeFeedGenerator#links";
     privacyPolicy?: string;
     termsOfService?: string;
   }
@@ -1023,7 +1023,7 @@ export declare namespace AppBskyFeedGetLikes {
     cursor?: string;
   }
   interface Like {
-    [Brand.Type]?: "app.bsky.feed.getLikes#like";
+    [Brand.Type]: "app.bsky.feed.getLikes#like";
     actor: AppBskyActorDefs.ProfileView;
     createdAt: string;
     indexedAt: string;
@@ -1244,14 +1244,14 @@ export declare namespace AppBskyFeedPost {
    * \@deprecated
    */
   interface Entity {
-    [Brand.Type]?: "app.bsky.feed.post#entity";
+    [Brand.Type]: "app.bsky.feed.post#entity";
     index: TextSlice;
     /** Expected values are 'mention' and 'link'. */
     type: string;
     value: string;
   }
   interface ReplyRef {
-    [Brand.Type]?: "app.bsky.feed.post#replyRef";
+    [Brand.Type]: "app.bsky.feed.post#replyRef";
     parent: ComAtprotoRepoStrongRef.Main;
     root: ComAtprotoRepoStrongRef.Main;
   }
@@ -1260,7 +1260,7 @@ export declare namespace AppBskyFeedPost {
    * \@deprecated
    */
   interface TextSlice {
-    [Brand.Type]?: "app.bsky.feed.post#textSlice";
+    [Brand.Type]: "app.bsky.feed.post#textSlice";
     /** Minimum: 0 */
     end: number;
     /** Minimum: 0 */
@@ -1285,7 +1285,7 @@ export declare namespace AppBskyFeedPostgate {
   }
   /** Disables embedding of this post. */
   interface DisableRule {
-    [Brand.Type]?: "app.bsky.feed.postgate#disableRule";
+    [Brand.Type]: "app.bsky.feed.postgate#disableRule";
   }
 }
 
@@ -1375,16 +1375,16 @@ export declare namespace AppBskyFeedThreadgate {
   }
   /** Allow replies from actors you follow. */
   interface FollowingRule {
-    [Brand.Type]?: "app.bsky.feed.threadgate#followingRule";
+    [Brand.Type]: "app.bsky.feed.threadgate#followingRule";
   }
   /** Allow replies from actors on a list. */
   interface ListRule {
-    [Brand.Type]?: "app.bsky.feed.threadgate#listRule";
+    [Brand.Type]: "app.bsky.feed.threadgate#listRule";
     list: At.Uri;
   }
   /** Allow replies from actors mentioned in your post. */
   interface MentionRule {
-    [Brand.Type]?: "app.bsky.feed.threadgate#mentionRule";
+    [Brand.Type]: "app.bsky.feed.threadgate#mentionRule";
   }
 }
 
@@ -1401,7 +1401,7 @@ export declare namespace AppBskyGraphBlock {
 export declare namespace AppBskyGraphDefs {
   type Curatelist = "app.bsky.graph.defs#curatelist";
   interface ListItemView {
-    [Brand.Type]?: "app.bsky.graph.defs#listItemView";
+    [Brand.Type]: "app.bsky.graph.defs#listItemView";
     subject: AppBskyActorDefs.ProfileView;
     uri: At.Uri;
   }
@@ -1411,7 +1411,7 @@ export declare namespace AppBskyGraphDefs {
     | "app.bsky.graph.defs#referencelist"
     | (string & {});
   interface ListView {
-    [Brand.Type]?: "app.bsky.graph.defs#listView";
+    [Brand.Type]: "app.bsky.graph.defs#listView";
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     indexedAt: string;
@@ -1435,7 +1435,7 @@ export declare namespace AppBskyGraphDefs {
     viewer?: ListViewerState;
   }
   interface ListViewBasic {
-    [Brand.Type]?: "app.bsky.graph.defs#listViewBasic";
+    [Brand.Type]: "app.bsky.graph.defs#listViewBasic";
     cid: At.CID;
     /**
      * Minimum string length: 1
@@ -1452,21 +1452,21 @@ export declare namespace AppBskyGraphDefs {
     viewer?: ListViewerState;
   }
   interface ListViewerState {
-    [Brand.Type]?: "app.bsky.graph.defs#listViewerState";
+    [Brand.Type]: "app.bsky.graph.defs#listViewerState";
     blocked?: At.Uri;
     muted?: boolean;
   }
   type Modlist = "app.bsky.graph.defs#modlist";
   /** indicates that a handle or DID could not be resolved */
   interface NotFoundActor {
-    [Brand.Type]?: "app.bsky.graph.defs#notFoundActor";
+    [Brand.Type]: "app.bsky.graph.defs#notFoundActor";
     actor: string;
     notFound: boolean;
   }
   type Referencelist = "app.bsky.graph.defs#referencelist";
   /** lists the bi-directional graph relationships between one actor (not indicated in the object), and the target actors (the DID included in the object) */
   interface Relationship {
-    [Brand.Type]?: "app.bsky.graph.defs#relationship";
+    [Brand.Type]: "app.bsky.graph.defs#relationship";
     did: At.DID;
     /** if the actor is followed by this DID, contains the AT-URI of the follow record */
     followedBy?: At.Uri;
@@ -1474,7 +1474,7 @@ export declare namespace AppBskyGraphDefs {
     following?: At.Uri;
   }
   interface StarterPackView {
-    [Brand.Type]?: "app.bsky.graph.defs#starterPackView";
+    [Brand.Type]: "app.bsky.graph.defs#starterPackView";
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
@@ -1492,7 +1492,7 @@ export declare namespace AppBskyGraphDefs {
     listItemsSample?: ListItemView[];
   }
   interface StarterPackViewBasic {
-    [Brand.Type]?: "app.bsky.graph.defs#starterPackViewBasic";
+    [Brand.Type]: "app.bsky.graph.defs#starterPackViewBasic";
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
@@ -1889,7 +1889,7 @@ export declare namespace AppBskyGraphStarterpack {
     feeds?: FeedItem[];
   }
   interface FeedItem {
-    [Brand.Type]?: "app.bsky.graph.starterpack#feedItem";
+    [Brand.Type]: "app.bsky.graph.starterpack#feedItem";
     uri: At.Uri;
   }
 }
@@ -1923,14 +1923,14 @@ export declare namespace AppBskyGraphUnmuteThread {
 
 export declare namespace AppBskyLabelerDefs {
   interface LabelerPolicies {
-    [Brand.Type]?: "app.bsky.labeler.defs#labelerPolicies";
+    [Brand.Type]: "app.bsky.labeler.defs#labelerPolicies";
     /** The label values which this labeler publishes. May include global or custom labels. */
     labelValues: ComAtprotoLabelDefs.LabelValue[];
     /** Label values created by this labeler and scoped exclusively to it. Labels defined here will override global label definitions for this labeler. */
     labelValueDefinitions?: ComAtprotoLabelDefs.LabelValueDefinition[];
   }
   interface LabelerView {
-    [Brand.Type]?: "app.bsky.labeler.defs#labelerView";
+    [Brand.Type]: "app.bsky.labeler.defs#labelerView";
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     indexedAt: string;
@@ -1941,7 +1941,7 @@ export declare namespace AppBskyLabelerDefs {
     viewer?: LabelerViewerState;
   }
   interface LabelerViewDetailed {
-    [Brand.Type]?: "app.bsky.labeler.defs#labelerViewDetailed";
+    [Brand.Type]: "app.bsky.labeler.defs#labelerViewDetailed";
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     indexedAt: string;
@@ -1953,7 +1953,7 @@ export declare namespace AppBskyLabelerDefs {
     viewer?: LabelerViewerState;
   }
   interface LabelerViewerState {
-    [Brand.Type]?: "app.bsky.labeler.defs#labelerViewerState";
+    [Brand.Type]: "app.bsky.labeler.defs#labelerViewerState";
     like?: At.Uri;
   }
 }
@@ -2016,7 +2016,7 @@ export declare namespace AppBskyNotificationListNotifications {
     seenAt?: string;
   }
   interface Notification {
-    [Brand.Type]?: "app.bsky.notification.listNotifications#notification";
+    [Brand.Type]: "app.bsky.notification.listNotifications#notification";
     author: AppBskyActorDefs.ProfileView;
     cid: At.CID;
     indexedAt: string;
@@ -2071,13 +2071,13 @@ export declare namespace AppBskyNotificationUpdateSeen {
 export declare namespace AppBskyRichtextFacet {
   /** Annotation of a sub-string within rich text. */
   interface Main {
-    [Brand.Type]?: "app.bsky.richtext.facet";
+    [Brand.Type]: "app.bsky.richtext.facet";
     features: Brand.Union<Link | Mention | Tag>[];
     index: ByteSlice;
   }
   /** Specifies the sub-string range a facet feature applies to. Start index is inclusive, end index is exclusive. Indices are zero-indexed, counting bytes of the UTF-8 encoded text. NOTE: some languages, like Javascript, use UTF-16 or Unicode codepoints for string slice indexing; in these languages, convert to byte arrays before working with facets. */
   interface ByteSlice {
-    [Brand.Type]?: "app.bsky.richtext.facet#byteSlice";
+    [Brand.Type]: "app.bsky.richtext.facet#byteSlice";
     /** Minimum: 0 */
     byteEnd: number;
     /** Minimum: 0 */
@@ -2085,17 +2085,17 @@ export declare namespace AppBskyRichtextFacet {
   }
   /** Facet feature for a URL. The text URL may have been simplified or truncated, but the facet reference should be a complete URL. */
   interface Link {
-    [Brand.Type]?: "app.bsky.richtext.facet#link";
+    [Brand.Type]: "app.bsky.richtext.facet#link";
     uri: string;
   }
   /** Facet feature for mention of another account. The text is usually a handle, including a '\@' prefix, but the facet reference is a DID. */
   interface Mention {
-    [Brand.Type]?: "app.bsky.richtext.facet#mention";
+    [Brand.Type]: "app.bsky.richtext.facet#mention";
     did: At.DID;
   }
   /** Facet feature for a hashtag. The text usually includes a '#' prefix, but the facet reference should not (except in the case of 'double hash tags'). */
   interface Tag {
-    [Brand.Type]?: "app.bsky.richtext.facet#tag";
+    [Brand.Type]: "app.bsky.richtext.facet#tag";
     /**
      * Maximum string length: 640
      * Maximum grapheme length: 64
@@ -2106,15 +2106,15 @@ export declare namespace AppBskyRichtextFacet {
 
 export declare namespace AppBskyUnspeccedDefs {
   interface SkeletonSearchActor {
-    [Brand.Type]?: "app.bsky.unspecced.defs#skeletonSearchActor";
+    [Brand.Type]: "app.bsky.unspecced.defs#skeletonSearchActor";
     did: At.DID;
   }
   interface SkeletonSearchPost {
-    [Brand.Type]?: "app.bsky.unspecced.defs#skeletonSearchPost";
+    [Brand.Type]: "app.bsky.unspecced.defs#skeletonSearchPost";
     uri: At.Uri;
   }
   interface SkeletonSearchStarterPack {
-    [Brand.Type]?: "app.bsky.unspecced.defs#skeletonSearchStarterPack";
+    [Brand.Type]: "app.bsky.unspecced.defs#skeletonSearchStarterPack";
     uri: At.Uri;
   }
 }
@@ -2178,7 +2178,7 @@ export declare namespace AppBskyUnspeccedGetTaggedSuggestions {
     suggestions: Suggestion[];
   }
   interface Suggestion {
-    [Brand.Type]?: "app.bsky.unspecced.getTaggedSuggestions#suggestion";
+    [Brand.Type]: "app.bsky.unspecced.getTaggedSuggestions#suggestion";
     subject: string;
     subjectType: "actor" | "feed" | (string & {});
     tag: string;
@@ -2298,7 +2298,7 @@ export declare namespace AppBskyUnspeccedSearchStarterPacksSkeleton {
 
 export declare namespace AppBskyVideoDefs {
   interface JobStatus {
-    [Brand.Type]?: "app.bsky.video.defs#jobStatus";
+    [Brand.Type]: "app.bsky.video.defs#jobStatus";
     did: At.DID;
     jobId: string;
     /** The state of the video processing job. All values not listed as a known value indicate that the job is in process. */
@@ -2358,7 +2358,7 @@ export declare namespace ChatBskyActorDeclaration {
 
 export declare namespace ChatBskyActorDefs {
   interface ProfileViewBasic {
-    [Brand.Type]?: "chat.bsky.actor.defs#profileViewBasic";
+    [Brand.Type]: "chat.bsky.actor.defs#profileViewBasic";
     did: At.DID;
     handle: At.Handle;
     associated?: AppBskyActorDefs.ProfileAssociated;
@@ -2389,7 +2389,7 @@ export declare namespace ChatBskyActorExportAccountData {
 
 export declare namespace ChatBskyConvoDefs {
   interface ConvoView {
-    [Brand.Type]?: "chat.bsky.convo.defs#convoView";
+    [Brand.Type]: "chat.bsky.convo.defs#convoView";
     id: string;
     members: ChatBskyActorDefs.ProfileViewBasic[];
     muted: boolean;
@@ -2399,36 +2399,36 @@ export declare namespace ChatBskyConvoDefs {
     opened?: boolean;
   }
   interface DeletedMessageView {
-    [Brand.Type]?: "chat.bsky.convo.defs#deletedMessageView";
+    [Brand.Type]: "chat.bsky.convo.defs#deletedMessageView";
     id: string;
     rev: string;
     sender: MessageViewSender;
     sentAt: string;
   }
   interface LogBeginConvo {
-    [Brand.Type]?: "chat.bsky.convo.defs#logBeginConvo";
+    [Brand.Type]: "chat.bsky.convo.defs#logBeginConvo";
     convoId: string;
     rev: string;
   }
   interface LogCreateMessage {
-    [Brand.Type]?: "chat.bsky.convo.defs#logCreateMessage";
+    [Brand.Type]: "chat.bsky.convo.defs#logCreateMessage";
     convoId: string;
     message: Brand.Union<DeletedMessageView | MessageView>;
     rev: string;
   }
   interface LogDeleteMessage {
-    [Brand.Type]?: "chat.bsky.convo.defs#logDeleteMessage";
+    [Brand.Type]: "chat.bsky.convo.defs#logDeleteMessage";
     convoId: string;
     message: Brand.Union<DeletedMessageView | MessageView>;
     rev: string;
   }
   interface LogLeaveConvo {
-    [Brand.Type]?: "chat.bsky.convo.defs#logLeaveConvo";
+    [Brand.Type]: "chat.bsky.convo.defs#logLeaveConvo";
     convoId: string;
     rev: string;
   }
   interface MessageInput {
-    [Brand.Type]?: "chat.bsky.convo.defs#messageInput";
+    [Brand.Type]: "chat.bsky.convo.defs#messageInput";
     /**
      * Maximum string length: 10000
      * Maximum grapheme length: 1000
@@ -2439,13 +2439,13 @@ export declare namespace ChatBskyConvoDefs {
     facets?: AppBskyRichtextFacet.Main[];
   }
   interface MessageRef {
-    [Brand.Type]?: "chat.bsky.convo.defs#messageRef";
+    [Brand.Type]: "chat.bsky.convo.defs#messageRef";
     convoId: string;
     did: At.DID;
     messageId: string;
   }
   interface MessageView {
-    [Brand.Type]?: "chat.bsky.convo.defs#messageView";
+    [Brand.Type]: "chat.bsky.convo.defs#messageView";
     id: string;
     rev: string;
     sender: MessageViewSender;
@@ -2460,7 +2460,7 @@ export declare namespace ChatBskyConvoDefs {
     facets?: AppBskyRichtextFacet.Main[];
   }
   interface MessageViewSender {
-    [Brand.Type]?: "chat.bsky.convo.defs#messageViewSender";
+    [Brand.Type]: "chat.bsky.convo.defs#messageViewSender";
     did: At.DID;
   }
 }
@@ -2591,7 +2591,7 @@ export declare namespace ChatBskyConvoSendMessageBatch {
     items: ChatBskyConvoDefs.MessageView[];
   }
   interface BatchItem {
-    [Brand.Type]?: "chat.bsky.convo.sendMessageBatch#batchItem";
+    [Brand.Type]: "chat.bsky.convo.sendMessageBatch#batchItem";
     convoId: string;
     message: ChatBskyConvoDefs.MessageInput;
   }
@@ -2629,7 +2629,7 @@ export declare namespace ChatBskyModerationGetActorMetadata {
     month: Metadata;
   }
   interface Metadata {
-    [Brand.Type]?: "chat.bsky.moderation.getActorMetadata#metadata";
+    [Brand.Type]: "chat.bsky.moderation.getActorMetadata#metadata";
     convos: number;
     convosStarted: number;
     messagesReceived: number;
@@ -2667,7 +2667,7 @@ export declare namespace ChatBskyModerationUpdateActorAccess {
 
 export declare namespace ComAtprotoAdminDefs {
   interface AccountView {
-    [Brand.Type]?: "com.atproto.admin.defs#accountView";
+    [Brand.Type]: "com.atproto.admin.defs#accountView";
     did: At.DID;
     handle: At.Handle;
     indexedAt: string;
@@ -2682,22 +2682,22 @@ export declare namespace ComAtprotoAdminDefs {
     threatSignatures?: ThreatSignature[];
   }
   interface RepoBlobRef {
-    [Brand.Type]?: "com.atproto.admin.defs#repoBlobRef";
+    [Brand.Type]: "com.atproto.admin.defs#repoBlobRef";
     cid: At.CID;
     did: At.DID;
     recordUri?: At.Uri;
   }
   interface RepoRef {
-    [Brand.Type]?: "com.atproto.admin.defs#repoRef";
+    [Brand.Type]: "com.atproto.admin.defs#repoRef";
     did: At.DID;
   }
   interface StatusAttr {
-    [Brand.Type]?: "com.atproto.admin.defs#statusAttr";
+    [Brand.Type]: "com.atproto.admin.defs#statusAttr";
     applied: boolean;
     ref?: string;
   }
   interface ThreatSignature {
-    [Brand.Type]?: "com.atproto.admin.defs#threatSignature";
+    [Brand.Type]: "com.atproto.admin.defs#threatSignature";
     property: string;
     value: string;
   }
@@ -2962,7 +2962,7 @@ export declare namespace ComAtprotoIdentityUpdateHandle {
 export declare namespace ComAtprotoLabelDefs {
   /** Metadata tag on an atproto resource (eg, repo or record). */
   interface Label {
-    [Brand.Type]?: "com.atproto.label.defs#label";
+    [Brand.Type]: "com.atproto.label.defs#label";
     /** Timestamp when this label was created. */
     cts: string;
     /** DID of the actor who created this label. */
@@ -3000,7 +3000,7 @@ export declare namespace ComAtprotoLabelDefs {
     | (string & {});
   /** Declares a label value and its expected interpretations and behaviors. */
   interface LabelValueDefinition {
-    [Brand.Type]?: "com.atproto.label.defs#labelValueDefinition";
+    [Brand.Type]: "com.atproto.label.defs#labelValueDefinition";
     /** What should this label hide in the UI, if applied? 'content' hides all of the target; 'media' hides the images/video/audio; 'none' hides nothing. */
     blurs: "content" | "media" | "none" | (string & {});
     /**
@@ -3022,7 +3022,7 @@ export declare namespace ComAtprotoLabelDefs {
   }
   /** Strings which describe the label in the UI, localized into a specific language. */
   interface LabelValueDefinitionStrings {
-    [Brand.Type]?: "com.atproto.label.defs#labelValueDefinitionStrings";
+    [Brand.Type]: "com.atproto.label.defs#labelValueDefinitionStrings";
     /**
      * A longer description of what the label means and why it might be applied.
      * Maximum string length: 100000
@@ -3040,7 +3040,7 @@ export declare namespace ComAtprotoLabelDefs {
   }
   /** Metadata tag on an atproto record, published by the author within the record. Note that schemas should use #selfLabels, not #selfLabel. */
   interface SelfLabel {
-    [Brand.Type]?: "com.atproto.label.defs#selfLabel";
+    [Brand.Type]: "com.atproto.label.defs#selfLabel";
     /**
      * The short string name of the value or type of this label.
      * Maximum string length: 128
@@ -3049,7 +3049,7 @@ export declare namespace ComAtprotoLabelDefs {
   }
   /** Metadata tags on an atproto record, published by the author within the record. */
   interface SelfLabels {
-    [Brand.Type]?: "com.atproto.label.defs#selfLabels";
+    [Brand.Type]: "com.atproto.label.defs#selfLabels";
     /** Maximum array length: 10 */
     values: SelfLabel[];
   }
@@ -3087,12 +3087,12 @@ export declare namespace ComAtprotoLabelSubscribeLabels {
     FutureCursor: {};
   }
   interface Info {
-    [Brand.Type]?: "com.atproto.label.subscribeLabels#info";
+    [Brand.Type]: "com.atproto.label.subscribeLabels#info";
     name: "OutdatedCursor" | (string & {});
     message?: string;
   }
   interface Labels {
-    [Brand.Type]?: "com.atproto.label.subscribeLabels#labels";
+    [Brand.Type]: "com.atproto.label.subscribeLabels#labels";
     labels: ComAtprotoLabelDefs.Label[];
     seq: number;
   }
@@ -3170,36 +3170,36 @@ export declare namespace ComAtprotoRepoApplyWrites {
   }
   /** Operation which creates a new record. */
   interface Create {
-    [Brand.Type]?: "com.atproto.repo.applyWrites#create";
+    [Brand.Type]: "com.atproto.repo.applyWrites#create";
     collection: string;
     value: unknown;
     /** Maximum string length: 512 */
     rkey?: string;
   }
   interface CreateResult {
-    [Brand.Type]?: "com.atproto.repo.applyWrites#createResult";
+    [Brand.Type]: "com.atproto.repo.applyWrites#createResult";
     cid: At.CID;
     uri: At.Uri;
     validationStatus?: "unknown" | "valid" | (string & {});
   }
   /** Operation which deletes an existing record. */
   interface Delete {
-    [Brand.Type]?: "com.atproto.repo.applyWrites#delete";
+    [Brand.Type]: "com.atproto.repo.applyWrites#delete";
     collection: string;
     rkey: string;
   }
   interface DeleteResult {
-    [Brand.Type]?: "com.atproto.repo.applyWrites#deleteResult";
+    [Brand.Type]: "com.atproto.repo.applyWrites#deleteResult";
   }
   /** Operation which updates an existing record. */
   interface Update {
-    [Brand.Type]?: "com.atproto.repo.applyWrites#update";
+    [Brand.Type]: "com.atproto.repo.applyWrites#update";
     collection: string;
     rkey: string;
     value: unknown;
   }
   interface UpdateResult {
-    [Brand.Type]?: "com.atproto.repo.applyWrites#updateResult";
+    [Brand.Type]: "com.atproto.repo.applyWrites#updateResult";
     cid: At.CID;
     uri: At.Uri;
     validationStatus?: "unknown" | "valid" | (string & {});
@@ -3239,7 +3239,7 @@ export declare namespace ComAtprotoRepoCreateRecord {
 
 export declare namespace ComAtprotoRepoDefs {
   interface CommitMeta {
-    [Brand.Type]?: "com.atproto.repo.defs#commitMeta";
+    [Brand.Type]: "com.atproto.repo.defs#commitMeta";
     cid: At.CID;
     rev: string;
   }
@@ -3334,7 +3334,7 @@ export declare namespace ComAtprotoRepoListMissingBlobs {
     cursor?: string;
   }
   interface RecordBlob {
-    [Brand.Type]?: "com.atproto.repo.listMissingBlobs#recordBlob";
+    [Brand.Type]: "com.atproto.repo.listMissingBlobs#recordBlob";
     cid: At.CID;
     recordUri: At.Uri;
   }
@@ -3374,7 +3374,7 @@ export declare namespace ComAtprotoRepoListRecords {
     cursor?: string;
   }
   interface Record {
-    [Brand.Type]?: "com.atproto.repo.listRecords#record";
+    [Brand.Type]: "com.atproto.repo.listRecords#record";
     cid: At.CID;
     uri: At.Uri;
     value: unknown;
@@ -3416,7 +3416,7 @@ export declare namespace ComAtprotoRepoPutRecord {
 
 export declare namespace ComAtprotoRepoStrongRef {
   interface Main {
-    [Brand.Type]?: "com.atproto.repo.strongRef";
+    [Brand.Type]: "com.atproto.repo.strongRef";
     cid: At.CID;
     uri: At.Uri;
   }
@@ -3525,7 +3525,7 @@ export declare namespace ComAtprotoServerCreateAppPassword {
     AccountTakedown: {};
   }
   interface AppPassword {
-    [Brand.Type]?: "com.atproto.server.createAppPassword#appPassword";
+    [Brand.Type]: "com.atproto.server.createAppPassword#appPassword";
     createdAt: string;
     name: string;
     password: string;
@@ -3558,7 +3558,7 @@ export declare namespace ComAtprotoServerCreateInviteCodes {
     codes: AccountCodes[];
   }
   interface AccountCodes {
-    [Brand.Type]?: "com.atproto.server.createInviteCodes#accountCodes";
+    [Brand.Type]: "com.atproto.server.createInviteCodes#accountCodes";
     account: string;
     codes: string[];
   }
@@ -3604,7 +3604,7 @@ export declare namespace ComAtprotoServerDeactivateAccount {
 
 export declare namespace ComAtprotoServerDefs {
   interface InviteCode {
-    [Brand.Type]?: "com.atproto.server.defs#inviteCode";
+    [Brand.Type]: "com.atproto.server.defs#inviteCode";
     available: number;
     code: string;
     createdAt: string;
@@ -3614,7 +3614,7 @@ export declare namespace ComAtprotoServerDefs {
     uses: InviteCodeUse[];
   }
   interface InviteCodeUse {
-    [Brand.Type]?: "com.atproto.server.defs#inviteCodeUse";
+    [Brand.Type]: "com.atproto.server.defs#inviteCodeUse";
     usedAt: string;
     usedBy: At.DID;
   }
@@ -3660,11 +3660,11 @@ export declare namespace ComAtprotoServerDescribeServer {
     phoneVerificationRequired?: boolean;
   }
   interface Contact {
-    [Brand.Type]?: "com.atproto.server.describeServer#contact";
+    [Brand.Type]: "com.atproto.server.describeServer#contact";
     email?: string;
   }
   interface Links {
-    [Brand.Type]?: "com.atproto.server.describeServer#links";
+    [Brand.Type]: "com.atproto.server.describeServer#links";
     privacyPolicy?: string;
     termsOfService?: string;
   }
@@ -3737,7 +3737,7 @@ export declare namespace ComAtprotoServerListAppPasswords {
     AccountTakedown: {};
   }
   interface AppPassword {
-    [Brand.Type]?: "com.atproto.server.listAppPasswords#appPassword";
+    [Brand.Type]: "com.atproto.server.listAppPasswords#appPassword";
     createdAt: string;
     name: string;
     privileged?: boolean;
@@ -4043,7 +4043,7 @@ export declare namespace ComAtprotoSyncListRepos {
     cursor?: string;
   }
   interface Repo {
-    [Brand.Type]?: "com.atproto.sync.listRepos#repo";
+    [Brand.Type]: "com.atproto.sync.listRepos#repo";
     did: At.DID;
     /** Current repo commit CID */
     head: At.CID;
@@ -4088,7 +4088,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
   }
   /** Represents a change to an account's status on a host (eg, PDS or Relay). The semantics of this event are that the status is at the host which emitted the event, not necessarily that at the currently active PDS. Eg, a Relay takedown would emit a takedown with active=false, even if the PDS is still active. */
   interface Account {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#account";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#account";
     /** Indicates that the account has a repository which can be fetched from the host that emitted this event. */
     active: boolean;
     did: At.DID;
@@ -4104,7 +4104,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
   }
   /** Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature. */
   interface Commit {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#commit";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#commit";
     /** List of new blobs (by CID) referenced by records in this commit. */
     blobs: At.CIDLink[];
     /** CAR file containing relevant blocks, as a diff since the previous repo state. */
@@ -4144,7 +4144,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
    * \@deprecated
    */
   interface Handle {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#handle";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#handle";
     did: At.DID;
     handle: At.Handle;
     seq: number;
@@ -4152,7 +4152,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
   }
   /** Represents a change to an account's identity. Could be an updated handle, signing key, or pds hosting endpoint. Serves as a prod to all downstream services to refresh their identity cache. */
   interface Identity {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#identity";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#identity";
     did: At.DID;
     seq: number;
     time: string;
@@ -4160,7 +4160,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     handle?: At.Handle;
   }
   interface Info {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#info";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#info";
     name: "OutdatedCursor" | (string & {});
     message?: string;
   }
@@ -4169,7 +4169,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
    * \@deprecated
    */
   interface Migrate {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#migrate";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#migrate";
     did: At.DID;
     migrateTo: string | null;
     seq: number;
@@ -4177,7 +4177,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
   }
   /** A repo operation, ie a mutation of a single record. */
   interface RepoOp {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#repoOp";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#repoOp";
     action: "create" | "delete" | "update" | (string & {});
     /** For creates and updates, the new record CID. For deletions, null. */
     cid: At.CIDLink | null;
@@ -4188,7 +4188,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
    * \@deprecated
    */
   interface Tombstone {
-    [Brand.Type]?: "com.atproto.sync.subscribeRepos#tombstone";
+    [Brand.Type]: "com.atproto.sync.subscribeRepos#tombstone";
     did: At.DID;
     seq: number;
     time: string;
@@ -4267,7 +4267,7 @@ export declare namespace ToolsOzoneCommunicationCreateTemplate {
 
 export declare namespace ToolsOzoneCommunicationDefs {
   interface TemplateView {
-    [Brand.Type]?: "tools.ozone.communication.defs#templateView";
+    [Brand.Type]: "tools.ozone.communication.defs#templateView";
     /** Subject of the message, used in emails. */
     contentMarkdown: string;
     createdAt: string;
@@ -4330,7 +4330,7 @@ export declare namespace ToolsOzoneCommunicationUpdateTemplate {
 export declare namespace ToolsOzoneModerationDefs {
   /** Logs account status related events on a repo subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
   interface AccountEvent {
-    [Brand.Type]?: "tools.ozone.moderation.defs#accountEvent";
+    [Brand.Type]: "tools.ozone.moderation.defs#accountEvent";
     /** Indicates that the account has a repository which can be fetched from the host that emitted this event. */
     active: boolean;
     timestamp: string;
@@ -4345,7 +4345,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | (string & {});
   }
   interface AccountHosting {
-    [Brand.Type]?: "tools.ozone.moderation.defs#accountHosting";
+    [Brand.Type]: "tools.ozone.moderation.defs#accountHosting";
     status:
       | "deactivated"
       | "deleted"
@@ -4360,7 +4360,7 @@ export declare namespace ToolsOzoneModerationDefs {
     updatedAt?: string;
   }
   interface BlobView {
-    [Brand.Type]?: "tools.ozone.moderation.defs#blobView";
+    [Brand.Type]: "tools.ozone.moderation.defs#blobView";
     cid: At.CID;
     createdAt: string;
     mimeType: string;
@@ -4370,7 +4370,7 @@ export declare namespace ToolsOzoneModerationDefs {
   }
   /** Logs identity related events on a repo subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
   interface IdentityEvent {
-    [Brand.Type]?: "tools.ozone.moderation.defs#identityEvent";
+    [Brand.Type]: "tools.ozone.moderation.defs#identityEvent";
     timestamp: string;
     comment?: string;
     handle?: At.Handle;
@@ -4378,37 +4378,37 @@ export declare namespace ToolsOzoneModerationDefs {
     tombstone?: boolean;
   }
   interface ImageDetails {
-    [Brand.Type]?: "tools.ozone.moderation.defs#imageDetails";
+    [Brand.Type]: "tools.ozone.moderation.defs#imageDetails";
     height: number;
     width: number;
   }
   interface Moderation {
-    [Brand.Type]?: "tools.ozone.moderation.defs#moderation";
+    [Brand.Type]: "tools.ozone.moderation.defs#moderation";
     subjectStatus?: SubjectStatusView;
   }
   interface ModerationDetail {
-    [Brand.Type]?: "tools.ozone.moderation.defs#moderationDetail";
+    [Brand.Type]: "tools.ozone.moderation.defs#moderationDetail";
     subjectStatus?: SubjectStatusView;
   }
   interface ModEventAcknowledge {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventAcknowledge";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventAcknowledge";
     comment?: string;
   }
   /** Add a comment to a subject */
   interface ModEventComment {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventComment";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventComment";
     comment: string;
     /** Make the comment persistent on the subject */
     sticky?: boolean;
   }
   /** Divert a record's blobs to a 3rd party service for further scanning/tagging */
   interface ModEventDivert {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventDivert";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventDivert";
     comment?: string;
   }
   /** Keep a log of outgoing email to a user */
   interface ModEventEmail {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventEmail";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventEmail";
     /** The subject line of the email sent to the user. */
     subjectLine: string;
     /** Additional comment about the outgoing comm. */
@@ -4417,33 +4417,33 @@ export declare namespace ToolsOzoneModerationDefs {
     content?: string;
   }
   interface ModEventEscalate {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventEscalate";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventEscalate";
     comment?: string;
   }
   /** Apply/Negate labels on a subject */
   interface ModEventLabel {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventLabel";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventLabel";
     createLabelVals: string[];
     negateLabelVals: string[];
     comment?: string;
   }
   /** Mute incoming reports on a subject */
   interface ModEventMute {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventMute";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventMute";
     /** Indicates how long the subject should remain muted. */
     durationInHours: number;
     comment?: string;
   }
   /** Mute incoming reports from an account */
   interface ModEventMuteReporter {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventMuteReporter";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventMuteReporter";
     comment?: string;
     /** Indicates how long the account should remain muted. Falsy value here means a permanent mute. */
     durationInHours?: number;
   }
   /** Report a subject */
   interface ModEventReport {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventReport";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventReport";
     reportType: ComAtprotoModerationDefs.ReasonType;
     comment?: string;
     /** Set to true if the reporter was muted from reporting at the time of the event. These reports won't impact the reviewState of the subject. */
@@ -4451,19 +4451,19 @@ export declare namespace ToolsOzoneModerationDefs {
   }
   /** Resolve appeal on a subject */
   interface ModEventResolveAppeal {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventResolveAppeal";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventResolveAppeal";
     /** Describe resolution. */
     comment?: string;
   }
   /** Revert take down action on a subject */
   interface ModEventReverseTakedown {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventReverseTakedown";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventReverseTakedown";
     /** Describe reasoning behind the reversal. */
     comment?: string;
   }
   /** Add/Remove a tag on a subject */
   interface ModEventTag {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventTag";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventTag";
     /** Tags to be added to the subject. If already exists, won't be duplicated. */
     add: string[];
     /** Tags to be removed to the subject. Ignores a tag If it doesn't exist, won't be duplicated. */
@@ -4473,7 +4473,7 @@ export declare namespace ToolsOzoneModerationDefs {
   }
   /** Take down a subject permanently or temporarily */
   interface ModEventTakedown {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventTakedown";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventTakedown";
     /** If true, all other reports on content authored by this account will be resolved (acknowledged). */
     acknowledgeAccountSubjects?: boolean;
     comment?: string;
@@ -4482,18 +4482,18 @@ export declare namespace ToolsOzoneModerationDefs {
   }
   /** Unmute action on a subject */
   interface ModEventUnmute {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventUnmute";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventUnmute";
     /** Describe reasoning behind the reversal. */
     comment?: string;
   }
   /** Unmute incoming reports from an account */
   interface ModEventUnmuteReporter {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventUnmuteReporter";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventUnmuteReporter";
     /** Describe reasoning behind the reversal. */
     comment?: string;
   }
   interface ModEventView {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventView";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventView";
     createdAt: string;
     createdBy: At.DID;
     event: Brand.Union<
@@ -4527,7 +4527,7 @@ export declare namespace ToolsOzoneModerationDefs {
     subjectHandle?: string;
   }
   interface ModEventViewDetail {
-    [Brand.Type]?: "tools.ozone.moderation.defs#modEventViewDetail";
+    [Brand.Type]: "tools.ozone.moderation.defs#modEventViewDetail";
     createdAt: string;
     createdBy: At.DID;
     event: Brand.Union<
@@ -4558,21 +4558,21 @@ export declare namespace ToolsOzoneModerationDefs {
   }
   /** Logs lifecycle event on a record subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
   interface RecordEvent {
-    [Brand.Type]?: "tools.ozone.moderation.defs#recordEvent";
+    [Brand.Type]: "tools.ozone.moderation.defs#recordEvent";
     op: "create" | "delete" | "update" | (string & {});
     timestamp: string;
     cid?: At.CID;
     comment?: string;
   }
   interface RecordHosting {
-    [Brand.Type]?: "tools.ozone.moderation.defs#recordHosting";
+    [Brand.Type]: "tools.ozone.moderation.defs#recordHosting";
     status: "deleted" | "unknown" | (string & {});
     createdAt?: string;
     deletedAt?: string;
     updatedAt?: string;
   }
   interface RecordView {
-    [Brand.Type]?: "tools.ozone.moderation.defs#recordView";
+    [Brand.Type]: "tools.ozone.moderation.defs#recordView";
     blobCids: At.CID[];
     cid: At.CID;
     indexedAt: string;
@@ -4582,7 +4582,7 @@ export declare namespace ToolsOzoneModerationDefs {
     value: unknown;
   }
   interface RecordViewDetail {
-    [Brand.Type]?: "tools.ozone.moderation.defs#recordViewDetail";
+    [Brand.Type]: "tools.ozone.moderation.defs#recordViewDetail";
     blobs: BlobView[];
     cid: At.CID;
     indexedAt: string;
@@ -4593,11 +4593,11 @@ export declare namespace ToolsOzoneModerationDefs {
     labels?: ComAtprotoLabelDefs.Label[];
   }
   interface RecordViewNotFound {
-    [Brand.Type]?: "tools.ozone.moderation.defs#recordViewNotFound";
+    [Brand.Type]: "tools.ozone.moderation.defs#recordViewNotFound";
     uri: At.Uri;
   }
   interface RepoView {
-    [Brand.Type]?: "tools.ozone.moderation.defs#repoView";
+    [Brand.Type]: "tools.ozone.moderation.defs#repoView";
     did: At.DID;
     handle: At.Handle;
     indexedAt: string;
@@ -4611,7 +4611,7 @@ export declare namespace ToolsOzoneModerationDefs {
     threatSignatures?: ComAtprotoAdminDefs.ThreatSignature[];
   }
   interface RepoViewDetail {
-    [Brand.Type]?: "tools.ozone.moderation.defs#repoViewDetail";
+    [Brand.Type]: "tools.ozone.moderation.defs#repoViewDetail";
     did: At.DID;
     handle: At.Handle;
     indexedAt: string;
@@ -4628,7 +4628,7 @@ export declare namespace ToolsOzoneModerationDefs {
     threatSignatures?: ComAtprotoAdminDefs.ThreatSignature[];
   }
   interface RepoViewNotFound {
-    [Brand.Type]?: "tools.ozone.moderation.defs#repoViewNotFound";
+    [Brand.Type]: "tools.ozone.moderation.defs#repoViewNotFound";
     did: At.DID;
   }
   type ReviewClosed = "tools.ozone.moderation.defs#reviewClosed";
@@ -4642,7 +4642,7 @@ export declare namespace ToolsOzoneModerationDefs {
     | "#reviewOpen"
     | (string & {});
   interface SubjectStatusView {
-    [Brand.Type]?: "tools.ozone.moderation.defs#subjectStatusView";
+    [Brand.Type]: "tools.ozone.moderation.defs#subjectStatusView";
     /** Timestamp referencing the first moderation status impacting event was emitted on the subject */
     createdAt: string;
     id: number;
@@ -4671,7 +4671,7 @@ export declare namespace ToolsOzoneModerationDefs {
     takendown?: boolean;
   }
   interface VideoDetails {
-    [Brand.Type]?: "tools.ozone.moderation.defs#videoDetails";
+    [Brand.Type]: "tools.ozone.moderation.defs#videoDetails";
     height: number;
     length: number;
     width: number;
@@ -4937,11 +4937,11 @@ export declare namespace ToolsOzoneServerGetConfig {
     viewer?: ViewerConfig;
   }
   interface ServiceConfig {
-    [Brand.Type]?: "tools.ozone.server.getConfig#serviceConfig";
+    [Brand.Type]: "tools.ozone.server.getConfig#serviceConfig";
     url?: string;
   }
   interface ViewerConfig {
-    [Brand.Type]?: "tools.ozone.server.getConfig#viewerConfig";
+    [Brand.Type]: "tools.ozone.server.getConfig#viewerConfig";
     role?:
       | "tools.ozone.team.defs#roleAdmin"
       | "tools.ozone.team.defs#roleModerator"
@@ -4968,7 +4968,7 @@ export declare namespace ToolsOzoneSetAddValues {
 
 export declare namespace ToolsOzoneSetDefs {
   interface Set {
-    [Brand.Type]?: "tools.ozone.set.defs#set";
+    [Brand.Type]: "tools.ozone.set.defs#set";
     /**
      * Minimum string length: 3
      * Maximum string length: 128
@@ -4981,7 +4981,7 @@ export declare namespace ToolsOzoneSetDefs {
     description?: string;
   }
   interface SetView {
-    [Brand.Type]?: "tools.ozone.set.defs#setView";
+    [Brand.Type]: "tools.ozone.set.defs#setView";
     createdAt: string;
     /**
      * Minimum string length: 3
@@ -5087,7 +5087,7 @@ export declare namespace ToolsOzoneSetUpsertSet {
 
 export declare namespace ToolsOzoneSettingDefs {
   interface Option {
-    [Brand.Type]?: "tools.ozone.setting.defs#option";
+    [Brand.Type]: "tools.ozone.setting.defs#option";
     createdBy: At.DID;
     did: At.DID;
     key: string;
@@ -5172,7 +5172,7 @@ export declare namespace ToolsOzoneSettingUpsertOption {
 
 export declare namespace ToolsOzoneSignatureDefs {
   interface SigDetail {
-    [Brand.Type]?: "tools.ozone.signature.defs#sigDetail";
+    [Brand.Type]: "tools.ozone.signature.defs#sigDetail";
     property: string;
     value: string;
   }
@@ -5207,7 +5207,7 @@ export declare namespace ToolsOzoneSignatureFindRelatedAccounts {
     cursor?: string;
   }
   interface RelatedAccount {
-    [Brand.Type]?: "tools.ozone.signature.findRelatedAccounts#relatedAccount";
+    [Brand.Type]: "tools.ozone.signature.findRelatedAccounts#relatedAccount";
     account: ComAtprotoAdminDefs.AccountView;
     similarities?: ToolsOzoneSignatureDefs.SigDetail[];
   }
@@ -5251,7 +5251,7 @@ export declare namespace ToolsOzoneTeamAddMember {
 
 export declare namespace ToolsOzoneTeamDefs {
   interface Member {
-    [Brand.Type]?: "tools.ozone.team.defs#member";
+    [Brand.Type]: "tools.ozone.team.defs#member";
     did: At.DID;
     role: "#roleAdmin" | "#roleModerator" | "#roleTriage" | (string & {});
     createdAt?: string;

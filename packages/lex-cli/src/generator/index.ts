@@ -93,7 +93,7 @@ declare module "@tsky/lexicons" {`;
 
         chunk += writeJsdoc(descs);
         chunk += `interface ${typeName} {`;
-        chunk += `[Brand.Type]?: '${nsid}';`;
+        chunk += `[Brand.Type]: '${nsid}';`;
 
         for (const prop of propKeys) {
           const isOptional = !required || !required.includes(prop);

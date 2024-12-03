@@ -6,13 +6,13 @@ export declare namespace Brand {
   const Type: unique symbol;
 
   /** Get the intended \`$type\` field */
-  type GetType<T extends { [Type]?: string }> = NonNullable<T[typeof Type]>;
+  type GetType<T extends { [Type]: string }> = T[typeof Type];
 
   /** Creates a union of objects where it's discriminated by \`$type\` field. */
-  type Union<T extends { [Type]?: string }> = T extends any ? T & { $type: GetType<T> } : never;
+  type Union<T extends { [Type]: string }> = T extends any ? T & { $type: GetType<T> } : never;
 
   /** Omits the type branding from object */
-  type Omit<T extends { [Type]?: string }> = ObjectOmit<T, typeof Type>;
+  type Omit<T extends { [Type]: string }> = ObjectOmit<T, typeof Type>;
 }
 
 /** Base AT Protocol schema types */
