@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsx ./scripts/generate-types.ts && tsc",
     "clean": "rm -rf dist && rm -rf lexicons",
-    "prepublish": "npm run build"
+    "prepublish": "pnpm run clean && pnpm run build"
   },
   "devDependencies": {
     "@tsky/lex-cli": "workspace:*",
