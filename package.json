@@ -15,10 +15,12 @@
     "docs:dev": "pnpm run --filter @tsky/docs dev",
     "docs:build": "pnpm run --filter @tsky/docs build",
     "docs:preview": "pnpm run --filter @tsky/docs preview",
-    "format": "biome check --write .",
-    "format:check": "biome check",
-    "lint": "eslint ./packages ./docs",
-    "lint:fix": "eslint . --fix"
+    "format": "biome format",
+    "format:fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check",
+    "check:fix": "biome check --write ."
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.11.2",
@@ -32,6 +34,6 @@
     "typescript-eslint": "^8.16.0"
   },
   "nano-staged": {
-    "*.{js,ts,cjs,mjs}": ["biome check --write --"]
+    "*.{js,ts,cjs,mjs,json}": ["biome check --write --"]
   }
 }
