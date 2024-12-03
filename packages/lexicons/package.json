@@ -2,11 +2,24 @@
   "name": "@tsky/lexicons",
   "type": "module",
   "version": "0.0.1",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "tsx ./scripts/generate-types.ts"
+    "build": "tsx ./scripts/generate-types.ts && tsc",
+    "clean": "rm -rf dist && rm -rf lexicons",
+    "prepublish": "npm run build"
   },
   "devDependencies": {
     "@tsky/lex-cli": "workspace:*",
