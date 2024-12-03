@@ -3,7 +3,13 @@
   "type": "module",
   "version": "0.0.1",
   "license": "MIT",
-  "bin": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": "./dist/index.js",
   "scripts": {
     "build": "tsc",
     "prepublish": "pnpm run build"

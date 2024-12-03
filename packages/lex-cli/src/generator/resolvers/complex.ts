@@ -3,11 +3,9 @@ import type {
   RefSchema,
   RefUnionSchema,
   XrpcParametersSchema,
-} from '../schema.js';
-import { toNamespace, toUpper } from '../../utils/cache.js';
-import { writeJsdoc } from '../../utils/docs.js';
-import { sortName, sortPropertyKeys } from '../../utils/sort.js';
-import { resolveType } from './type.js';
+} from '../schema';
+import { toNamespace, toUpper, writeJsdoc, sortName, sortPropertyKeys } from '../../utils';
+import { resolveType } from './type';
 
 export function resolveRefType(def: RefSchema): string {
   const [ns, ref] = def.ref.split('#');

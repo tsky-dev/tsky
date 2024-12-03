@@ -1,4 +1,4 @@
-import type { IntegerSchema } from '../schema.js';
+import type { IntegerSchema } from '../schema';
 
 export function resolveIntegerType(
   def: IntegerSchema,
