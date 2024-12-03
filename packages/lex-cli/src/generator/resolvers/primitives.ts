@@ -1,6 +1,4 @@
-export function resolvePrimitiveType(
-  type: string,
-): string {
+export function resolvePrimitiveType(type: string): string {
   switch (type) {
     case 'unknown':
       return 'unknown';

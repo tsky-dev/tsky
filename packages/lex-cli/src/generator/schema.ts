@@ -1,11 +1,8 @@
 import * as t from 'typanion';
 
-const isPositiveInteger = t.cascade(
-  t.isNumber(),
-  (value): value is number => {
-    return Number.isInteger(value) && value >= 0;
-  },
-);
+const isPositiveInteger = t.cascade(t.isNumber(), (value): value is number => {
+  return Number.isInteger(value) && value >= 0;
+});
 
 export const booleanSchema = t.isObject({
   type: t.isLiteral('boolean'),
@@ -42,19 +39,22 @@ const stringFormatSchema = t.isOneOf([
   t.isLiteral('uri'),
 ]);
 
-export const stringSchema: t.StrictValidator<unknown, {
-  type: 'string';
-  description?: string;
-  format?: string;
-  default?: string;
-  const?: string;
-  enum?: string[];
-  knownValues?: string[];
-  maxLength?: number;
-  minLength?: number;
-  maxGraphemes?: number;
-  minGraphemes?: number;
-}> = t.cascade(
+export const stringSchema: t.StrictValidator<
+  unknown,
+  {
+    type: 'string';
+    description?: string;
+    format?: string;
+    default?: string;
+    const?: string;
+    enum?: string[];
+    knownValues?: string[];
+    maxLength?: number;
+    minLength?: number;
+    maxGraphemes?: number;
+    minGraphemes?: number;
+  }
+> = t.cascade(
   t.isObject({
     type: t.isLiteral('string'),
     description: t.isOptional(t.isString()),
@@ -68,13 +68,42 @@ export const stringSchema: t.StrictValidator<unknown, {
     maxGraphemes: t.isOptional(isPositiveInteger),
     minGraphemes: t.isOptional(isPositiveInteger),
   }),
-  (value): value is { type: 'string'; description?: string; format?: 'at-identifier' | 'at-uri' | 'cid' | 'datetime' | 'did' | 'handle' | 'language' | 'nsid' | 'record-key' | 'tid' | 'uri'; default?: string; const?: string; enum?: string[]; knownValues?: string[]; maxLength?: number; minLength?: number; maxGraphemes?: number; minGraphemes?: number } => {
+  (
+    value,
+  ): value is {
+    type: 'string';
+    description?: string;
+    format?:
+      | 'at-identifier'
+      | 'at-uri'
+      | 'cid'
+      | 'datetime'
+      | 'did'
+      | 'handle'
+      | 'language'
+      | 'nsid'
+      | 'record-key'
+      | 'tid'
+      | 'uri';
+    default?: string;
+    const?: string;
+    enum?: string[];
+    knownValues?: string[];
+    maxLength?: number;
+    minLength?: number;
+    maxGraphemes?: number;
+    minGraphemes?: number;
+  } => {
     if (value.format !== undefined && value.format !== 'uri') {
-      if (value.maxLength !== undefined
+      if (
+        value.maxLength !== undefined
         || value.minLength !== undefined
         || value.maxGraphemes !== undefined
-        || value.minGraphemes !== undefined) {
-        throw new Error(`${value.format} format can't be used with length or grapheme constraints`);
+        || value.minGraphemes !== undefined
+      ) {
+        throw new Error(
+          `${value.format} format can't be used with length or grapheme constraints`,
+        );
       }
     }
     return true;
@@ -115,10 +144,7 @@ export const cidLinkSchema = t.isObject({
 
 export type CidLinkSchema = t.InferType<typeof cidLinkSchema>;
 
-export const ipldTypeSchema = t.isOneOf([
-  bytesSchema,
-  cidLinkSchema,
-]);
+export const ipldTypeSchema = t.isOneOf([bytesSchema, cidLinkSchema]);
 
 export type IpldTypeSchema = t.InferType<typeof ipldTypeSchema>;
 
@@ -137,7 +163,14 @@ export const refUnionSchema = t.cascade(
     refs: t.isArray(t.isString()),
     closed: t.isOptional(t.isBoolean()),
   }),
-  (value): value is { type: 'union'; description?: string; refs: string[]; closed?: boolean } => {
+  (
+    value,
+  ): value is {
+    type: 'union';
+    description?: string;
+    refs: string[];
+    closed?: boolean;
+  } => {
     if (value.closed && value.refs.length === 0) {
       throw new Error(`A closed union can't have empty refs list`);
     }
@@ -147,10 +180,7 @@ export const refUnionSchema = t.cascade(
 
 export type RefUnionSchema = t.InferType<typeof refUnionSchema>;
 
-export const refVariantSchema = t.isOneOf([
-  refSchema,
-  refUnionSchema,
-]);
+export const refVariantSchema = t.isOneOf([refSchema, refUnionSchema]);
 
 export type RefVariantSchema = t.InferType<typeof refVariantSchema>;
 
@@ -166,19 +196,27 @@ export type BlobSchema = t.InferType<typeof blobSchema>;
 export const arraySchema = t.isObject({
   type: t.isLiteral('array'),
   description: t.isOptional(t.isString()),
-  items: t.isOneOf([primitiveSchema, ipldTypeSchema, blobSchema, refVariantSchema]),
+  items: t.isOneOf([
+    primitiveSchema,
+    ipldTypeSchema,
+    blobSchema,
+    refVariantSchema,
+  ]),
   maxLength: t.isOptional(isPositiveInteger),
   minLength: t.isOptional(isPositiveInteger),
 });
 
 export type ArraySchema = t.InferType<typeof arraySchema>;
 
-export const primitiveArraySchema = t.cascade(arraySchema, (value): value is ArraySchema => {
-  if (!t.isOneOf([primitiveSchema])(value.items)) {
-    throw new Error('Array items must be primitive types');
-  }
-  return true;
-});
+export const primitiveArraySchema = t.cascade(
+  arraySchema,
+  (value): value is ArraySchema => {
+    if (!t.isOneOf([primitiveSchema])(value.items)) {
+      throw new Error('Array items must be primitive types');
+    }
+    return true;
+  },
+);
 
 export type PrimitiveArraySchema = t.InferType<typeof primitiveArraySchema>;
 
@@ -197,16 +235,19 @@ function refineRequiredProperties<
     properties: Record<string, unknown>;
   }
 
-  return t.cascade(schema, (value: RequiredPropertiesSchema): value is RequiredPropertiesSchema => {
-    if (value.required) {
-      for (const field of value.required) {
-        if (value.properties[field] === undefined) {
-          throw new Error(`Required field "${field}" not defined`);
+  return t.cascade(
+    schema,
+    (value: RequiredPropertiesSchema): value is RequiredPropertiesSchema => {
+      if (value.required) {
+        for (const field of value.required) {
+          if (value.properties[field] === undefined) {
+            throw new Error(`Required field "${field}" not defined`);
+          }
         }
       }
-    }
-    return true;
-  });
+      return true;
+    },
+  );
 }
 
 export const objectSchema = refineRequiredProperties(
@@ -215,13 +256,15 @@ export const objectSchema = refineRequiredProperties(
     description: t.isOptional(t.isString()),
     required: t.isOptional(t.isArray(t.isString())),
     nullable: t.isOptional(t.isArray(t.isString())),
-    properties: t.isRecord(t.isOneOf([
-      refVariantSchema,
-      ipldTypeSchema,
-      arraySchema,
-      blobSchema,
-      primitiveSchema,
-    ])),
+    properties: t.isRecord(
+      t.isOneOf([
+        refVariantSchema,
+        ipldTypeSchema,
+        arraySchema,
+        blobSchema,
+        primitiveSchema,
+      ]),
+    ),
   }),
 );
 
@@ -251,7 +294,9 @@ export const xrpcSubscriptionMessageSchema = t.isObject({
   schema: t.isOptional(t.isOneOf([refVariantSchema, objectSchema])),
 });
 
-export type XrpcSubscriptionMessageSchema = t.InferType<typeof xrpcSubscriptionMessageSchema>;
+export type XrpcSubscriptionMessageSchema = t.InferType<
+  typeof xrpcSubscriptionMessageSchema
+>;
 
 export const xrpcErrorSchema = t.isObject({
   name: t.isString(),
@@ -319,11 +364,9 @@ export const userTypeSchema = t.isOneOf([
 
 export type UserTypeSchema = t.InferType<typeof userTypeSchema>;
 
-const NSID_RE = /^[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\.[a-z]{1,63}$/i;
-const nsidType = t.cascade(
-  t.isString(),
-  value => NSID_RE.test(value),
-);
+const NSID_RE
+  = /^[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\.[a-z]{1,63}$/i;
+const nsidType = t.cascade(t.isString(), value => NSID_RE.test(value));
 
 export const documentSchema = t.cascade(
   t.isObject({
@@ -333,7 +376,15 @@ export const documentSchema = t.cascade(
     description: t.isOptional(t.isString()),
     defs: t.isRecord(userTypeSchema),
   }),
-  (value): value is { lexicon: 1; id: string; revision?: number; description?: string; defs: Record<string, UserTypeSchema> } => {
+  (
+    value,
+  ): value is {
+    lexicon: 1;
+    id: string;
+    revision?: number;
+    description?: string;
+    defs: Record<string, UserTypeSchema>;
+  } => {
     for (const id in value.defs) {
       const def = value.defs[id];
       const type = def.type;
@@ -345,7 +396,9 @@ export const documentSchema = t.cascade(
           || type === 'procedure'
           || type === 'subscription')
       ) {
-        throw new Error(`${type} must be the \`main\` definition (in defs.${id})`);
+        throw new Error(
+          `${type} must be the \`main\` definition (in defs.${id})`,
+        );
       }
     }
     return true;

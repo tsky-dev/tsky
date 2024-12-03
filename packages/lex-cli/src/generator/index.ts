@@ -4,7 +4,7 @@ import { getDescriptions, writeJsdoc } from '../utils/docs.js';
 import { mainPrelude } from '../utils/prelude.js';
 import { sortDefinition, sortName, sortPropertyKeys } from '../utils/sort.js';
 import { resolveType } from './resolvers/type.js';
-import { documentSchema, type DocumentSchema } from './schema.js';
+import { type DocumentSchema, documentSchema } from './schema.js';
 
 export interface GenerateDefinitionsOptions {
   files: string[];

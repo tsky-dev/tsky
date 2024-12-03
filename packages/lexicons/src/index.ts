@@ -27,13 +27,17 @@ export type BskyQuery = {
 
 export type QueryParams<T extends keyof Queries> = Queries[T] extends {
   params: infer P;
-} ? P : never;
+}
+  ? P
+  : never;
 
 export type QueryOutput<T extends keyof Queries> = Queries[T]['output'];
 
 export type QueryErrors<T extends keyof Queries> = Queries[T] extends {
   errors: infer E;
-} ? E : never;
+}
+  ? E
+  : never;
 
 // --- Procedure Types ---
 export type ProcedureDefs = LexiconUnion<Procedures>;
@@ -41,27 +45,46 @@ export type BskyProcedure = {
   [K in keyof Procedures]: K extends BskyNSID ? Procedures[K] : never;
 }[keyof Procedures];
 
-export type ProcedureParams<T extends keyof Procedures> = Procedures[T] extends {
-  params: infer P;
-} ? P : never;
+export type ProcedureParams<T extends keyof Procedures> =
+  Procedures[T] extends {
+    params: infer P;
+  }
+    ? P
+    : never;
 
 export type ProcedureInput<T extends keyof Procedures> = Procedures[T] extends {
   input: infer I;
-} ? I : never;
+}
+  ? I
+  : never;
 
-export type ProcedureOutput<T extends keyof Procedures> = Procedures[T] extends {
-  output: infer O;
-} ? O : never;
+export type ProcedureOutput<T extends keyof Procedures> =
+  Procedures[T] extends {
+    output: infer O;
+  }
+    ? O
+    : never;
 
-export type ProcedureErrors<T extends keyof Procedures> = Procedures[T] extends {
-  errors: infer E;
-} ? E : never;
+export type ProcedureErrors<T extends keyof Procedures> =
+  Procedures[T] extends {
+    errors: infer E;
+  }
+    ? E
+    : never;
 
 // --- Common Bluesky Types ---
-export type BskyPost = BskyRecord & { $type: `${typeof APP_BSKY_PREFIX}feed.post` };
-export type BskyProfile = BskyRecord & { $type: `${typeof APP_BSKY_PREFIX}actor.profile` };
-export type BskyLike = BskyRecord & { $type: `${typeof APP_BSKY_PREFIX}feed.like` };
-export type BskyFollow = BskyRecord & { $type: `${typeof APP_BSKY_PREFIX}graph.follow` };
+export type BskyPost = BskyRecord & {
+  $type: `${typeof APP_BSKY_PREFIX}feed.post`;
+};
+export type BskyProfile = BskyRecord & {
+  $type: `${typeof APP_BSKY_PREFIX}actor.profile`;
+};
+export type BskyLike = BskyRecord & {
+  $type: `${typeof APP_BSKY_PREFIX}feed.like`;
+};
+export type BskyFollow = BskyRecord & {
+  $type: `${typeof APP_BSKY_PREFIX}graph.follow`;
+};
 
 // --- Type Guards ---
 export function isRecord(value: unknown): value is RecordDefs {
@@ -82,7 +105,9 @@ export function isAtProtoRecord(value: unknown): value is AtProtoRecord {
 }
 
 export function isBskyPost(value: unknown): value is BskyPost {
-  return isBskyRecord(value) && value.$type.startsWith(`${APP_BSKY_PREFIX}feed.post`);
+  return (
+    isBskyRecord(value) && value.$type.startsWith(`${APP_BSKY_PREFIX}feed.post`)
+  );
 }
 
 // --- Error Types and Guards ---
@@ -104,5 +129,9 @@ export function isBskyError(value: unknown): value is BskyError {
 }
 
 // --- Helper Types ---
-export type BskyQueryParams<T extends BskyNSID> = T extends keyof Queries ? QueryParams<T> : never;
-export type BskyProcedureInput<T extends BskyNSID> = T extends keyof Procedures ? ProcedureInput<T> : never;
+export type BskyQueryParams<T extends BskyNSID> = T extends keyof Queries
+  ? QueryParams<T>
+  : never;
+export type BskyProcedureInput<T extends BskyNSID> = T extends keyof Procedures
+  ? ProcedureInput<T>
+  : never;
