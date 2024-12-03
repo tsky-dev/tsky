@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
-import { toNamespace, getDescriptions, writeJsdoc, mainPrelude, sortDefinition, sortName, sortPropertyKeys } from '../utils';
-import { resolveType } from './resolvers';
-import { type DocumentSchema, documentSchema } from './schema';
+import { toNamespace, getDescriptions, writeJsdoc, mainPrelude, sortDefinition, sortName, sortPropertyKeys } from '../utils/index.js';
+import { resolveType } from './resolvers/index.js';
+import { type DocumentSchema, documentSchema } from './schema.js';
 
 export interface GenerateDefinitionsOptions {
   files: string[];

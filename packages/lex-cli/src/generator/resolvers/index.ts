@@ -1,5 +1,5 @@
-export { resolveObjectType, resolveRefType, resolveUnionType } from './complex';
-export { resolveIntegerType } from './numeric';
-export { resolvePrimitiveType } from './primitives';
-export { resolveStringFormat, resolveStringType } from './string';
-export { resolveType } from './type';
+export { resolveObjectType, resolveRefType, resolveUnionType } from './complex.js';
+export { resolveIntegerType } from './numeric.js';
+export { resolvePrimitiveType } from './primitives.js';
+export { resolveStringFormat, resolveStringType } from './string.js';
+export { resolveType } from './type.js';

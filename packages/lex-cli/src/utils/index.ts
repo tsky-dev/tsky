@@ -1,5 +1,5 @@
-export { toNamespace, toUpper } from './cache';
-export { getDescriptions, writeJsdoc } from './docs';
-export { IGNORED_FORMATS, TYPE_FORMATS } from './formats';
-export { mainPrelude } from './prelude';
-export { sortDefinition, sortName, sortPropertyKeys } from './sort';
+export { toNamespace, toUpper } from './cache.js';
+export { getDescriptions, writeJsdoc } from './docs.js';
+export { IGNORED_FORMATS, TYPE_FORMATS } from './formats.js';
+export { mainPrelude } from './prelude.js';
+export { sortDefinition, sortName, sortPropertyKeys } from './sort.js';

@@ -1,5 +1,5 @@
-import type { StringSchema } from '../schema';
-import { IGNORED_FORMATS, TYPE_FORMATS, sortName } from '../../utils';
+import type { StringSchema } from '../schema.js';
+import { IGNORED_FORMATS, TYPE_FORMATS, sortName } from '../../utils/index.js';
 
 export function resolveStringFormat(format: string, nsid: string): string {
   if (format === 'did') return TYPE_FORMATS.DID;
