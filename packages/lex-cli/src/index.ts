@@ -57,7 +57,6 @@ cli.register(
       try {
         code = await generateDefinitions({
           files: this.files,
-          main: true,
           banner: this.banner,
           description: this.desc,
         });
