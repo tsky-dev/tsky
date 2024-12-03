@@ -12,7 +12,8 @@
   "bin": "./dist/index.js",
   "scripts": {
     "build": "tsc",
-    "prepublish": "pnpm run build"
+    "clean": "rm -rf dist",
+    "prepublish": "pnpm run clean && pnpm run build"
   },
   "dependencies": {
     "clipanion": "4.0.0-rc.4",
