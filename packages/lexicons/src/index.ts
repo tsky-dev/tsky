@@ -66,10 +66,10 @@ export type BskyFollow = BskyRecord & { $type: `${typeof APP_BSKY_PREFIX}graph.f
 // --- Type Guards ---
 export function isRecord(value: unknown): value is RecordDefs {
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    '$type' in value &&
-    typeof value.$type === 'string'
+    typeof value === 'object'
+    && value !== null
+    && '$type' in value
+    && typeof value.$type === 'string'
   );
 }
 
@@ -86,20 +86,20 @@ export function isBskyPost(value: unknown): value is BskyPost {
 }
 
 // --- Error Types and Guards ---
-export type BskyError = {
+export interface BskyError {
   error: string;
   message: string;
   statusCode?: number;
-};
+}
 
 export function isBskyError(value: unknown): value is BskyError {
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    'error' in value &&
-    'message' in value &&
-    typeof (value as BskyError).error === 'string' &&
-    typeof (value as BskyError).message === 'string'
+    typeof value === 'object'
+    && value !== null
+    && 'error' in value
+    && 'message' in value
+    && typeof (value as BskyError).error === 'string'
+    && typeof (value as BskyError).message === 'string'
   );
 }
 
