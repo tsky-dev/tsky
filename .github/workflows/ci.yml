@@ -35,7 +35,7 @@ jobs:
         run: pnpm -r lint
 
       - name: 📝 Check format
-        run: pnpm format:check
+        run: pnpm format
 
       - name: 💪 Type check
         run: pnpm -r test:typecheck
