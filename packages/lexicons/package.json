@@ -8,14 +8,10 @@
   "scripts": {
     "build": "tsx ./scripts/generate-types.ts"
   },
-  "dependencies": {
-    "@atproto/lexicon": "^0.4.3",
-    "@atproto/xrpc": "^0.6.4",
-    "multiformats": "^13.3.1"
-  },
   "devDependencies": {
-    "@atproto/lex-cli": "^0.5.2",
+    "@tsky/lex-cli": "workspace:*",
     "@types/node": "^22.10.1",
+    "fast-glob": "^3.3.2",
     "tar": "^7.4.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
