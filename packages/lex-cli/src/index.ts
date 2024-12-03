@@ -14,28 +14,36 @@ const cli = new Cli({
 cli.register(Builtins.HelpCommand);
 
 cli.register(
-  class GenerateMainLexicons extends Command {
-    static paths = [['generate-main']];
+  class GenerateTypes extends Command {
+    static paths = [['generate-types']];
 
     static usage = Command.Usage({
-      description: 'Generates the main type definition file',
+      description: 'Generates TypeScript type definitions from Lexicon schema files',
+      details: `
+        This command takes Lexicon JSON schema files as input and generates corresponding TypeScript
+        type definitions. It handles all AT Protocol lexicons (app.bsky, com.atproto, etc.) and
+        outputs a single consolidated TypeScript declaration file.
+      `,
+      examples: [
+        ['Basic usage', 'lex-cli generate-types ./lexicons/**/*.json -o types.ts'],
+        ['With module description', 'lex-cli generate-types ./lexicons/**/*.json -o types.ts --description "AT Protocol Types"'],
+      ],
     });
 
     output = Option.String('-o,--output', {
       required: false,
-      description:
-        'Where to save the resulting type definition file, defaults to stdout if not passed',
+      description: 'Path for the generated TypeScript definition file. If not specified, outputs to stdout',
       validator: t.cascade(t.isString(), t.matchesRegExp(/\.ts$/)),
     });
 
     desc = Option.String('--description', {
       required: false,
-      description: 'Module description',
+      description: 'JSDoc description to add to the generated module',
     });
 
     banner = Option.String('--banner', {
       required: false,
-      description: 'Insert an arbitrary string at the beginning of the module',
+      description: 'Custom banner text to insert at the top of the generated file',
     });
 
     files = Option.Rest({
