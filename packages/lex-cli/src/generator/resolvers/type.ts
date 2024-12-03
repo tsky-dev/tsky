@@ -2,16 +2,16 @@ import type {
   RefVariantSchema,
   UserTypeSchema,
   XrpcParametersSchema,
-} from '../schema';
-import { getDescriptions } from '../../utils';
+} from '../schema.js';
+import { getDescriptions } from '../../utils/index.js';
 import {
   resolveObjectType,
   resolveRefType,
   resolveUnionType,
-} from './complex';
-import { resolveIntegerType } from './numeric';
-import { resolvePrimitiveType } from './primitives';
-import { resolveStringType } from './string';
+} from './complex.js';
+import { resolveIntegerType } from './numeric.js';
+import { resolvePrimitiveType } from './primitives.js';
+import { resolveStringType } from './string.js';
 
 export function resolveType(
   nsid: string,

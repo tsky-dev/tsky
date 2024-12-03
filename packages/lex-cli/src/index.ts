@@ -4,7 +4,7 @@ import { Builtins, Cli, Command, Option } from 'clipanion';
 import pc from 'picocolors';
 import prettier from 'prettier';
 import * as t from 'typanion';
-import { generateDefinitions } from './generator';
+import { generateDefinitions } from './generator/index.js';
 
 const cli = new Cli({
   binaryName: 'lex-cli',
