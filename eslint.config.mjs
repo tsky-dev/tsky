@@ -2,7 +2,7 @@ import antfu from '@antfu/eslint-config';
 
 export default antfu(
   {
-    ignores: ['packages/lexicons/**/*'],
+    ignores: ['packages/lexicons/src/lib/lexicons.ts'],
     typescript: true,
     stylistic: {
       semi: true,
