@@ -5,7 +5,8 @@
   "license": "MIT",
   "bin": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "pnpm run build"
   },
   "dependencies": {
     "clipanion": "4.0.0-rc.4",
