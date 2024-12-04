@@ -20,9 +20,8 @@ async function findJsonFiles(dir: string): Promise<string[]> {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      files.push(...await findJsonFiles(fullPath));
-    }
-    else if (entry.isFile() && entry.name.endsWith('.json')) {
+      files.push(...(await findJsonFiles(fullPath)));
+    } else if (entry.isFile() && entry.name.endsWith('.json')) {
       files.push(fullPath);
     }
   }
@@ -38,7 +37,9 @@ async function main() {
 
     // Get latest commit SHA for lexicons
     console.log('Getting latest lexicon commit...');
-    const shaResponse = await fetch(`https://api.github.com/repos/${REPO}/commits?path=lexicons/`);
+    const shaResponse = await fetch(
+      `https://api.github.com/repos/${REPO}/commits?path=lexicons/`,
+    );
     if (!shaResponse.ok) {
       throw new Error(`Failed to get commit SHA: ${shaResponse.statusText}`);
     }
@@ -51,7 +52,9 @@ async function main() {
 
     // Download specific commit's lexicons
     console.log('Downloading lexicons from atproto...');
-    const response = await fetch(`https://github.com/${REPO}/archive/${sha}.tar.gz`);
+    const response = await fetch(
+      `https://github.com/${REPO}/archive/${sha}.tar.gz`,
+    );
     if (!response.ok) {
       throw new Error(`Failed to download lexicons: ${response.statusText}`);
     }
@@ -64,7 +67,7 @@ async function main() {
     await tar.x({
       file: tarFile,
       cwd: LEXICONS_DIR,
-      filter: path => path.includes('/lexicons/'),
+      filter: (path) => path.includes('/lexicons/'),
       strip: 2,
     });
 
@@ -80,17 +83,13 @@ async function main() {
 
     // Generate types using @atproto/lex-cli
     console.log('Generating types...');
-    execSync(
-      `pnpm lex gen-api ${TYPES_DIR} ${lexiconFiles.join(' ')}`,
-      {
-        stdio: 'inherit',
-        cwd: TYPES_DIR,
-      },
-    );
+    execSync(`pnpm lex gen-api ${TYPES_DIR} ${lexiconFiles.join(' ')}`, {
+      stdio: 'inherit',
+      cwd: TYPES_DIR,
+    });
 
     console.log('Done! Types generated in', TYPES_DIR);
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error:', error);
     process.exit(1);
   }
