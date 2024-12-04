@@ -16,7 +16,8 @@
       "dist",
       "node_modules",
       "package.json",
-      "tsconfig.json"
+      "tsconfig.json",
+      "packages/lexicons/src/lib/lexicons.ts"
     ]
   },
   "linter": {
