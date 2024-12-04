@@ -6,23 +6,37 @@
  * Contains type declarations for Bluesky lexicons
  */
 
-type ObjectOmit<T, K extends keyof any> = Omit<T, K>;
+/** Base type with optional type field */
+export interface TypedBase {
+  $type?: string;
+}
 
-/** Handles type branding in objects */
-export declare namespace Brand {
-  /** Symbol used to brand objects, this does not actually exist in runtime */
-  const Type: unique symbol;
+/** Base type for all record types */
+export interface RecordBase {
+  $type: string;
+}
 
-  /** Get the intended `$type` field */
-  type GetType<T extends { [Type]: string }> = T[typeof Type];
+/** Makes $type required and specific */
+export type Typed<T extends TypedBase, Type extends string> = Omit<
+  T,
+  "$type"
+> & {
+  $type: Type;
+};
 
-  /** Creates a union of objects where it's discriminated by `$type` field. */
-  type Union<T extends { [Type]: string }> = T extends any
-    ? T & { $type: GetType<T> }
-    : never;
+/** Creates a union of objects discriminated by $type */
+export type TypeUnion<T extends TypedBase> = T extends any
+  ? Typed<T, string>
+  : never;
 
-  /** Omits the type branding from object */
-  type Omit<T extends { [Type]: string }> = ObjectOmit<T, typeof Type>;
+/** Type guard for records */
+export function isRecord(value: unknown): value is RecordBase {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "$type" in value &&
+    typeof value.$type === "string"
+  );
 }
 
 /** Base AT Protocol schema types */
@@ -50,7 +64,7 @@ export declare namespace At {
   }
 
   /** Blob interface */
-  interface Blob<T extends string = string> {
+  interface Blob<T extends string = string> extends RecordBase {
     $type: "blob";
     mimeType: T;
     ref: {
@@ -60,20 +74,17 @@ export declare namespace At {
   }
 }
 export declare namespace AppBskyActorDefs {
-  interface AdultContentPref {
-    [Brand.Type]: "app.bsky.actor.defs#adultContentPref";
+  interface AdultContentPref extends TypedBase {
     /** \@default false */
     enabled: boolean;
   }
   /** If set, an active progress guide. Once completed, can be set to undefined. Should have unspecced fields tracking progress. */
-  interface BskyAppProgressGuide {
-    [Brand.Type]: "app.bsky.actor.defs#bskyAppProgressGuide";
+  interface BskyAppProgressGuide extends TypedBase {
     /** Maximum string length: 100 */
     guide: string;
   }
   /** A grab bag of state that's specific to the bsky.app program. Third-party apps shouldn't use this. */
-  interface BskyAppStatePref {
-    [Brand.Type]: "app.bsky.actor.defs#bskyAppStatePref";
+  interface BskyAppStatePref extends TypedBase {
     activeProgressGuide?: BskyAppProgressGuide;
     /**
      * Storage for NUXs the user has encountered.
@@ -87,15 +98,13 @@ export declare namespace AppBskyActorDefs {
      */
     queuedNudges?: string[];
   }
-  interface ContentLabelPref {
-    [Brand.Type]: "app.bsky.actor.defs#contentLabelPref";
+  interface ContentLabelPref extends TypedBase {
     label: string;
     visibility: "hide" | "ignore" | "show" | "warn" | (string & {});
     /** Which labeler does this preference apply to? If undefined, applies globally. */
     labelerDid?: At.DID;
   }
-  interface FeedViewPref {
-    [Brand.Type]: "app.bsky.actor.defs#feedViewPref";
+  interface FeedViewPref extends TypedBase {
     /** The URI of the feed, or an identifier which describes the feed. */
     feed: string;
     /** Hide quote posts in the feed. */
@@ -112,13 +121,11 @@ export declare namespace AppBskyActorDefs {
     /** Hide reposts in the feed. */
     hideReposts?: boolean;
   }
-  interface HiddenPostsPref {
-    [Brand.Type]: "app.bsky.actor.defs#hiddenPostsPref";
+  interface HiddenPostsPref extends TypedBase {
     /** A list of URIs of posts the account owner has hidden. */
     items: At.Uri[];
   }
-  interface InterestsPref {
-    [Brand.Type]: "app.bsky.actor.defs#interestsPref";
+  interface InterestsPref extends TypedBase {
     /**
      * A list of tags which describe the account owner's interests gathered during onboarding.
      * Maximum array length: 100
@@ -128,8 +135,7 @@ export declare namespace AppBskyActorDefs {
     tags: string[];
   }
   /** The subject's followers whom you also follow */
-  interface KnownFollowers {
-    [Brand.Type]: "app.bsky.actor.defs#knownFollowers";
+  interface KnownFollowers extends TypedBase {
     count: number;
     /**
      * Minimum array length: 0
@@ -137,17 +143,14 @@ export declare namespace AppBskyActorDefs {
      */
     followers: ProfileViewBasic[];
   }
-  interface LabelerPrefItem {
-    [Brand.Type]: "app.bsky.actor.defs#labelerPrefItem";
+  interface LabelerPrefItem extends TypedBase {
     did: At.DID;
   }
-  interface LabelersPref {
-    [Brand.Type]: "app.bsky.actor.defs#labelersPref";
+  interface LabelersPref extends TypedBase {
     labelers: LabelerPrefItem[];
   }
   /** A word that the account owner has muted. */
-  interface MutedWord {
-    [Brand.Type]: "app.bsky.actor.defs#mutedWord";
+  interface MutedWord extends TypedBase {
     /** The intended targets of the muted word. */
     targets: AppBskyActorDefs.MutedWordTarget[];
     /**
@@ -165,8 +168,7 @@ export declare namespace AppBskyActorDefs {
     expiresAt?: string;
     id?: string;
   }
-  interface MutedWordsPref {
-    [Brand.Type]: "app.bsky.actor.defs#mutedWordsPref";
+  interface MutedWordsPref extends TypedBase {
     /** A list of words the account owner has muted. */
     items: AppBskyActorDefs.MutedWord[];
   }
@@ -176,8 +178,7 @@ export declare namespace AppBskyActorDefs {
    */
   type MutedWordTarget = "content" | "tag" | (string & {});
   /** A new user experiences (NUX) storage object */
-  interface Nux {
-    [Brand.Type]: "app.bsky.actor.defs#nux";
+  interface Nux extends TypedBase {
     /** \@default false */
     completed: boolean;
     /** Maximum string length: 100 */
@@ -191,12 +192,11 @@ export declare namespace AppBskyActorDefs {
     /** The date and time at which the NUX will expire and should be considered completed. */
     expiresAt?: string;
   }
-  interface PersonalDetailsPref {
-    [Brand.Type]: "app.bsky.actor.defs#personalDetailsPref";
+  interface PersonalDetailsPref extends TypedBase {
     /** The birth date of account owner. */
     birthDate?: string;
   }
-  type Preferences = Brand.Union<
+  type Preferences = TypeUnion<
     | AdultContentPref
     | BskyAppStatePref
     | ContentLabelPref
@@ -210,20 +210,17 @@ export declare namespace AppBskyActorDefs {
     | SavedFeedsPrefV2
     | ThreadViewPref
   >[];
-  interface ProfileAssociated {
-    [Brand.Type]: "app.bsky.actor.defs#profileAssociated";
+  interface ProfileAssociated extends TypedBase {
     chat?: ProfileAssociatedChat;
     feedgens?: number;
     labeler?: boolean;
     lists?: number;
     starterPacks?: number;
   }
-  interface ProfileAssociatedChat {
-    [Brand.Type]: "app.bsky.actor.defs#profileAssociatedChat";
+  interface ProfileAssociatedChat extends TypedBase {
     allowIncoming: "all" | "following" | "none" | (string & {});
   }
-  interface ProfileView {
-    [Brand.Type]: "app.bsky.actor.defs#profileView";
+  interface ProfileView extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     associated?: ProfileAssociated;
@@ -243,8 +240,7 @@ export declare namespace AppBskyActorDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     viewer?: ViewerState;
   }
-  interface ProfileViewBasic {
-    [Brand.Type]: "app.bsky.actor.defs#profileViewBasic";
+  interface ProfileViewBasic extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     associated?: ProfileAssociated;
@@ -258,8 +254,7 @@ export declare namespace AppBskyActorDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     viewer?: ViewerState;
   }
-  interface ProfileViewDetailed {
-    [Brand.Type]: "app.bsky.actor.defs#profileViewDetailed";
+  interface ProfileViewDetailed extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     associated?: ProfileAssociated;
@@ -285,25 +280,21 @@ export declare namespace AppBskyActorDefs {
     postsCount?: number;
     viewer?: ViewerState;
   }
-  interface SavedFeed {
-    [Brand.Type]: "app.bsky.actor.defs#savedFeed";
+  interface SavedFeed extends TypedBase {
     id: string;
     pinned: boolean;
     type: "feed" | "list" | "timeline" | (string & {});
     value: string;
   }
-  interface SavedFeedsPref {
-    [Brand.Type]: "app.bsky.actor.defs#savedFeedsPref";
+  interface SavedFeedsPref extends TypedBase {
     pinned: At.Uri[];
     saved: At.Uri[];
     timelineIndex?: number;
   }
-  interface SavedFeedsPrefV2 {
-    [Brand.Type]: "app.bsky.actor.defs#savedFeedsPrefV2";
+  interface SavedFeedsPrefV2 extends TypedBase {
     items: AppBskyActorDefs.SavedFeed[];
   }
-  interface ThreadViewPref {
-    [Brand.Type]: "app.bsky.actor.defs#threadViewPref";
+  interface ThreadViewPref extends TypedBase {
     /** Show followed users at the top of all replies. */
     prioritizeFollowedUsers?: boolean;
     /** Sorting mode for threads. */
@@ -316,8 +307,7 @@ export declare namespace AppBskyActorDefs {
       | (string & {});
   }
   /** Metadata about the requesting account's relationship with the subject account. Only has meaningful content for authed requests. */
-  interface ViewerState {
-    [Brand.Type]: "app.bsky.actor.defs#viewerState";
+  interface ViewerState extends TypedBase {
     blockedBy?: boolean;
     blocking?: At.Uri;
     blockingByList?: AppBskyGraphDefs.ListViewBasic;
@@ -332,14 +322,14 @@ export declare namespace AppBskyActorDefs {
 /** Get private preferences attached to the current account. Expected use is synchronization between multiple devices, and import/export during account migration. Requires auth. */
 export declare namespace AppBskyActorGetPreferences {
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     preferences: AppBskyActorDefs.Preferences;
   }
 }
 
 /** Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth. */
 export declare namespace AppBskyActorGetProfile {
-  interface Params {
+  interface Params extends TypedBase {
     /** Handle or DID of account to fetch profile of. */
     actor: string;
   }
@@ -349,19 +339,19 @@ export declare namespace AppBskyActorGetProfile {
 
 /** Get detailed profile views of multiple actors. */
 export declare namespace AppBskyActorGetProfiles {
-  interface Params {
+  interface Params extends TypedBase {
     /** Maximum array length: 25 */
     actors: string[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     profiles: AppBskyActorDefs.ProfileViewDetailed[];
   }
 }
 
 /** Get a list of suggested actors. Expected use is discovery of accounts to follow during new account onboarding. */
 export declare namespace AppBskyActorGetSuggestions {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -371,7 +361,7 @@ export declare namespace AppBskyActorGetSuggestions {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
     cursor?: string;
   }
@@ -379,7 +369,7 @@ export declare namespace AppBskyActorGetSuggestions {
 
 export declare namespace AppBskyActorProfile {
   /** A declaration of a Bluesky account profile. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.actor.profile";
     /** Small image to be displayed next to posts from account. AKA, 'profile picture' */
     avatar?: At.Blob;
@@ -399,15 +389,15 @@ export declare namespace AppBskyActorProfile {
     displayName?: string;
     joinedViaStarterPack?: ComAtprotoRepoStrongRef.Main;
     /** Self-label values, specific to the Bluesky application, on the overall account. */
-    labels?: Brand.Union<ComAtprotoLabelDefs.SelfLabels>;
+    labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
     pinnedPost?: ComAtprotoRepoStrongRef.Main;
   }
 }
 
 /** Set the private preferences attached to the account. */
 export declare namespace AppBskyActorPutPreferences {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     preferences: AppBskyActorDefs.Preferences;
   }
   type Output = undefined;
@@ -415,7 +405,7 @@ export declare namespace AppBskyActorPutPreferences {
 
 /** Find actors (profiles) matching search criteria. Does not require auth. */
 export declare namespace AppBskyActorSearchActors {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -432,7 +422,7 @@ export declare namespace AppBskyActorSearchActors {
     term?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
     cursor?: string;
   }
@@ -440,7 +430,7 @@ export declare namespace AppBskyActorSearchActors {
 
 /** Find actor suggestions for a prefix search term. Expected use is for auto-completion during text field entry. Does not require auth. */
 export declare namespace AppBskyActorSearchActorsTypeahead {
-  interface Params {
+  interface Params extends TypedBase {
     /**
      * Minimum: 1
      * Maximum: 100
@@ -456,15 +446,14 @@ export declare namespace AppBskyActorSearchActorsTypeahead {
     term?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileViewBasic[];
   }
 }
 
 export declare namespace AppBskyEmbedDefs {
   /** width:height represents an aspect ratio. It may be approximate, and may not correspond to absolute dimensions in any given unit. */
-  interface AspectRatio {
-    [Brand.Type]: "app.bsky.embed.defs#aspectRatio";
+  interface AspectRatio extends TypedBase {
     /** Minimum: 1 */
     height: number;
     /** Minimum: 1 */
@@ -474,23 +463,19 @@ export declare namespace AppBskyEmbedDefs {
 
 export declare namespace AppBskyEmbedExternal {
   /** A representation of some externally linked content (eg, a URL and 'card'), embedded in a Bluesky record (eg, a post). */
-  interface Main {
-    [Brand.Type]: "app.bsky.embed.external";
+  interface Main extends TypedBase {
     external: External;
   }
-  interface External {
-    [Brand.Type]: "app.bsky.embed.external#external";
+  interface External extends TypedBase {
     description: string;
     title: string;
     uri: string;
     thumb?: At.Blob;
   }
-  interface View {
-    [Brand.Type]: "app.bsky.embed.external#view";
+  interface View extends TypedBase {
     external: ViewExternal;
   }
-  interface ViewExternal {
-    [Brand.Type]: "app.bsky.embed.external#viewExternal";
+  interface ViewExternal extends TypedBase {
     description: string;
     title: string;
     uri: string;
@@ -499,25 +484,21 @@ export declare namespace AppBskyEmbedExternal {
 }
 
 export declare namespace AppBskyEmbedImages {
-  interface Main {
-    [Brand.Type]: "app.bsky.embed.images";
+  interface Main extends TypedBase {
     /** Maximum array length: 4 */
     images: Image[];
   }
-  interface Image {
-    [Brand.Type]: "app.bsky.embed.images#image";
+  interface Image extends TypedBase {
     /** Alt text description of the image, for accessibility. */
     alt: string;
     image: At.Blob;
     aspectRatio?: AppBskyEmbedDefs.AspectRatio;
   }
-  interface View {
-    [Brand.Type]: "app.bsky.embed.images#view";
+  interface View extends TypedBase {
     /** Maximum array length: 4 */
     images: ViewImage[];
   }
-  interface ViewImage {
-    [Brand.Type]: "app.bsky.embed.images#viewImage";
+  interface ViewImage extends TypedBase {
     /** Alt text description of the image, for accessibility. */
     alt: string;
     /** Fully-qualified URL where a large version of the image can be fetched. May or may not be the exact original blob. For example, CDN location provided by the App View. */
@@ -529,13 +510,11 @@ export declare namespace AppBskyEmbedImages {
 }
 
 export declare namespace AppBskyEmbedRecord {
-  interface Main {
-    [Brand.Type]: "app.bsky.embed.record";
+  interface Main extends TypedBase {
     record: ComAtprotoRepoStrongRef.Main;
   }
-  interface View {
-    [Brand.Type]: "app.bsky.embed.record#view";
-    record: Brand.Union<
+  interface View extends TypedBase {
+    record: TypeUnion<
       | ViewBlocked
       | ViewDetached
       | ViewNotFound
@@ -546,31 +525,27 @@ export declare namespace AppBskyEmbedRecord {
       | AppBskyLabelerDefs.LabelerView
     >;
   }
-  interface ViewBlocked {
-    [Brand.Type]: "app.bsky.embed.record#viewBlocked";
+  interface ViewBlocked extends TypedBase {
     author: AppBskyFeedDefs.BlockedAuthor;
     blocked: boolean;
     uri: At.Uri;
   }
-  interface ViewDetached {
-    [Brand.Type]: "app.bsky.embed.record#viewDetached";
+  interface ViewDetached extends TypedBase {
     detached: boolean;
     uri: At.Uri;
   }
-  interface ViewNotFound {
-    [Brand.Type]: "app.bsky.embed.record#viewNotFound";
+  interface ViewNotFound extends TypedBase {
     notFound: boolean;
     uri: At.Uri;
   }
-  interface ViewRecord {
-    [Brand.Type]: "app.bsky.embed.record#viewRecord";
+  interface ViewRecord extends TypedBase {
     author: AppBskyActorDefs.ProfileViewBasic;
     cid: At.CID;
     indexedAt: string;
     uri: At.Uri;
     /** The record data itself. */
     value: unknown;
-    embeds?: Brand.Union<
+    embeds?: TypeUnion<
       | AppBskyEmbedExternal.View
       | AppBskyEmbedImages.View
       | AppBskyEmbedRecord.View
@@ -586,18 +561,16 @@ export declare namespace AppBskyEmbedRecord {
 }
 
 export declare namespace AppBskyEmbedRecordWithMedia {
-  interface Main {
-    [Brand.Type]: "app.bsky.embed.recordWithMedia";
-    media: Brand.Union<
+  interface Main extends TypedBase {
+    media: TypeUnion<
       | AppBskyEmbedExternal.Main
       | AppBskyEmbedImages.Main
       | AppBskyEmbedVideo.Main
     >;
     record: AppBskyEmbedRecord.Main;
   }
-  interface View {
-    [Brand.Type]: "app.bsky.embed.recordWithMedia#view";
-    media: Brand.Union<
+  interface View extends TypedBase {
+    media: TypeUnion<
       | AppBskyEmbedExternal.View
       | AppBskyEmbedImages.View
       | AppBskyEmbedVideo.View
@@ -607,8 +580,7 @@ export declare namespace AppBskyEmbedRecordWithMedia {
 }
 
 export declare namespace AppBskyEmbedVideo {
-  interface Main {
-    [Brand.Type]: "app.bsky.embed.video";
+  interface Main extends TypedBase {
     video: At.Blob;
     /**
      * Alt text description of the video, for accessibility.
@@ -620,13 +592,11 @@ export declare namespace AppBskyEmbedVideo {
     /** Maximum array length: 20 */
     captions?: Caption[];
   }
-  interface Caption {
-    [Brand.Type]: "app.bsky.embed.video#caption";
+  interface Caption extends TypedBase {
     file: At.Blob;
     lang: string;
   }
-  interface View {
-    [Brand.Type]: "app.bsky.embed.video#view";
+  interface View extends TypedBase {
     cid: At.CID;
     playlist: string;
     /**
@@ -640,13 +610,11 @@ export declare namespace AppBskyEmbedVideo {
 }
 
 export declare namespace AppBskyFeedDefs {
-  interface BlockedAuthor {
-    [Brand.Type]: "app.bsky.feed.defs#blockedAuthor";
+  interface BlockedAuthor extends TypedBase {
     did: At.DID;
     viewer?: AppBskyActorDefs.ViewerState;
   }
-  interface BlockedPost {
-    [Brand.Type]: "app.bsky.feed.defs#blockedPost";
+  interface BlockedPost extends TypedBase {
     author: BlockedAuthor;
     blocked: boolean;
     uri: At.Uri;
@@ -655,19 +623,17 @@ export declare namespace AppBskyFeedDefs {
   type ClickthroughEmbed = "app.bsky.feed.defs#clickthroughEmbed";
   type ClickthroughItem = "app.bsky.feed.defs#clickthroughItem";
   type ClickthroughReposter = "app.bsky.feed.defs#clickthroughReposter";
-  interface FeedViewPost {
-    [Brand.Type]: "app.bsky.feed.defs#feedViewPost";
+  interface FeedViewPost extends TypedBase {
     post: PostView;
     /**
      * Context provided by feed generator that may be passed back alongside interactions.
      * Maximum string length: 2000
      */
     feedContext?: string;
-    reason?: Brand.Union<ReasonPin | ReasonRepost>;
+    reason?: TypeUnion<ReasonPin | ReasonRepost>;
     reply?: ReplyRef;
   }
-  interface GeneratorView {
-    [Brand.Type]: "app.bsky.feed.defs#generatorView";
+  interface GeneratorView extends TypedBase {
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     did: At.DID;
@@ -687,12 +653,10 @@ export declare namespace AppBskyFeedDefs {
     likeCount?: number;
     viewer?: GeneratorViewerState;
   }
-  interface GeneratorViewerState {
-    [Brand.Type]: "app.bsky.feed.defs#generatorViewerState";
+  interface GeneratorViewerState extends TypedBase {
     like?: At.Uri;
   }
-  interface Interaction {
-    [Brand.Type]: "app.bsky.feed.defs#interaction";
+  interface Interaction extends TypedBase {
     event?:
       | "app.bsky.feed.defs#clickthroughAuthor"
       | "app.bsky.feed.defs#clickthroughEmbed"
@@ -720,19 +684,17 @@ export declare namespace AppBskyFeedDefs {
   type InteractionRepost = "app.bsky.feed.defs#interactionRepost";
   type InteractionSeen = "app.bsky.feed.defs#interactionSeen";
   type InteractionShare = "app.bsky.feed.defs#interactionShare";
-  interface NotFoundPost {
-    [Brand.Type]: "app.bsky.feed.defs#notFoundPost";
+  interface NotFoundPost extends TypedBase {
     notFound: boolean;
     uri: At.Uri;
   }
-  interface PostView {
-    [Brand.Type]: "app.bsky.feed.defs#postView";
+  interface PostView extends TypedBase {
     author: AppBskyActorDefs.ProfileViewBasic;
     cid: At.CID;
     indexedAt: string;
     record: unknown;
     uri: At.Uri;
-    embed?: Brand.Union<
+    embed?: TypeUnion<
       | AppBskyEmbedExternal.View
       | AppBskyEmbedImages.View
       | AppBskyEmbedRecord.View
@@ -747,56 +709,45 @@ export declare namespace AppBskyFeedDefs {
     threadgate?: ThreadgateView;
     viewer?: ViewerState;
   }
-  interface ReasonPin {
-    [Brand.Type]: "app.bsky.feed.defs#reasonPin";
-  }
-  interface ReasonRepost {
-    [Brand.Type]: "app.bsky.feed.defs#reasonRepost";
+  interface ReasonPin extends TypedBase {}
+  interface ReasonRepost extends TypedBase {
     by: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
   }
-  interface ReplyRef {
-    [Brand.Type]: "app.bsky.feed.defs#replyRef";
-    parent: Brand.Union<BlockedPost | NotFoundPost | PostView>;
-    root: Brand.Union<BlockedPost | NotFoundPost | PostView>;
+  interface ReplyRef extends TypedBase {
+    parent: TypeUnion<BlockedPost | NotFoundPost | PostView>;
+    root: TypeUnion<BlockedPost | NotFoundPost | PostView>;
     /** When parent is a reply to another post, this is the author of that post. */
     grandparentAuthor?: AppBskyActorDefs.ProfileViewBasic;
   }
   type RequestLess = "app.bsky.feed.defs#requestLess";
   type RequestMore = "app.bsky.feed.defs#requestMore";
-  interface SkeletonFeedPost {
-    [Brand.Type]: "app.bsky.feed.defs#skeletonFeedPost";
+  interface SkeletonFeedPost extends TypedBase {
     post: At.Uri;
     /**
      * Context that will be passed through to client and may be passed to feed generator back alongside interactions.
      * Maximum string length: 2000
      */
     feedContext?: string;
-    reason?: Brand.Union<SkeletonReasonPin | SkeletonReasonRepost>;
+    reason?: TypeUnion<SkeletonReasonPin | SkeletonReasonRepost>;
   }
-  interface SkeletonReasonPin {
-    [Brand.Type]: "app.bsky.feed.defs#skeletonReasonPin";
-  }
-  interface SkeletonReasonRepost {
-    [Brand.Type]: "app.bsky.feed.defs#skeletonReasonRepost";
+  interface SkeletonReasonPin extends TypedBase {}
+  interface SkeletonReasonRepost extends TypedBase {
     repost: At.Uri;
   }
-  interface ThreadgateView {
-    [Brand.Type]: "app.bsky.feed.defs#threadgateView";
+  interface ThreadgateView extends TypedBase {
     cid?: At.CID;
     lists?: AppBskyGraphDefs.ListViewBasic[];
     record?: unknown;
     uri?: At.Uri;
   }
-  interface ThreadViewPost {
-    [Brand.Type]: "app.bsky.feed.defs#threadViewPost";
+  interface ThreadViewPost extends TypedBase {
     post: PostView;
-    parent?: Brand.Union<BlockedPost | NotFoundPost | ThreadViewPost>;
-    replies?: Brand.Union<BlockedPost | NotFoundPost | ThreadViewPost>[];
+    parent?: TypeUnion<BlockedPost | NotFoundPost | ThreadViewPost>;
+    replies?: TypeUnion<BlockedPost | NotFoundPost | ThreadViewPost>[];
   }
   /** Metadata about the requesting account's relationship with the subject content. Only has meaningful content for authed requests. */
-  interface ViewerState {
-    [Brand.Type]: "app.bsky.feed.defs#viewerState";
+  interface ViewerState extends TypedBase {
     embeddingDisabled?: boolean;
     like?: At.Uri;
     pinned?: boolean;
@@ -808,19 +759,17 @@ export declare namespace AppBskyFeedDefs {
 
 /** Get information about a feed generator, including policies and offered feed URIs. Does not require auth; implemented by Feed Generator services (not App View). */
 export declare namespace AppBskyFeedDescribeFeedGenerator {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     did: At.DID;
     feeds: Feed[];
     links?: Links;
   }
-  interface Feed {
-    [Brand.Type]: "app.bsky.feed.describeFeedGenerator#feed";
+  interface Feed extends TypedBase {
     uri: At.Uri;
   }
-  interface Links {
-    [Brand.Type]: "app.bsky.feed.describeFeedGenerator#links";
+  interface Links extends TypedBase {
     privacyPolicy?: string;
     termsOfService?: string;
   }
@@ -828,7 +777,7 @@ export declare namespace AppBskyFeedDescribeFeedGenerator {
 
 export declare namespace AppBskyFeedGenerator {
   /** Record declaring of the existence of a feed generator, and containing metadata about it. The record can exist in any repository. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.feed.generator";
     createdAt: string;
     did: At.DID;
@@ -847,13 +796,13 @@ export declare namespace AppBskyFeedGenerator {
     description?: string;
     descriptionFacets?: AppBskyRichtextFacet.Main[];
     /** Self-label values */
-    labels?: Brand.Union<ComAtprotoLabelDefs.SelfLabels>;
+    labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
   }
 }
 
 /** Get a list of feeds (feed generator records) created by the actor (in the actor's repo). */
 export declare namespace AppBskyFeedGetActorFeeds {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
     cursor?: string;
     /**
@@ -864,7 +813,7 @@ export declare namespace AppBskyFeedGetActorFeeds {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feeds: AppBskyFeedDefs.GeneratorView[];
     cursor?: string;
   }
@@ -872,7 +821,7 @@ export declare namespace AppBskyFeedGetActorFeeds {
 
 /** Get a list of posts liked by an actor. Requires auth, actor must be the requesting account. */
 export declare namespace AppBskyFeedGetActorLikes {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
     cursor?: string;
     /**
@@ -883,11 +832,11 @@ export declare namespace AppBskyFeedGetActorLikes {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feed: AppBskyFeedDefs.FeedViewPost[];
     cursor?: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     BlockedActor: {};
     BlockedByActor: {};
   }
@@ -895,7 +844,7 @@ export declare namespace AppBskyFeedGetActorLikes {
 
 /** Get a view of an actor's 'author feed' (post and reposts by the author). Does not require auth. */
 export declare namespace AppBskyFeedGetAuthorFeed {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
     cursor?: string;
     /**
@@ -918,11 +867,11 @@ export declare namespace AppBskyFeedGetAuthorFeed {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feed: AppBskyFeedDefs.FeedViewPost[];
     cursor?: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     BlockedActor: {};
     BlockedByActor: {};
   }
@@ -930,7 +879,7 @@ export declare namespace AppBskyFeedGetAuthorFeed {
 
 /** Get a hydrated feed from an actor's selected feed generator. Implemented by App View. */
 export declare namespace AppBskyFeedGetFeed {
-  interface Params {
+  interface Params extends TypedBase {
     feed: At.Uri;
     cursor?: string;
     /**
@@ -941,23 +890,23 @@ export declare namespace AppBskyFeedGetFeed {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feed: AppBskyFeedDefs.FeedViewPost[];
     cursor?: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     UnknownFeed: {};
   }
 }
 
 /** Get information about a feed generator. Implemented by AppView. */
 export declare namespace AppBskyFeedGetFeedGenerator {
-  interface Params {
+  interface Params extends TypedBase {
     /** AT-URI of the feed generator record. */
     feed: At.Uri;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     /** Indicates whether the feed generator service has been online recently, or else seems to be inactive. */
     isOnline: boolean;
     /** Indicates whether the feed generator service is compatible with the record declaration. */
@@ -968,18 +917,18 @@ export declare namespace AppBskyFeedGetFeedGenerator {
 
 /** Get information about a list of feed generators. */
 export declare namespace AppBskyFeedGetFeedGenerators {
-  interface Params {
+  interface Params extends TypedBase {
     feeds: At.Uri[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feeds: AppBskyFeedDefs.GeneratorView[];
   }
 }
 
 /** Get a skeleton of a feed provided by a feed generator. Auth is optional, depending on provider requirements, and provides the DID of the requester. Implemented by Feed Generator Service. */
 export declare namespace AppBskyFeedGetFeedSkeleton {
-  interface Params {
+  interface Params extends TypedBase {
     /** Reference to feed generator record describing the specific feed being requested. */
     feed: At.Uri;
     cursor?: string;
@@ -991,18 +940,18 @@ export declare namespace AppBskyFeedGetFeedSkeleton {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feed: AppBskyFeedDefs.SkeletonFeedPost[];
     cursor?: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     UnknownFeed: {};
   }
 }
 
 /** Get like records which reference a subject (by AT-URI and CID). */
 export declare namespace AppBskyFeedGetLikes {
-  interface Params {
+  interface Params extends TypedBase {
     /** AT-URI of the subject (eg, a post record). */
     uri: At.Uri;
     /** CID of the subject record (aka, specific version of record), to filter likes. */
@@ -1016,14 +965,13 @@ export declare namespace AppBskyFeedGetLikes {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     likes: Like[];
     uri: At.Uri;
     cid?: At.CID;
     cursor?: string;
   }
-  interface Like {
-    [Brand.Type]: "app.bsky.feed.getLikes#like";
+  interface Like extends TypedBase {
     actor: AppBskyActorDefs.ProfileView;
     createdAt: string;
     indexedAt: string;
@@ -1032,7 +980,7 @@ export declare namespace AppBskyFeedGetLikes {
 
 /** Get a feed of recent posts from a list (posts and reposts from any actors on the list). Does not require auth. */
 export declare namespace AppBskyFeedGetListFeed {
-  interface Params {
+  interface Params extends TypedBase {
     /** Reference (AT-URI) to the list record. */
     list: At.Uri;
     cursor?: string;
@@ -1044,18 +992,18 @@ export declare namespace AppBskyFeedGetListFeed {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feed: AppBskyFeedDefs.FeedViewPost[];
     cursor?: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     UnknownList: {};
   }
 }
 
 /** Gets post views for a specified list of posts (by AT-URI). This is sometimes referred to as 'hydrating' a 'feed skeleton'. */
 export declare namespace AppBskyFeedGetPosts {
-  interface Params {
+  interface Params extends TypedBase {
     /**
      * List of post AT-URIs to return hydrated views for.
      * Maximum array length: 25
@@ -1063,14 +1011,14 @@ export declare namespace AppBskyFeedGetPosts {
     uris: At.Uri[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     posts: AppBskyFeedDefs.PostView[];
   }
 }
 
 /** Get posts in a thread. Does not require auth, but additional metadata and filtering will be applied for authed requests. */
 export declare namespace AppBskyFeedGetPostThread {
-  interface Params {
+  interface Params extends TypedBase {
     /** Reference (AT-URI) to post record. */
     uri: At.Uri;
     /**
@@ -1089,22 +1037,22 @@ export declare namespace AppBskyFeedGetPostThread {
     parentHeight?: number;
   }
   type Input = undefined;
-  interface Output {
-    thread: Brand.Union<
+  interface Output extends TypedBase {
+    thread: TypeUnion<
       | AppBskyFeedDefs.BlockedPost
       | AppBskyFeedDefs.NotFoundPost
       | AppBskyFeedDefs.ThreadViewPost
     >;
     threadgate?: AppBskyFeedDefs.ThreadgateView;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     NotFound: {};
   }
 }
 
 /** Get a list of quotes for a given post. */
 export declare namespace AppBskyFeedGetQuotes {
-  interface Params {
+  interface Params extends TypedBase {
     /** Reference (AT-URI) of post record */
     uri: At.Uri;
     /** If supplied, filters to quotes of specific version (by CID) of the post record. */
@@ -1118,7 +1066,7 @@ export declare namespace AppBskyFeedGetQuotes {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     posts: AppBskyFeedDefs.PostView[];
     uri: At.Uri;
     cid?: At.CID;
@@ -1128,7 +1076,7 @@ export declare namespace AppBskyFeedGetQuotes {
 
 /** Get a list of reposts for a given post. */
 export declare namespace AppBskyFeedGetRepostedBy {
-  interface Params {
+  interface Params extends TypedBase {
     /** Reference (AT-URI) of post record */
     uri: At.Uri;
     /** If supplied, filters to reposts of specific version (by CID) of the post record. */
@@ -1142,7 +1090,7 @@ export declare namespace AppBskyFeedGetRepostedBy {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     repostedBy: AppBskyActorDefs.ProfileView[];
     uri: At.Uri;
     cid?: At.CID;
@@ -1152,7 +1100,7 @@ export declare namespace AppBskyFeedGetRepostedBy {
 
 /** Get a list of suggested feeds (feed generators) for the requesting account. */
 export declare namespace AppBskyFeedGetSuggestedFeeds {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -1162,7 +1110,7 @@ export declare namespace AppBskyFeedGetSuggestedFeeds {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feeds: AppBskyFeedDefs.GeneratorView[];
     cursor?: string;
   }
@@ -1170,7 +1118,7 @@ export declare namespace AppBskyFeedGetSuggestedFeeds {
 
 /** Get a view of the requesting account's home timeline. This is expected to be some form of reverse-chronological feed. */
 export declare namespace AppBskyFeedGetTimeline {
-  interface Params {
+  interface Params extends TypedBase {
     /** Variant 'algorithm' for timeline. Implementation-specific. NOTE: most feed flexibility has been moved to feed generator mechanism. */
     algorithm?: string;
     cursor?: string;
@@ -1182,7 +1130,7 @@ export declare namespace AppBskyFeedGetTimeline {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feed: AppBskyFeedDefs.FeedViewPost[];
     cursor?: string;
   }
@@ -1190,7 +1138,7 @@ export declare namespace AppBskyFeedGetTimeline {
 
 export declare namespace AppBskyFeedLike {
   /** Record declaring a 'like' of a piece of subject content. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.feed.like";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
@@ -1199,7 +1147,7 @@ export declare namespace AppBskyFeedLike {
 
 export declare namespace AppBskyFeedPost {
   /** Record containing a Bluesky post. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.feed.post";
     /** Client-declared timestamp when this post was originally created. */
     createdAt: string;
@@ -1209,7 +1157,7 @@ export declare namespace AppBskyFeedPost {
      * Maximum grapheme length: 300
      */
     text: string;
-    embed?: Brand.Union<
+    embed?: TypeUnion<
       | AppBskyEmbedExternal.Main
       | AppBskyEmbedImages.Main
       | AppBskyEmbedRecord.Main
@@ -1224,7 +1172,7 @@ export declare namespace AppBskyFeedPost {
     /** Annotations of text (mentions, URLs, hashtags, etc) */
     facets?: AppBskyRichtextFacet.Main[];
     /** Self-label values for this post. Effectively content warnings. */
-    labels?: Brand.Union<ComAtprotoLabelDefs.SelfLabels>;
+    labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
     /**
      * Indicates human language of post primary text content.
      * Maximum array length: 3
@@ -1243,15 +1191,13 @@ export declare namespace AppBskyFeedPost {
    * Deprecated: use facets instead.
    * \@deprecated
    */
-  interface Entity {
-    [Brand.Type]: "app.bsky.feed.post#entity";
+  interface Entity extends TypedBase {
     index: TextSlice;
     /** Expected values are 'mention' and 'link'. */
     type: string;
     value: string;
   }
-  interface ReplyRef {
-    [Brand.Type]: "app.bsky.feed.post#replyRef";
+  interface ReplyRef extends TypedBase {
     parent: ComAtprotoRepoStrongRef.Main;
     root: ComAtprotoRepoStrongRef.Main;
   }
@@ -1259,8 +1205,7 @@ export declare namespace AppBskyFeedPost {
    * Deprecated. Use app.bsky.richtext instead -- A text segment. Start is inclusive, end is exclusive. Indices are for utf16-encoded strings.
    * \@deprecated
    */
-  interface TextSlice {
-    [Brand.Type]: "app.bsky.feed.post#textSlice";
+  interface TextSlice extends TypedBase {
     /** Minimum: 0 */
     end: number;
     /** Minimum: 0 */
@@ -1270,7 +1215,7 @@ export declare namespace AppBskyFeedPost {
 
 export declare namespace AppBskyFeedPostgate {
   /** Record defining interaction rules for a post. The record key (rkey) of the postgate record must match the record key of the post, and that record must be in the same repository. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.feed.postgate";
     createdAt: string;
     /** Reference (AT-URI) to the post record. */
@@ -1281,17 +1226,15 @@ export declare namespace AppBskyFeedPostgate {
      */
     detachedEmbeddingUris?: At.Uri[];
     /** Maximum array length: 5 */
-    embeddingRules?: Brand.Union<DisableRule>[];
+    embeddingRules?: TypeUnion<DisableRule>[];
   }
   /** Disables embedding of this post. */
-  interface DisableRule {
-    [Brand.Type]: "app.bsky.feed.postgate#disableRule";
-  }
+  interface DisableRule extends TypedBase {}
 }
 
 export declare namespace AppBskyFeedRepost {
   /** Record representing a 'repost' of an existing Bluesky post. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.feed.repost";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
@@ -1300,7 +1243,7 @@ export declare namespace AppBskyFeedRepost {
 
 /** Find posts matching search criteria, returning views of those posts. */
 export declare namespace AppBskyFeedSearchPosts {
-  interface Params {
+  interface Params extends TypedBase {
     /** Search query string; syntax, phrase, boolean, and faceting is unspecified, but Lucene query syntax is recommended. */
     q: string;
     /** Filter to posts by the given account. Handles are resolved to DID before query-time. */
@@ -1338,35 +1281,35 @@ export declare namespace AppBskyFeedSearchPosts {
     url?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     posts: AppBskyFeedDefs.PostView[];
     cursor?: string;
     /** Count of search hits. Optional, may be rounded/truncated, and may not be possible to paginate through all hits. */
     hitsTotal?: number;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     BadQueryString: {};
   }
 }
 
 /** Send information about interactions with feed items back to the feed generator that served them. */
 export declare namespace AppBskyFeedSendInteractions {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     interactions: AppBskyFeedDefs.Interaction[];
   }
-  interface Output {}
+  interface Output extends TypedBase {}
 }
 
 export declare namespace AppBskyFeedThreadgate {
   /** Record defining interaction gating rules for a thread (aka, reply controls). The record key (rkey) of the threadgate record must match the record key of the thread's root post, and that record must be in the same repository. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.feed.threadgate";
     createdAt: string;
     /** Reference (AT-URI) to the post record. */
     post: At.Uri;
     /** Maximum array length: 5 */
-    allow?: Brand.Union<FollowingRule | ListRule | MentionRule>[];
+    allow?: TypeUnion<FollowingRule | ListRule | MentionRule>[];
     /**
      * List of hidden reply URIs.
      * Maximum array length: 50
@@ -1374,23 +1317,18 @@ export declare namespace AppBskyFeedThreadgate {
     hiddenReplies?: At.Uri[];
   }
   /** Allow replies from actors you follow. */
-  interface FollowingRule {
-    [Brand.Type]: "app.bsky.feed.threadgate#followingRule";
-  }
+  interface FollowingRule extends TypedBase {}
   /** Allow replies from actors on a list. */
-  interface ListRule {
-    [Brand.Type]: "app.bsky.feed.threadgate#listRule";
+  interface ListRule extends TypedBase {
     list: At.Uri;
   }
   /** Allow replies from actors mentioned in your post. */
-  interface MentionRule {
-    [Brand.Type]: "app.bsky.feed.threadgate#mentionRule";
-  }
+  interface MentionRule extends TypedBase {}
 }
 
 export declare namespace AppBskyGraphBlock {
   /** Record declaring a 'block' relationship against another account. NOTE: blocks are public in Bluesky; see blog posts for details. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.graph.block";
     createdAt: string;
     /** DID of the account to be blocked. */
@@ -1400,8 +1338,7 @@ export declare namespace AppBskyGraphBlock {
 
 export declare namespace AppBskyGraphDefs {
   type Curatelist = "app.bsky.graph.defs#curatelist";
-  interface ListItemView {
-    [Brand.Type]: "app.bsky.graph.defs#listItemView";
+  interface ListItemView extends TypedBase {
     subject: AppBskyActorDefs.ProfileView;
     uri: At.Uri;
   }
@@ -1410,8 +1347,7 @@ export declare namespace AppBskyGraphDefs {
     | "app.bsky.graph.defs#modlist"
     | "app.bsky.graph.defs#referencelist"
     | (string & {});
-  interface ListView {
-    [Brand.Type]: "app.bsky.graph.defs#listView";
+  interface ListView extends TypedBase {
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     indexedAt: string;
@@ -1434,8 +1370,7 @@ export declare namespace AppBskyGraphDefs {
     listItemCount?: number;
     viewer?: ListViewerState;
   }
-  interface ListViewBasic {
-    [Brand.Type]: "app.bsky.graph.defs#listViewBasic";
+  interface ListViewBasic extends TypedBase {
     cid: At.CID;
     /**
      * Minimum string length: 1
@@ -1451,30 +1386,26 @@ export declare namespace AppBskyGraphDefs {
     listItemCount?: number;
     viewer?: ListViewerState;
   }
-  interface ListViewerState {
-    [Brand.Type]: "app.bsky.graph.defs#listViewerState";
+  interface ListViewerState extends TypedBase {
     blocked?: At.Uri;
     muted?: boolean;
   }
   type Modlist = "app.bsky.graph.defs#modlist";
   /** indicates that a handle or DID could not be resolved */
-  interface NotFoundActor {
-    [Brand.Type]: "app.bsky.graph.defs#notFoundActor";
+  interface NotFoundActor extends TypedBase {
     actor: string;
     notFound: boolean;
   }
   type Referencelist = "app.bsky.graph.defs#referencelist";
   /** lists the bi-directional graph relationships between one actor (not indicated in the object), and the target actors (the DID included in the object) */
-  interface Relationship {
-    [Brand.Type]: "app.bsky.graph.defs#relationship";
+  interface Relationship extends TypedBase {
     did: At.DID;
     /** if the actor is followed by this DID, contains the AT-URI of the follow record */
     followedBy?: At.Uri;
     /** if the actor follows this DID, this is the AT-URI of the follow record */
     following?: At.Uri;
   }
-  interface StarterPackView {
-    [Brand.Type]: "app.bsky.graph.defs#starterPackView";
+  interface StarterPackView extends TypedBase {
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
@@ -1491,8 +1422,7 @@ export declare namespace AppBskyGraphDefs {
     /** Maximum array length: 12 */
     listItemsSample?: ListItemView[];
   }
-  interface StarterPackViewBasic {
-    [Brand.Type]: "app.bsky.graph.defs#starterPackViewBasic";
+  interface StarterPackViewBasic extends TypedBase {
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
@@ -1510,7 +1440,7 @@ export declare namespace AppBskyGraphDefs {
 
 export declare namespace AppBskyGraphFollow {
   /** Record declaring a social 'follow' relationship of another account. Duplicate follows will be ignored by the AppView. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.graph.follow";
     createdAt: string;
     subject: At.DID;
@@ -1519,7 +1449,7 @@ export declare namespace AppBskyGraphFollow {
 
 /** Get a list of starter packs created by the actor. */
 export declare namespace AppBskyGraphGetActorStarterPacks {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
     cursor?: string;
     /**
@@ -1530,7 +1460,7 @@ export declare namespace AppBskyGraphGetActorStarterPacks {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     starterPacks: AppBskyGraphDefs.StarterPackViewBasic[];
     cursor?: string;
   }
@@ -1538,7 +1468,7 @@ export declare namespace AppBskyGraphGetActorStarterPacks {
 
 /** Enumerates which accounts the requesting account is currently blocking. Requires auth. */
 export declare namespace AppBskyGraphGetBlocks {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -1548,7 +1478,7 @@ export declare namespace AppBskyGraphGetBlocks {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     blocks: AppBskyActorDefs.ProfileView[];
     cursor?: string;
   }
@@ -1556,7 +1486,7 @@ export declare namespace AppBskyGraphGetBlocks {
 
 /** Enumerates accounts which follow a specified account (actor). */
 export declare namespace AppBskyGraphGetFollowers {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
     cursor?: string;
     /**
@@ -1567,7 +1497,7 @@ export declare namespace AppBskyGraphGetFollowers {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     followers: AppBskyActorDefs.ProfileView[];
     subject: AppBskyActorDefs.ProfileView;
     cursor?: string;
@@ -1576,7 +1506,7 @@ export declare namespace AppBskyGraphGetFollowers {
 
 /** Enumerates accounts which a specified account (actor) follows. */
 export declare namespace AppBskyGraphGetFollows {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
     cursor?: string;
     /**
@@ -1587,7 +1517,7 @@ export declare namespace AppBskyGraphGetFollows {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     follows: AppBskyActorDefs.ProfileView[];
     subject: AppBskyActorDefs.ProfileView;
     cursor?: string;
@@ -1596,7 +1526,7 @@ export declare namespace AppBskyGraphGetFollows {
 
 /** Enumerates accounts which follow a specified account (actor) and are followed by the viewer. */
 export declare namespace AppBskyGraphGetKnownFollowers {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
     cursor?: string;
     /**
@@ -1607,7 +1537,7 @@ export declare namespace AppBskyGraphGetKnownFollowers {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     followers: AppBskyActorDefs.ProfileView[];
     subject: AppBskyActorDefs.ProfileView;
     cursor?: string;
@@ -1616,7 +1546,7 @@ export declare namespace AppBskyGraphGetKnownFollowers {
 
 /** Gets a 'view' (with additional context) of a specified list. */
 export declare namespace AppBskyGraphGetList {
-  interface Params {
+  interface Params extends TypedBase {
     /** Reference (AT-URI) of the list record to hydrate. */
     list: At.Uri;
     cursor?: string;
@@ -1628,7 +1558,7 @@ export declare namespace AppBskyGraphGetList {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     items: AppBskyGraphDefs.ListItemView[];
     list: AppBskyGraphDefs.ListView;
     cursor?: string;
@@ -1637,7 +1567,7 @@ export declare namespace AppBskyGraphGetList {
 
 /** Get mod lists that the requesting account (actor) is blocking. Requires auth. */
 export declare namespace AppBskyGraphGetListBlocks {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -1647,7 +1577,7 @@ export declare namespace AppBskyGraphGetListBlocks {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     lists: AppBskyGraphDefs.ListView[];
     cursor?: string;
   }
@@ -1655,7 +1585,7 @@ export declare namespace AppBskyGraphGetListBlocks {
 
 /** Enumerates mod lists that the requesting account (actor) currently has muted. Requires auth. */
 export declare namespace AppBskyGraphGetListMutes {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -1665,7 +1595,7 @@ export declare namespace AppBskyGraphGetListMutes {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     lists: AppBskyGraphDefs.ListView[];
     cursor?: string;
   }
@@ -1673,7 +1603,7 @@ export declare namespace AppBskyGraphGetListMutes {
 
 /** Enumerates the lists created by a specified account (actor). */
 export declare namespace AppBskyGraphGetLists {
-  interface Params {
+  interface Params extends TypedBase {
     /** The account (actor) to enumerate lists from. */
     actor: string;
     cursor?: string;
@@ -1685,7 +1615,7 @@ export declare namespace AppBskyGraphGetLists {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     lists: AppBskyGraphDefs.ListView[];
     cursor?: string;
   }
@@ -1693,7 +1623,7 @@ export declare namespace AppBskyGraphGetLists {
 
 /** Enumerates accounts that the requesting account (actor) currently has muted. Requires auth. */
 export declare namespace AppBskyGraphGetMutes {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -1703,7 +1633,7 @@ export declare namespace AppBskyGraphGetMutes {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     mutes: AppBskyActorDefs.ProfileView[];
     cursor?: string;
   }
@@ -1711,7 +1641,7 @@ export declare namespace AppBskyGraphGetMutes {
 
 /** Enumerates public relationships between one account, and a list of other accounts. Does not require auth. */
 export declare namespace AppBskyGraphGetRelationships {
-  interface Params {
+  interface Params extends TypedBase {
     /** Primary account requesting relationships for. */
     actor: string;
     /**
@@ -1721,48 +1651,48 @@ export declare namespace AppBskyGraphGetRelationships {
     others?: string[];
   }
   type Input = undefined;
-  interface Output {
-    relationships: Brand.Union<
+  interface Output extends TypedBase {
+    relationships: TypeUnion<
       AppBskyGraphDefs.NotFoundActor | AppBskyGraphDefs.Relationship
     >[];
     actor?: At.DID;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     ActorNotFound: {};
   }
 }
 
 /** Gets a view of a starter pack. */
 export declare namespace AppBskyGraphGetStarterPack {
-  interface Params {
+  interface Params extends TypedBase {
     /** Reference (AT-URI) of the starter pack record. */
     starterPack: At.Uri;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     starterPack: AppBskyGraphDefs.StarterPackView;
   }
 }
 
 /** Get views for a list of starter packs. */
 export declare namespace AppBskyGraphGetStarterPacks {
-  interface Params {
+  interface Params extends TypedBase {
     /** Maximum array length: 25 */
     uris: At.Uri[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     starterPacks: AppBskyGraphDefs.StarterPackViewBasic[];
   }
 }
 
 /** Enumerates follows similar to a given account (actor). Expected use is to recommend additional accounts immediately after following one account. */
 export declare namespace AppBskyGraphGetSuggestedFollowsByActor {
-  interface Params {
+  interface Params extends TypedBase {
     actor: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     suggestions: AppBskyActorDefs.ProfileView[];
     /**
      * If true, response has fallen-back to generic results, and is not scoped using relativeToDid
@@ -1774,7 +1704,7 @@ export declare namespace AppBskyGraphGetSuggestedFollowsByActor {
 
 export declare namespace AppBskyGraphList {
   /** Record representing a list of accounts (actors). Scope includes both moderation-oriented lists and curration-oriented lists. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.graph.list";
     createdAt: string;
     /**
@@ -1792,13 +1722,13 @@ export declare namespace AppBskyGraphList {
      */
     description?: string;
     descriptionFacets?: AppBskyRichtextFacet.Main[];
-    labels?: Brand.Union<ComAtprotoLabelDefs.SelfLabels>;
+    labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
   }
 }
 
 export declare namespace AppBskyGraphListblock {
   /** Record representing a block relationship against an entire an entire list of accounts (actors). */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.graph.listblock";
     createdAt: string;
     /** Reference (AT-URI) to the mod list record. */
@@ -1808,7 +1738,7 @@ export declare namespace AppBskyGraphListblock {
 
 export declare namespace AppBskyGraphListitem {
   /** Record representing an account's inclusion on a specific list. The AppView will ignore duplicate listitem records. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.graph.listitem";
     createdAt: string;
     /** Reference (AT-URI) to the list record (app.bsky.graph.list). */
@@ -1820,8 +1750,8 @@ export declare namespace AppBskyGraphListitem {
 
 /** Creates a mute relationship for the specified account. Mutes are private in Bluesky. Requires auth. */
 export declare namespace AppBskyGraphMuteActor {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     actor: string;
   }
   type Output = undefined;
@@ -1829,8 +1759,8 @@ export declare namespace AppBskyGraphMuteActor {
 
 /** Creates a mute relationship for the specified list of accounts. Mutes are private in Bluesky. Requires auth. */
 export declare namespace AppBskyGraphMuteActorList {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     list: At.Uri;
   }
   type Output = undefined;
@@ -1838,8 +1768,8 @@ export declare namespace AppBskyGraphMuteActorList {
 
 /** Mutes a thread preventing notifications from the thread and any of its children. Mutes are private in Bluesky. Requires auth. */
 export declare namespace AppBskyGraphMuteThread {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     root: At.Uri;
   }
   type Output = undefined;
@@ -1847,7 +1777,7 @@ export declare namespace AppBskyGraphMuteThread {
 
 /** Find starter packs matching search criteria. Does not require auth. */
 export declare namespace AppBskyGraphSearchStarterPacks {
-  interface Params {
+  interface Params extends TypedBase {
     /** Search query string. Syntax, phrase, boolean, and faceting is unspecified, but Lucene query syntax is recommended. */
     q: string;
     cursor?: string;
@@ -1859,7 +1789,7 @@ export declare namespace AppBskyGraphSearchStarterPacks {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     starterPacks: AppBskyGraphDefs.StarterPackViewBasic[];
     cursor?: string;
   }
@@ -1867,7 +1797,7 @@ export declare namespace AppBskyGraphSearchStarterPacks {
 
 export declare namespace AppBskyGraphStarterpack {
   /** Record defining a starter pack of actors and feeds for new users. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.graph.starterpack";
     createdAt: string;
     /** Reference (AT-URI) to the list record. */
@@ -1888,16 +1818,15 @@ export declare namespace AppBskyGraphStarterpack {
     /** Maximum array length: 3 */
     feeds?: FeedItem[];
   }
-  interface FeedItem {
-    [Brand.Type]: "app.bsky.graph.starterpack#feedItem";
+  interface FeedItem extends TypedBase {
     uri: At.Uri;
   }
 }
 
 /** Unmutes the specified account. Requires auth. */
 export declare namespace AppBskyGraphUnmuteActor {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     actor: string;
   }
   type Output = undefined;
@@ -1905,8 +1834,8 @@ export declare namespace AppBskyGraphUnmuteActor {
 
 /** Unmutes the specified list of accounts. Requires auth. */
 export declare namespace AppBskyGraphUnmuteActorList {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     list: At.Uri;
   }
   type Output = undefined;
@@ -1914,23 +1843,21 @@ export declare namespace AppBskyGraphUnmuteActorList {
 
 /** Unmutes the specified thread. Requires auth. */
 export declare namespace AppBskyGraphUnmuteThread {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     root: At.Uri;
   }
   type Output = undefined;
 }
 
 export declare namespace AppBskyLabelerDefs {
-  interface LabelerPolicies {
-    [Brand.Type]: "app.bsky.labeler.defs#labelerPolicies";
+  interface LabelerPolicies extends TypedBase {
     /** The label values which this labeler publishes. May include global or custom labels. */
     labelValues: ComAtprotoLabelDefs.LabelValue[];
     /** Label values created by this labeler and scoped exclusively to it. Labels defined here will override global label definitions for this labeler. */
     labelValueDefinitions?: ComAtprotoLabelDefs.LabelValueDefinition[];
   }
-  interface LabelerView {
-    [Brand.Type]: "app.bsky.labeler.defs#labelerView";
+  interface LabelerView extends TypedBase {
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     indexedAt: string;
@@ -1940,8 +1867,7 @@ export declare namespace AppBskyLabelerDefs {
     likeCount?: number;
     viewer?: LabelerViewerState;
   }
-  interface LabelerViewDetailed {
-    [Brand.Type]: "app.bsky.labeler.defs#labelerViewDetailed";
+  interface LabelerViewDetailed extends TypedBase {
     cid: At.CID;
     creator: AppBskyActorDefs.ProfileView;
     indexedAt: string;
@@ -1952,22 +1878,21 @@ export declare namespace AppBskyLabelerDefs {
     likeCount?: number;
     viewer?: LabelerViewerState;
   }
-  interface LabelerViewerState {
-    [Brand.Type]: "app.bsky.labeler.defs#labelerViewerState";
+  interface LabelerViewerState extends TypedBase {
     like?: At.Uri;
   }
 }
 
 /** Get information about a list of labeler services. */
 export declare namespace AppBskyLabelerGetServices {
-  interface Params {
+  interface Params extends TypedBase {
     dids: At.DID[];
     /** \@default false */
     detailed?: boolean;
   }
   type Input = undefined;
-  interface Output {
-    views: Brand.Union<
+  interface Output extends TypedBase {
+    views: TypeUnion<
       AppBskyLabelerDefs.LabelerView | AppBskyLabelerDefs.LabelerViewDetailed
     >[];
   }
@@ -1975,29 +1900,29 @@ export declare namespace AppBskyLabelerGetServices {
 
 export declare namespace AppBskyLabelerService {
   /** A declaration of the existence of labeler service. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "app.bsky.labeler.service";
     createdAt: string;
     policies: AppBskyLabelerDefs.LabelerPolicies;
-    labels?: Brand.Union<ComAtprotoLabelDefs.SelfLabels>;
+    labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
   }
 }
 
 /** Count the number of unread notifications for the requesting account. Requires auth. */
 export declare namespace AppBskyNotificationGetUnreadCount {
-  interface Params {
+  interface Params extends TypedBase {
     priority?: boolean;
     seenAt?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     count: number;
   }
 }
 
 /** Enumerate notifications for the requesting account. Requires auth. */
 export declare namespace AppBskyNotificationListNotifications {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -2009,14 +1934,13 @@ export declare namespace AppBskyNotificationListNotifications {
     seenAt?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     notifications: Notification[];
     cursor?: string;
     priority?: boolean;
     seenAt?: string;
   }
-  interface Notification {
-    [Brand.Type]: "app.bsky.notification.listNotifications#notification";
+  interface Notification extends TypedBase {
     author: AppBskyActorDefs.ProfileView;
     cid: At.CID;
     indexedAt: string;
@@ -2040,8 +1964,8 @@ export declare namespace AppBskyNotificationListNotifications {
 
 /** Set notification-related preferences for an account. Requires auth. */
 export declare namespace AppBskyNotificationPutPreferences {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     priority: boolean;
   }
   type Output = undefined;
@@ -2049,8 +1973,8 @@ export declare namespace AppBskyNotificationPutPreferences {
 
 /** Register to receive push notifications, via a specified service, for the requesting account. Requires auth. */
 export declare namespace AppBskyNotificationRegisterPush {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     appId: string;
     platform: "android" | "ios" | "web" | (string & {});
     serviceDid: At.DID;
@@ -2061,8 +1985,8 @@ export declare namespace AppBskyNotificationRegisterPush {
 
 /** Notify server that the requesting account has seen notifications. Requires auth. */
 export declare namespace AppBskyNotificationUpdateSeen {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     seenAt: string;
   }
   type Output = undefined;
@@ -2070,32 +1994,27 @@ export declare namespace AppBskyNotificationUpdateSeen {
 
 export declare namespace AppBskyRichtextFacet {
   /** Annotation of a sub-string within rich text. */
-  interface Main {
-    [Brand.Type]: "app.bsky.richtext.facet";
-    features: Brand.Union<Link | Mention | Tag>[];
+  interface Main extends TypedBase {
+    features: TypeUnion<Link | Mention | Tag>[];
     index: ByteSlice;
   }
   /** Specifies the sub-string range a facet feature applies to. Start index is inclusive, end index is exclusive. Indices are zero-indexed, counting bytes of the UTF-8 encoded text. NOTE: some languages, like Javascript, use UTF-16 or Unicode codepoints for string slice indexing; in these languages, convert to byte arrays before working with facets. */
-  interface ByteSlice {
-    [Brand.Type]: "app.bsky.richtext.facet#byteSlice";
+  interface ByteSlice extends TypedBase {
     /** Minimum: 0 */
     byteEnd: number;
     /** Minimum: 0 */
     byteStart: number;
   }
   /** Facet feature for a URL. The text URL may have been simplified or truncated, but the facet reference should be a complete URL. */
-  interface Link {
-    [Brand.Type]: "app.bsky.richtext.facet#link";
+  interface Link extends TypedBase {
     uri: string;
   }
   /** Facet feature for mention of another account. The text is usually a handle, including a '\@' prefix, but the facet reference is a DID. */
-  interface Mention {
-    [Brand.Type]: "app.bsky.richtext.facet#mention";
+  interface Mention extends TypedBase {
     did: At.DID;
   }
   /** Facet feature for a hashtag. The text usually includes a '#' prefix, but the facet reference should not (except in the case of 'double hash tags'). */
-  interface Tag {
-    [Brand.Type]: "app.bsky.richtext.facet#tag";
+  interface Tag extends TypedBase {
     /**
      * Maximum string length: 640
      * Maximum grapheme length: 64
@@ -2105,32 +2024,29 @@ export declare namespace AppBskyRichtextFacet {
 }
 
 export declare namespace AppBskyUnspeccedDefs {
-  interface SkeletonSearchActor {
-    [Brand.Type]: "app.bsky.unspecced.defs#skeletonSearchActor";
+  interface SkeletonSearchActor extends TypedBase {
     did: At.DID;
   }
-  interface SkeletonSearchPost {
-    [Brand.Type]: "app.bsky.unspecced.defs#skeletonSearchPost";
+  interface SkeletonSearchPost extends TypedBase {
     uri: At.Uri;
   }
-  interface SkeletonSearchStarterPack {
-    [Brand.Type]: "app.bsky.unspecced.defs#skeletonSearchStarterPack";
+  interface SkeletonSearchStarterPack extends TypedBase {
     uri: At.Uri;
   }
 }
 
 /** Get miscellaneous runtime configuration. */
 export declare namespace AppBskyUnspeccedGetConfig {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     checkEmailConfirmed?: boolean;
   }
 }
 
 /** An unspecced view of globally popular feed generators. */
 export declare namespace AppBskyUnspeccedGetPopularFeedGenerators {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -2141,7 +2057,7 @@ export declare namespace AppBskyUnspeccedGetPopularFeedGenerators {
     query?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     feeds: AppBskyFeedDefs.GeneratorView[];
     cursor?: string;
   }
@@ -2149,7 +2065,7 @@ export declare namespace AppBskyUnspeccedGetPopularFeedGenerators {
 
 /** Get a skeleton of suggested actors. Intended to be called and then hydrated through app.bsky.actor.getSuggestions */
 export declare namespace AppBskyUnspeccedGetSuggestionsSkeleton {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -2163,7 +2079,7 @@ export declare namespace AppBskyUnspeccedGetSuggestionsSkeleton {
     viewer?: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     actors: AppBskyUnspeccedDefs.SkeletonSearchActor[];
     cursor?: string;
     /** DID of the account these suggestions are relative to. If this is returned undefined, suggestions are based on the viewer. */
@@ -2174,11 +2090,10 @@ export declare namespace AppBskyUnspeccedGetSuggestionsSkeleton {
 /** Get a list of suggestions (feeds and users) tagged with categories */
 export declare namespace AppBskyUnspeccedGetTaggedSuggestions {
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     suggestions: Suggestion[];
   }
-  interface Suggestion {
-    [Brand.Type]: "app.bsky.unspecced.getTaggedSuggestions#suggestion";
+  interface Suggestion extends TypedBase {
     subject: string;
     subjectType: "actor" | "feed" | (string & {});
     tag: string;
@@ -2187,7 +2102,7 @@ export declare namespace AppBskyUnspeccedGetTaggedSuggestions {
 
 /** Backend Actors (profile) search, returns only skeleton. */
 export declare namespace AppBskyUnspeccedSearchActorsSkeleton {
-  interface Params {
+  interface Params extends TypedBase {
     /** Search query string; syntax, phrase, boolean, and faceting is unspecified, but Lucene query syntax is recommended. For typeahead search, only simple term match is supported, not full syntax. */
     q: string;
     /** Optional pagination mechanism; may not necessarily allow scrolling through entire result set. */
@@ -2204,20 +2119,20 @@ export declare namespace AppBskyUnspeccedSearchActorsSkeleton {
     viewer?: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     actors: AppBskyUnspeccedDefs.SkeletonSearchActor[];
     cursor?: string;
     /** Count of search hits. Optional, may be rounded/truncated, and may not be possible to paginate through all hits. */
     hitsTotal?: number;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     BadQueryString: {};
   }
 }
 
 /** Backend Posts search, returns only skeleton */
 export declare namespace AppBskyUnspeccedSearchPostsSkeleton {
-  interface Params {
+  interface Params extends TypedBase {
     /** Search query string; syntax, phrase, boolean, and faceting is unspecified, but Lucene query syntax is recommended. */
     q: string;
     /** Filter to posts by the given account. Handles are resolved to DID before query-time. */
@@ -2257,20 +2172,20 @@ export declare namespace AppBskyUnspeccedSearchPostsSkeleton {
     viewer?: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     posts: AppBskyUnspeccedDefs.SkeletonSearchPost[];
     cursor?: string;
     /** Count of search hits. Optional, may be rounded/truncated, and may not be possible to paginate through all hits. */
     hitsTotal?: number;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     BadQueryString: {};
   }
 }
 
 /** Backend Starter Pack search, returns only skeleton. */
 export declare namespace AppBskyUnspeccedSearchStarterPacksSkeleton {
-  interface Params {
+  interface Params extends TypedBase {
     /** Search query string; syntax, phrase, boolean, and faceting is unspecified, but Lucene query syntax is recommended. */
     q: string;
     /** Optional pagination mechanism; may not necessarily allow scrolling through entire result set. */
@@ -2285,20 +2200,19 @@ export declare namespace AppBskyUnspeccedSearchStarterPacksSkeleton {
     viewer?: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     starterPacks: AppBskyUnspeccedDefs.SkeletonSearchStarterPack[];
     cursor?: string;
     /** Count of search hits. Optional, may be rounded/truncated, and may not be possible to paginate through all hits. */
     hitsTotal?: number;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     BadQueryString: {};
   }
 }
 
 export declare namespace AppBskyVideoDefs {
-  interface JobStatus {
-    [Brand.Type]: "app.bsky.video.defs#jobStatus";
+  interface JobStatus extends TypedBase {
     did: At.DID;
     jobId: string;
     /** The state of the video processing job. All values not listed as a known value indicate that the job is in process. */
@@ -2317,20 +2231,20 @@ export declare namespace AppBskyVideoDefs {
 
 /** Get status details for a video processing job. */
 export declare namespace AppBskyVideoGetJobStatus {
-  interface Params {
+  interface Params extends TypedBase {
     jobId: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     jobStatus: AppBskyVideoDefs.JobStatus;
   }
 }
 
 /** Get video upload limits for the authenticated user. */
 export declare namespace AppBskyVideoGetUploadLimits {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     canUpload: boolean;
     error?: string;
     message?: string;
@@ -2341,24 +2255,23 @@ export declare namespace AppBskyVideoGetUploadLimits {
 
 /** Upload a video to be processed then stored on the PDS. */
 export declare namespace AppBskyVideoUploadVideo {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = Blob | ArrayBufferView;
-  interface Output {
+  interface Output extends TypedBase {
     jobStatus: AppBskyVideoDefs.JobStatus;
   }
 }
 
 export declare namespace ChatBskyActorDeclaration {
   /** A declaration of a Bluesky chat account. */
-  interface Record {
+  interface Record extends RecordBase {
     $type: "chat.bsky.actor.declaration";
     allowIncoming: "all" | "following" | "none" | (string & {});
   }
 }
 
 export declare namespace ChatBskyActorDefs {
-  interface ProfileViewBasic {
-    [Brand.Type]: "chat.bsky.actor.defs#profileViewBasic";
+  interface ProfileViewBasic extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     associated?: AppBskyActorDefs.ProfileAssociated;
@@ -2376,76 +2289,67 @@ export declare namespace ChatBskyActorDefs {
 }
 
 export declare namespace ChatBskyActorDeleteAccount {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {}
+  interface Output extends TypedBase {}
 }
 
 export declare namespace ChatBskyActorExportAccountData {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
   type Output = Uint8Array;
 }
 
 export declare namespace ChatBskyConvoDefs {
-  interface ConvoView {
-    [Brand.Type]: "chat.bsky.convo.defs#convoView";
+  interface ConvoView extends TypedBase {
     id: string;
     members: ChatBskyActorDefs.ProfileViewBasic[];
     muted: boolean;
     rev: string;
     unreadCount: number;
-    lastMessage?: Brand.Union<DeletedMessageView | MessageView>;
+    lastMessage?: TypeUnion<DeletedMessageView | MessageView>;
     opened?: boolean;
   }
-  interface DeletedMessageView {
-    [Brand.Type]: "chat.bsky.convo.defs#deletedMessageView";
+  interface DeletedMessageView extends TypedBase {
     id: string;
     rev: string;
     sender: MessageViewSender;
     sentAt: string;
   }
-  interface LogBeginConvo {
-    [Brand.Type]: "chat.bsky.convo.defs#logBeginConvo";
+  interface LogBeginConvo extends TypedBase {
     convoId: string;
     rev: string;
   }
-  interface LogCreateMessage {
-    [Brand.Type]: "chat.bsky.convo.defs#logCreateMessage";
+  interface LogCreateMessage extends TypedBase {
     convoId: string;
-    message: Brand.Union<DeletedMessageView | MessageView>;
+    message: TypeUnion<DeletedMessageView | MessageView>;
     rev: string;
   }
-  interface LogDeleteMessage {
-    [Brand.Type]: "chat.bsky.convo.defs#logDeleteMessage";
+  interface LogDeleteMessage extends TypedBase {
     convoId: string;
-    message: Brand.Union<DeletedMessageView | MessageView>;
+    message: TypeUnion<DeletedMessageView | MessageView>;
     rev: string;
   }
-  interface LogLeaveConvo {
-    [Brand.Type]: "chat.bsky.convo.defs#logLeaveConvo";
+  interface LogLeaveConvo extends TypedBase {
     convoId: string;
     rev: string;
   }
-  interface MessageInput {
-    [Brand.Type]: "chat.bsky.convo.defs#messageInput";
+  interface MessageInput extends TypedBase {
     /**
      * Maximum string length: 10000
      * Maximum grapheme length: 1000
      */
     text: string;
-    embed?: Brand.Union<AppBskyEmbedRecord.Main>;
+    embed?: TypeUnion<AppBskyEmbedRecord.Main>;
     /** Annotations of text (mentions, URLs, hashtags, etc) */
     facets?: AppBskyRichtextFacet.Main[];
   }
-  interface MessageRef {
-    [Brand.Type]: "chat.bsky.convo.defs#messageRef";
+  interface MessageRef extends TypedBase {
     convoId: string;
     did: At.DID;
     messageId: string;
   }
-  interface MessageView {
-    [Brand.Type]: "chat.bsky.convo.defs#messageView";
+  interface MessageView extends TypedBase {
     id: string;
     rev: string;
     sender: MessageViewSender;
@@ -2455,19 +2359,18 @@ export declare namespace ChatBskyConvoDefs {
      * Maximum grapheme length: 1000
      */
     text: string;
-    embed?: Brand.Union<AppBskyEmbedRecord.View>;
+    embed?: TypeUnion<AppBskyEmbedRecord.View>;
     /** Annotations of text (mentions, URLs, hashtags, etc) */
     facets?: AppBskyRichtextFacet.Main[];
   }
-  interface MessageViewSender {
-    [Brand.Type]: "chat.bsky.convo.defs#messageViewSender";
+  interface MessageViewSender extends TypedBase {
     did: At.DID;
   }
 }
 
 export declare namespace ChatBskyConvoDeleteMessageForSelf {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     convoId: string;
     messageId: string;
   }
@@ -2475,17 +2378,17 @@ export declare namespace ChatBskyConvoDeleteMessageForSelf {
 }
 
 export declare namespace ChatBskyConvoGetConvo {
-  interface Params {
+  interface Params extends TypedBase {
     convoId: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
 }
 
 export declare namespace ChatBskyConvoGetConvoForMembers {
-  interface Params {
+  interface Params extends TypedBase {
     /**
      * Minimum array length: 1
      * Maximum array length: 10
@@ -2493,18 +2396,18 @@ export declare namespace ChatBskyConvoGetConvoForMembers {
     members: At.DID[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
 }
 
 export declare namespace ChatBskyConvoGetLog {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
   }
   type Input = undefined;
-  interface Output {
-    logs: Brand.Union<
+  interface Output extends TypedBase {
+    logs: TypeUnion<
       | ChatBskyConvoDefs.LogBeginConvo
       | ChatBskyConvoDefs.LogCreateMessage
       | ChatBskyConvoDefs.LogDeleteMessage
@@ -2515,7 +2418,7 @@ export declare namespace ChatBskyConvoGetLog {
 }
 
 export declare namespace ChatBskyConvoGetMessages {
-  interface Params {
+  interface Params extends TypedBase {
     convoId: string;
     cursor?: string;
     /**
@@ -2526,8 +2429,8 @@ export declare namespace ChatBskyConvoGetMessages {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
-    messages: Brand.Union<
+  interface Output extends TypedBase {
+    messages: TypeUnion<
       ChatBskyConvoDefs.DeletedMessageView | ChatBskyConvoDefs.MessageView
     >[];
     cursor?: string;
@@ -2535,18 +2438,18 @@ export declare namespace ChatBskyConvoGetMessages {
 }
 
 export declare namespace ChatBskyConvoLeaveConvo {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     convoId: string;
   }
-  interface Output {
+  interface Output extends TypedBase {
     convoId: string;
     rev: string;
   }
 }
 
 export declare namespace ChatBskyConvoListConvos {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -2556,25 +2459,25 @@ export declare namespace ChatBskyConvoListConvos {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     convos: ChatBskyConvoDefs.ConvoView[];
     cursor?: string;
   }
 }
 
 export declare namespace ChatBskyConvoMuteConvo {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     convoId: string;
   }
-  interface Output {
+  interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
 }
 
 export declare namespace ChatBskyConvoSendMessage {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     convoId: string;
     message: ChatBskyConvoDefs.MessageInput;
   }
@@ -2582,54 +2485,52 @@ export declare namespace ChatBskyConvoSendMessage {
 }
 
 export declare namespace ChatBskyConvoSendMessageBatch {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Maximum array length: 100 */
     items: BatchItem[];
   }
-  interface Output {
+  interface Output extends TypedBase {
     items: ChatBskyConvoDefs.MessageView[];
   }
-  interface BatchItem {
-    [Brand.Type]: "chat.bsky.convo.sendMessageBatch#batchItem";
+  interface BatchItem extends TypedBase {
     convoId: string;
     message: ChatBskyConvoDefs.MessageInput;
   }
 }
 
 export declare namespace ChatBskyConvoUnmuteConvo {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     convoId: string;
   }
-  interface Output {
+  interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
 }
 
 export declare namespace ChatBskyConvoUpdateRead {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     convoId: string;
     messageId?: string;
   }
-  interface Output {
+  interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
 }
 
 export declare namespace ChatBskyModerationGetActorMetadata {
-  interface Params {
+  interface Params extends TypedBase {
     actor: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     all: Metadata;
     day: Metadata;
     month: Metadata;
   }
-  interface Metadata {
-    [Brand.Type]: "chat.bsky.moderation.getActorMetadata#metadata";
+  interface Metadata extends TypedBase {
     convos: number;
     convosStarted: number;
     messagesReceived: number;
@@ -2638,7 +2539,7 @@ export declare namespace ChatBskyModerationGetActorMetadata {
 }
 
 export declare namespace ChatBskyModerationGetMessageContext {
-  interface Params {
+  interface Params extends TypedBase {
     messageId: string;
     /** \@default 5 */
     after?: number;
@@ -2648,16 +2549,16 @@ export declare namespace ChatBskyModerationGetMessageContext {
     convoId?: string;
   }
   type Input = undefined;
-  interface Output {
-    messages: Brand.Union<
+  interface Output extends TypedBase {
+    messages: TypeUnion<
       ChatBskyConvoDefs.DeletedMessageView | ChatBskyConvoDefs.MessageView
     >[];
   }
 }
 
 export declare namespace ChatBskyModerationUpdateActorAccess {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     actor: At.DID;
     allowAccess: boolean;
     ref?: string;
@@ -2666,8 +2567,7 @@ export declare namespace ChatBskyModerationUpdateActorAccess {
 }
 
 export declare namespace ComAtprotoAdminDefs {
-  interface AccountView {
-    [Brand.Type]: "com.atproto.admin.defs#accountView";
+  interface AccountView extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     indexedAt: string;
@@ -2681,23 +2581,19 @@ export declare namespace ComAtprotoAdminDefs {
     relatedRecords?: unknown[];
     threatSignatures?: ThreatSignature[];
   }
-  interface RepoBlobRef {
-    [Brand.Type]: "com.atproto.admin.defs#repoBlobRef";
+  interface RepoBlobRef extends TypedBase {
     cid: At.CID;
     did: At.DID;
     recordUri?: At.Uri;
   }
-  interface RepoRef {
-    [Brand.Type]: "com.atproto.admin.defs#repoRef";
+  interface RepoRef extends TypedBase {
     did: At.DID;
   }
-  interface StatusAttr {
-    [Brand.Type]: "com.atproto.admin.defs#statusAttr";
+  interface StatusAttr extends TypedBase {
     applied: boolean;
     ref?: string;
   }
-  interface ThreatSignature {
-    [Brand.Type]: "com.atproto.admin.defs#threatSignature";
+  interface ThreatSignature extends TypedBase {
     property: string;
     value: string;
   }
@@ -2705,8 +2601,8 @@ export declare namespace ComAtprotoAdminDefs {
 
 /** Delete a user account as an administrator. */
 export declare namespace ComAtprotoAdminDeleteAccount {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     did: At.DID;
   }
   type Output = undefined;
@@ -2714,8 +2610,8 @@ export declare namespace ComAtprotoAdminDeleteAccount {
 
 /** Disable an account from receiving new invite codes, but does not invalidate existing codes. */
 export declare namespace ComAtprotoAdminDisableAccountInvites {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     account: At.DID;
     /** Optional reason for disabled invites. */
     note?: string;
@@ -2725,8 +2621,8 @@ export declare namespace ComAtprotoAdminDisableAccountInvites {
 
 /** Disable some set of codes and/or all codes associated with a set of users. */
 export declare namespace ComAtprotoAdminDisableInviteCodes {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     accounts?: string[];
     codes?: string[];
   }
@@ -2735,8 +2631,8 @@ export declare namespace ComAtprotoAdminDisableInviteCodes {
 
 /** Re-enable an account's ability to receive invite codes. */
 export declare namespace ComAtprotoAdminEnableAccountInvites {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     account: At.DID;
     /** Optional reason for enabled invites. */
     note?: string;
@@ -2746,7 +2642,7 @@ export declare namespace ComAtprotoAdminEnableAccountInvites {
 
 /** Get details about an account. */
 export declare namespace ComAtprotoAdminGetAccountInfo {
-  interface Params {
+  interface Params extends TypedBase {
     did: At.DID;
   }
   type Input = undefined;
@@ -2755,18 +2651,18 @@ export declare namespace ComAtprotoAdminGetAccountInfo {
 
 /** Get details about some accounts. */
 export declare namespace ComAtprotoAdminGetAccountInfos {
-  interface Params {
+  interface Params extends TypedBase {
     dids: At.DID[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     infos: ComAtprotoAdminDefs.AccountView[];
   }
 }
 
 /** Get an admin view of invite codes. */
 export declare namespace ComAtprotoAdminGetInviteCodes {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -2778,7 +2674,7 @@ export declare namespace ComAtprotoAdminGetInviteCodes {
     sort?: "recent" | "usage" | (string & {});
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     codes: ComAtprotoServerDefs.InviteCode[];
     cursor?: string;
   }
@@ -2786,14 +2682,14 @@ export declare namespace ComAtprotoAdminGetInviteCodes {
 
 /** Get the service-specific admin status of a subject (account, record, or blob). */
 export declare namespace ComAtprotoAdminGetSubjectStatus {
-  interface Params {
+  interface Params extends TypedBase {
     blob?: At.CID;
     did?: At.DID;
     uri?: At.Uri;
   }
   type Input = undefined;
-  interface Output {
-    subject: Brand.Union<
+  interface Output extends TypedBase {
+    subject: TypeUnion<
       | ComAtprotoAdminDefs.RepoBlobRef
       | ComAtprotoAdminDefs.RepoRef
       | ComAtprotoRepoStrongRef.Main
@@ -2805,7 +2701,7 @@ export declare namespace ComAtprotoAdminGetSubjectStatus {
 
 /** Get list of accounts that matches your search query. */
 export declare namespace ComAtprotoAdminSearchAccounts {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     email?: string;
     /**
@@ -2816,7 +2712,7 @@ export declare namespace ComAtprotoAdminSearchAccounts {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     accounts: ComAtprotoAdminDefs.AccountView[];
     cursor?: string;
   }
@@ -2824,8 +2720,8 @@ export declare namespace ComAtprotoAdminSearchAccounts {
 
 /** Send email to a user's account email address. */
 export declare namespace ComAtprotoAdminSendEmail {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     content: string;
     recipientDid: At.DID;
     senderDid: At.DID;
@@ -2833,15 +2729,15 @@ export declare namespace ComAtprotoAdminSendEmail {
     comment?: string;
     subject?: string;
   }
-  interface Output {
+  interface Output extends TypedBase {
     sent: boolean;
   }
 }
 
 /** Administrative action to update an account's email. */
 export declare namespace ComAtprotoAdminUpdateAccountEmail {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** The handle or DID of the repo. */
     account: string;
     email: string;
@@ -2851,8 +2747,8 @@ export declare namespace ComAtprotoAdminUpdateAccountEmail {
 
 /** Administrative action to update an account's handle. */
 export declare namespace ComAtprotoAdminUpdateAccountHandle {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     did: At.DID;
     handle: At.Handle;
   }
@@ -2861,8 +2757,8 @@ export declare namespace ComAtprotoAdminUpdateAccountHandle {
 
 /** Update the password for a user account as an administrator. */
 export declare namespace ComAtprotoAdminUpdateAccountPassword {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     did: At.DID;
     password: string;
   }
@@ -2871,9 +2767,9 @@ export declare namespace ComAtprotoAdminUpdateAccountPassword {
 
 /** Update the service-specific admin status of a subject (account, record, or blob). */
 export declare namespace ComAtprotoAdminUpdateSubjectStatus {
-  interface Params {}
-  interface Input {
-    subject: Brand.Union<
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    subject: TypeUnion<
       | ComAtprotoAdminDefs.RepoBlobRef
       | ComAtprotoAdminDefs.RepoRef
       | ComAtprotoRepoStrongRef.Main
@@ -2881,8 +2777,8 @@ export declare namespace ComAtprotoAdminUpdateSubjectStatus {
     deactivated?: ComAtprotoAdminDefs.StatusAttr;
     takedown?: ComAtprotoAdminDefs.StatusAttr;
   }
-  interface Output {
-    subject: Brand.Union<
+  interface Output extends TypedBase {
+    subject: TypeUnion<
       | ComAtprotoAdminDefs.RepoBlobRef
       | ComAtprotoAdminDefs.RepoRef
       | ComAtprotoRepoStrongRef.Main
@@ -2893,9 +2789,9 @@ export declare namespace ComAtprotoAdminUpdateSubjectStatus {
 
 /** Describe the credentials that should be included in the DID doc of an account that is migrating to this service. */
 export declare namespace ComAtprotoIdentityGetRecommendedDidCredentials {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     alsoKnownAs?: string[];
     /** Recommended rotation keys for PLC dids. Should be undefined (or ignored) for did:webs. */
     rotationKeys?: string[];
@@ -2906,27 +2802,27 @@ export declare namespace ComAtprotoIdentityGetRecommendedDidCredentials {
 
 /** Request an email with a code to in order to request a signed PLC operation. Requires Auth. */
 export declare namespace ComAtprotoIdentityRequestPlcOperationSignature {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
   type Output = undefined;
 }
 
 /** Resolves a handle (domain name) to a DID. */
 export declare namespace ComAtprotoIdentityResolveHandle {
-  interface Params {
+  interface Params extends TypedBase {
     /** The handle to resolve. */
     handle: At.Handle;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     did: At.DID;
   }
 }
 
 /** Signs a PLC operation to update some value(s) in the requesting DID's document. */
 export declare namespace ComAtprotoIdentitySignPlcOperation {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     alsoKnownAs?: string[];
     rotationKeys?: string[];
     services?: unknown;
@@ -2934,7 +2830,7 @@ export declare namespace ComAtprotoIdentitySignPlcOperation {
     token?: string;
     verificationMethods?: unknown;
   }
-  interface Output {
+  interface Output extends TypedBase {
     /** A signed DID PLC operation. */
     operation: unknown;
   }
@@ -2942,8 +2838,8 @@ export declare namespace ComAtprotoIdentitySignPlcOperation {
 
 /** Validates a PLC operation to ensure that it doesn't violate a service's constraints or get the identity into a bad state, then submits it to the PLC registry */
 export declare namespace ComAtprotoIdentitySubmitPlcOperation {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     operation: unknown;
   }
   type Output = undefined;
@@ -2951,8 +2847,8 @@ export declare namespace ComAtprotoIdentitySubmitPlcOperation {
 
 /** Updates the current account's handle. Verifies handle validity, and updates did:plc document if necessary. Implemented by PDS, and requires auth. */
 export declare namespace ComAtprotoIdentityUpdateHandle {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** The new handle. */
     handle: At.Handle;
   }
@@ -2961,8 +2857,7 @@ export declare namespace ComAtprotoIdentityUpdateHandle {
 
 export declare namespace ComAtprotoLabelDefs {
   /** Metadata tag on an atproto resource (eg, repo or record). */
-  interface Label {
-    [Brand.Type]: "com.atproto.label.defs#label";
+  interface Label extends TypedBase {
     /** Timestamp when this label was created. */
     cts: string;
     /** DID of the actor who created this label. */
@@ -2999,8 +2894,7 @@ export declare namespace ComAtprotoLabelDefs {
     | "sexual"
     | (string & {});
   /** Declares a label value and its expected interpretations and behaviors. */
-  interface LabelValueDefinition {
-    [Brand.Type]: "com.atproto.label.defs#labelValueDefinition";
+  interface LabelValueDefinition extends TypedBase {
     /** What should this label hide in the UI, if applied? 'content' hides all of the target; 'media' hides the images/video/audio; 'none' hides nothing. */
     blurs: "content" | "media" | "none" | (string & {});
     /**
@@ -3021,8 +2915,7 @@ export declare namespace ComAtprotoLabelDefs {
     defaultSetting?: "hide" | "ignore" | "warn" | (string & {});
   }
   /** Strings which describe the label in the UI, localized into a specific language. */
-  interface LabelValueDefinitionStrings {
-    [Brand.Type]: "com.atproto.label.defs#labelValueDefinitionStrings";
+  interface LabelValueDefinitionStrings extends TypedBase {
     /**
      * A longer description of what the label means and why it might be applied.
      * Maximum string length: 100000
@@ -3039,8 +2932,7 @@ export declare namespace ComAtprotoLabelDefs {
     name: string;
   }
   /** Metadata tag on an atproto record, published by the author within the record. Note that schemas should use #selfLabels, not #selfLabel. */
-  interface SelfLabel {
-    [Brand.Type]: "com.atproto.label.defs#selfLabel";
+  interface SelfLabel extends TypedBase {
     /**
      * The short string name of the value or type of this label.
      * Maximum string length: 128
@@ -3048,8 +2940,7 @@ export declare namespace ComAtprotoLabelDefs {
     val: string;
   }
   /** Metadata tags on an atproto record, published by the author within the record. */
-  interface SelfLabels {
-    [Brand.Type]: "com.atproto.label.defs#selfLabels";
+  interface SelfLabels extends TypedBase {
     /** Maximum array length: 10 */
     values: SelfLabel[];
   }
@@ -3057,7 +2948,7 @@ export declare namespace ComAtprotoLabelDefs {
 
 /** Find labels relevant to the provided AT-URI patterns. Public endpoint for moderation services, though may return different or additional results with auth. */
 export declare namespace ComAtprotoLabelQueryLabels {
-  interface Params {
+  interface Params extends TypedBase {
     /** List of AT URI patterns to match (boolean 'OR'). Each may be a prefix (ending with '*'; will match inclusive of the string leading to '*'), or a full URI. */
     uriPatterns: string[];
     cursor?: string;
@@ -3071,28 +2962,26 @@ export declare namespace ComAtprotoLabelQueryLabels {
     sources?: At.DID[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     labels: ComAtprotoLabelDefs.Label[];
     cursor?: string;
   }
 }
 
 export declare namespace ComAtprotoLabelSubscribeLabels {
-  interface Params {
+  interface Params extends TypedBase {
     /** The last known event seq number to backfill from. */
     cursor?: number;
   }
-  type Message = Brand.Union<Info | Labels>;
-  interface Errors {
+  type Message = TypeUnion<Info | Labels>;
+  interface Errors extends TypedBase {
     FutureCursor: {};
   }
-  interface Info {
-    [Brand.Type]: "com.atproto.label.subscribeLabels#info";
+  interface Info extends TypedBase {
     name: "OutdatedCursor" | (string & {});
     message?: string;
   }
-  interface Labels {
-    [Brand.Type]: "com.atproto.label.subscribeLabels#labels";
+  interface Labels extends TypedBase {
     labels: ComAtprotoLabelDefs.Label[];
     seq: number;
   }
@@ -3100,11 +2989,11 @@ export declare namespace ComAtprotoLabelSubscribeLabels {
 
 /** Submit a moderation report regarding an atproto account or record. Implemented by moderation services (with PDS proxying), and requires auth. */
 export declare namespace ComAtprotoModerationCreateReport {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Indicates the broad category of violation the report is for. */
     reasonType: ComAtprotoModerationDefs.ReasonType;
-    subject: Brand.Union<
+    subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
     >;
     /**
@@ -3114,12 +3003,12 @@ export declare namespace ComAtprotoModerationCreateReport {
      */
     reason?: string;
   }
-  interface Output {
+  interface Output extends TypedBase {
     createdAt: string;
     id: number;
     reasonType: ComAtprotoModerationDefs.ReasonType;
     reportedBy: At.DID;
-    subject: Brand.Union<
+    subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
     >;
     /**
@@ -3151,55 +3040,48 @@ export declare namespace ComAtprotoModerationDefs {
 
 /** Apply a batch transaction of repository creates, updates, and deletes. Requires auth, implemented by PDS. */
 export declare namespace ComAtprotoRepoApplyWrites {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** The handle or DID of the repo (aka, current account). */
     repo: string;
-    writes: Brand.Union<Create | Delete | Update>[];
+    writes: TypeUnion<Create | Delete | Update>[];
     /** If provided, the entire operation will fail if the current repo commit CID does not match this value. Used to prevent conflicting repo mutations. */
     swapCommit?: At.CID;
     /** Can be set to 'false' to skip Lexicon schema validation of record data across all operations, 'true' to require it, or leave unset to validate only for known Lexicons. */
     validate?: boolean;
   }
-  interface Output {
+  interface Output extends TypedBase {
     commit?: ComAtprotoRepoDefs.CommitMeta;
-    results?: Brand.Union<CreateResult | DeleteResult | UpdateResult>[];
+    results?: TypeUnion<CreateResult | DeleteResult | UpdateResult>[];
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     InvalidSwap: {};
   }
   /** Operation which creates a new record. */
-  interface Create {
-    [Brand.Type]: "com.atproto.repo.applyWrites#create";
+  interface Create extends TypedBase {
     collection: string;
     value: unknown;
     /** Maximum string length: 512 */
     rkey?: string;
   }
-  interface CreateResult {
-    [Brand.Type]: "com.atproto.repo.applyWrites#createResult";
+  interface CreateResult extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
     validationStatus?: "unknown" | "valid" | (string & {});
   }
   /** Operation which deletes an existing record. */
-  interface Delete {
-    [Brand.Type]: "com.atproto.repo.applyWrites#delete";
+  interface Delete extends TypedBase {
     collection: string;
     rkey: string;
   }
-  interface DeleteResult {
-    [Brand.Type]: "com.atproto.repo.applyWrites#deleteResult";
-  }
+  interface DeleteResult extends TypedBase {}
   /** Operation which updates an existing record. */
-  interface Update {
-    [Brand.Type]: "com.atproto.repo.applyWrites#update";
+  interface Update extends TypedBase {
     collection: string;
     rkey: string;
     value: unknown;
   }
-  interface UpdateResult {
-    [Brand.Type]: "com.atproto.repo.applyWrites#updateResult";
+  interface UpdateResult extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
     validationStatus?: "unknown" | "valid" | (string & {});
@@ -3208,8 +3090,8 @@ export declare namespace ComAtprotoRepoApplyWrites {
 
 /** Create a single new repository record. Requires auth, implemented by PDS. */
 export declare namespace ComAtprotoRepoCreateRecord {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** The NSID of the record collection. */
     collection: string;
     /** The record itself. Must contain a $type field. */
@@ -3226,20 +3108,19 @@ export declare namespace ComAtprotoRepoCreateRecord {
     /** Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons. */
     validate?: boolean;
   }
-  interface Output {
+  interface Output extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
     commit?: ComAtprotoRepoDefs.CommitMeta;
     validationStatus?: "unknown" | "valid" | (string & {});
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     InvalidSwap: {};
   }
 }
 
 export declare namespace ComAtprotoRepoDefs {
-  interface CommitMeta {
-    [Brand.Type]: "com.atproto.repo.defs#commitMeta";
+  interface CommitMeta extends TypedBase {
     cid: At.CID;
     rev: string;
   }
@@ -3247,8 +3128,8 @@ export declare namespace ComAtprotoRepoDefs {
 
 /** Delete a repository record, or ensure it doesn't exist. Requires auth, implemented by PDS. */
 export declare namespace ComAtprotoRepoDeleteRecord {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** The NSID of the record collection. */
     collection: string;
     /** The handle or DID of the repo (aka, current account). */
@@ -3260,22 +3141,22 @@ export declare namespace ComAtprotoRepoDeleteRecord {
     /** Compare and swap with the previous record by CID. */
     swapRecord?: At.CID;
   }
-  interface Output {
+  interface Output extends TypedBase {
     commit?: ComAtprotoRepoDefs.CommitMeta;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     InvalidSwap: {};
   }
 }
 
 /** Get information about an account and repository, including the list of collections. Does not require auth. */
 export declare namespace ComAtprotoRepoDescribeRepo {
-  interface Params {
+  interface Params extends TypedBase {
     /** The handle or DID of the repo. */
     repo: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     /** List of all the collections (NSIDs) for which this repo contains at least one record. */
     collections: string[];
     did: At.DID;
@@ -3289,7 +3170,7 @@ export declare namespace ComAtprotoRepoDescribeRepo {
 
 /** Get a single record from a repository. Does not require auth. */
 export declare namespace ComAtprotoRepoGetRecord {
-  interface Params {
+  interface Params extends TypedBase {
     /** The NSID of the record collection. */
     collection: string;
     /** The handle or DID of the repo. */
@@ -3300,26 +3181,26 @@ export declare namespace ComAtprotoRepoGetRecord {
     cid?: At.CID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     uri: At.Uri;
     value: unknown;
     cid?: At.CID;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     RecordNotFound: {};
   }
 }
 
 /** Import a repo in the form of a CAR file. Requires Content-Length HTTP header to be set. */
 export declare namespace ComAtprotoRepoImportRepo {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = Blob | ArrayBufferView;
   type Output = undefined;
 }
 
 /** Returns a list of missing blobs for the requesting account. Intended to be used in the account migration flow. */
 export declare namespace ComAtprotoRepoListMissingBlobs {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -3329,12 +3210,11 @@ export declare namespace ComAtprotoRepoListMissingBlobs {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     blobs: RecordBlob[];
     cursor?: string;
   }
-  interface RecordBlob {
-    [Brand.Type]: "com.atproto.repo.listMissingBlobs#recordBlob";
+  interface RecordBlob extends TypedBase {
     cid: At.CID;
     recordUri: At.Uri;
   }
@@ -3342,7 +3222,7 @@ export declare namespace ComAtprotoRepoListMissingBlobs {
 
 /** List a range of records in a repository, matching a specific collection. Does not require auth. */
 export declare namespace ComAtprotoRepoListRecords {
-  interface Params {
+  interface Params extends TypedBase {
     /** The NSID of the record type. */
     collection: string;
     /** The handle or DID of the repo. */
@@ -3369,12 +3249,11 @@ export declare namespace ComAtprotoRepoListRecords {
     rkeyStart?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     records: Record[];
     cursor?: string;
   }
-  interface Record {
-    [Brand.Type]: "com.atproto.repo.listRecords#record";
+  interface Record extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
     value: unknown;
@@ -3383,8 +3262,8 @@ export declare namespace ComAtprotoRepoListRecords {
 
 /** Write a repository record, creating or updating it as needed. Requires auth, implemented by PDS. */
 export declare namespace ComAtprotoRepoPutRecord {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** The NSID of the record collection. */
     collection: string;
     /** The record to write. */
@@ -3403,20 +3282,19 @@ export declare namespace ComAtprotoRepoPutRecord {
     /** Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons. */
     validate?: boolean;
   }
-  interface Output {
+  interface Output extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
     commit?: ComAtprotoRepoDefs.CommitMeta;
     validationStatus?: "unknown" | "valid" | (string & {});
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     InvalidSwap: {};
   }
 }
 
 export declare namespace ComAtprotoRepoStrongRef {
-  interface Main {
-    [Brand.Type]: "com.atproto.repo.strongRef";
+  interface Main extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
   }
@@ -3424,25 +3302,25 @@ export declare namespace ComAtprotoRepoStrongRef {
 
 /** Upload a new blob, to be referenced from a repository record. The blob will be deleted if it is not referenced within a time window (eg, minutes). Blob restrictions (mimetype, size, etc) are enforced when the reference is created. Requires auth, implemented by PDS. */
 export declare namespace ComAtprotoRepoUploadBlob {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = Blob | ArrayBufferView;
-  interface Output {
+  interface Output extends TypedBase {
     blob: At.Blob;
   }
 }
 
 /** Activates a currently deactivated account. Used to finalize account migration after the account's repo is imported and identity is setup. */
 export declare namespace ComAtprotoServerActivateAccount {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
   type Output = undefined;
 }
 
 /** Returns the status of an account, especially as pertaining to import or recovery. Can be called many times over the course of an account migration. Requires auth and can only be called pertaining to oneself. */
 export declare namespace ComAtprotoServerCheckAccountStatus {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     activated: boolean;
     expectedBlobs: number;
     importedBlobs: number;
@@ -3457,13 +3335,13 @@ export declare namespace ComAtprotoServerCheckAccountStatus {
 
 /** Confirm an email using a token from com.atproto.server.requestEmailConfirmation. */
 export declare namespace ComAtprotoServerConfirmEmail {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     email: string;
     token: string;
   }
   type Output = undefined;
-  interface Errors {
+  interface Errors extends TypedBase {
     AccountNotFound: {};
     ExpiredToken: {};
     InvalidToken: {};
@@ -3473,8 +3351,8 @@ export declare namespace ComAtprotoServerConfirmEmail {
 
 /** Create an account. Implemented by PDS. */
 export declare namespace ComAtprotoServerCreateAccount {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Requested handle for the account. */
     handle: At.Handle;
     /** Pre-existing atproto DID, being imported to a new account. */
@@ -3491,7 +3369,7 @@ export declare namespace ComAtprotoServerCreateAccount {
     verificationPhone?: string;
   }
   /** Account login session returned on successful account creation. */
-  interface Output {
+  interface Output extends TypedBase {
     accessJwt: string;
     /** The DID of the new account. */
     did: At.DID;
@@ -3500,7 +3378,7 @@ export declare namespace ComAtprotoServerCreateAccount {
     /** Complete DID document. */
     didDoc?: unknown;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     InvalidHandle: {};
     InvalidPassword: {};
     InvalidInviteCode: {};
@@ -3513,19 +3391,18 @@ export declare namespace ComAtprotoServerCreateAccount {
 
 /** Create an App Password. */
 export declare namespace ComAtprotoServerCreateAppPassword {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** A short name for the App Password, to help distinguish them. */
     name: string;
     /** If an app password has 'privileged' access to possibly sensitive account state. Meant for use with trusted clients. */
     privileged?: boolean;
   }
   type Output = AppPassword;
-  interface Errors {
+  interface Errors extends TypedBase {
     AccountTakedown: {};
   }
-  interface AppPassword {
-    [Brand.Type]: "com.atproto.server.createAppPassword#appPassword";
+  interface AppPassword extends TypedBase {
     createdAt: string;
     name: string;
     password: string;
@@ -3535,30 +3412,29 @@ export declare namespace ComAtprotoServerCreateAppPassword {
 
 /** Create an invite code. */
 export declare namespace ComAtprotoServerCreateInviteCode {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     useCount: number;
     forAccount?: At.DID;
   }
-  interface Output {
+  interface Output extends TypedBase {
     code: string;
   }
 }
 
 /** Create invite codes. */
 export declare namespace ComAtprotoServerCreateInviteCodes {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** \@default 1 */
     codeCount: number;
     useCount: number;
     forAccounts?: At.DID[];
   }
-  interface Output {
+  interface Output extends TypedBase {
     codes: AccountCodes[];
   }
-  interface AccountCodes {
-    [Brand.Type]: "com.atproto.server.createInviteCodes#accountCodes";
+  interface AccountCodes extends TypedBase {
     account: string;
     codes: string[];
   }
@@ -3566,14 +3442,14 @@ export declare namespace ComAtprotoServerCreateInviteCodes {
 
 /** Create an authentication session. */
 export declare namespace ComAtprotoServerCreateSession {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Handle or other identifier supported by the server for the authenticating user. */
     identifier: string;
     password: string;
     authFactorToken?: string;
   }
-  interface Output {
+  interface Output extends TypedBase {
     accessJwt: string;
     did: At.DID;
     handle: At.Handle;
@@ -3586,7 +3462,7 @@ export declare namespace ComAtprotoServerCreateSession {
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
     status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     AccountTakedown: {};
     AuthFactorTokenRequired: {};
   }
@@ -3594,8 +3470,8 @@ export declare namespace ComAtprotoServerCreateSession {
 
 /** Deactivates a currently active account. Stops serving of repo, and future writes to repo until reactivated. Used to finalize account migration with the old host after the account has been activated on the new host. */
 export declare namespace ComAtprotoServerDeactivateAccount {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** A recommendation to server as to how long they should hold onto the deactivated account before deleting. */
     deleteAfter?: string;
   }
@@ -3603,8 +3479,7 @@ export declare namespace ComAtprotoServerDeactivateAccount {
 }
 
 export declare namespace ComAtprotoServerDefs {
-  interface InviteCode {
-    [Brand.Type]: "com.atproto.server.defs#inviteCode";
+  interface InviteCode extends TypedBase {
     available: number;
     code: string;
     createdAt: string;
@@ -3613,8 +3488,7 @@ export declare namespace ComAtprotoServerDefs {
     forAccount: string;
     uses: InviteCodeUse[];
   }
-  interface InviteCodeUse {
-    [Brand.Type]: "com.atproto.server.defs#inviteCodeUse";
+  interface InviteCodeUse extends TypedBase {
     usedAt: string;
     usedBy: At.DID;
   }
@@ -3622,14 +3496,14 @@ export declare namespace ComAtprotoServerDefs {
 
 /** Delete an actor's account with a token and password. Can only be called after requesting a deletion token. Requires auth. */
 export declare namespace ComAtprotoServerDeleteAccount {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     did: At.DID;
     password: string;
     token: string;
   }
   type Output = undefined;
-  interface Errors {
+  interface Errors extends TypedBase {
     ExpiredToken: {};
     InvalidToken: {};
   }
@@ -3637,16 +3511,16 @@ export declare namespace ComAtprotoServerDeleteAccount {
 
 /** Delete the current session. Requires auth. */
 export declare namespace ComAtprotoServerDeleteSession {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
   type Output = undefined;
 }
 
 /** Describes the server's account creation requirements and capabilities. Implemented by PDS. */
 export declare namespace ComAtprotoServerDescribeServer {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     /** List of domain suffixes that can be used in account handles. */
     availableUserDomains: string[];
     did: At.DID;
@@ -3659,12 +3533,10 @@ export declare namespace ComAtprotoServerDescribeServer {
     /** If true, a phone verification token must be supplied to create an account on this instance. */
     phoneVerificationRequired?: boolean;
   }
-  interface Contact {
-    [Brand.Type]: "com.atproto.server.describeServer#contact";
+  interface Contact extends TypedBase {
     email?: string;
   }
-  interface Links {
-    [Brand.Type]: "com.atproto.server.describeServer#links";
+  interface Links extends TypedBase {
     privacyPolicy?: string;
     termsOfService?: string;
   }
@@ -3672,7 +3544,7 @@ export declare namespace ComAtprotoServerDescribeServer {
 
 /** Get all invite codes for the current account. Requires auth. */
 export declare namespace ComAtprotoServerGetAccountInviteCodes {
-  interface Params {
+  interface Params extends TypedBase {
     /**
      * Controls whether any new 'earned' but not 'created' invites should be created.
      * \@default true
@@ -3682,17 +3554,17 @@ export declare namespace ComAtprotoServerGetAccountInviteCodes {
     includeUsed?: boolean;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     codes: ComAtprotoServerDefs.InviteCode[];
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     DuplicateCreate: {};
   }
 }
 
 /** Get a signed token on behalf of the requesting DID for the requested service. */
 export declare namespace ComAtprotoServerGetServiceAuth {
-  interface Params {
+  interface Params extends TypedBase {
     /** The DID of the service that the token will be used to authenticate with */
     aud: At.DID;
     /** The time in Unix Epoch seconds that the JWT expires. Defaults to 60 seconds in the future. The service may enforce certain time bounds on tokens depending on the requested scope. */
@@ -3701,19 +3573,19 @@ export declare namespace ComAtprotoServerGetServiceAuth {
     lxm?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     token: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     BadExpiration: {};
   }
 }
 
 /** Get information about the current auth session. Requires auth. */
 export declare namespace ComAtprotoServerGetSession {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     active?: boolean;
@@ -3728,16 +3600,15 @@ export declare namespace ComAtprotoServerGetSession {
 
 /** List all App Passwords. */
 export declare namespace ComAtprotoServerListAppPasswords {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     passwords: AppPassword[];
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     AccountTakedown: {};
   }
-  interface AppPassword {
-    [Brand.Type]: "com.atproto.server.listAppPasswords#appPassword";
+  interface AppPassword extends TypedBase {
     createdAt: string;
     name: string;
     privileged?: boolean;
@@ -3746,9 +3617,9 @@ export declare namespace ComAtprotoServerListAppPasswords {
 
 /** Refresh an authentication session. Requires auth using the 'refreshJwt' (not the 'accessJwt'). */
 export declare namespace ComAtprotoServerRefreshSession {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     accessJwt: string;
     did: At.DID;
     handle: At.Handle;
@@ -3758,38 +3629,38 @@ export declare namespace ComAtprotoServerRefreshSession {
     /** Hosting status of the account. If not specified, then assume 'active'. */
     status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     AccountTakedown: {};
   }
 }
 
 /** Initiate a user account deletion via email. */
 export declare namespace ComAtprotoServerRequestAccountDelete {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
   type Output = undefined;
 }
 
 /** Request an email with a code to confirm ownership of email. */
 export declare namespace ComAtprotoServerRequestEmailConfirmation {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
   type Output = undefined;
 }
 
 /** Request a token in order to update email. */
 export declare namespace ComAtprotoServerRequestEmailUpdate {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     tokenRequired: boolean;
   }
 }
 
 /** Initiate a user account password reset via email. */
 export declare namespace ComAtprotoServerRequestPasswordReset {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     email: string;
   }
   type Output = undefined;
@@ -3797,12 +3668,12 @@ export declare namespace ComAtprotoServerRequestPasswordReset {
 
 /** Reserve a repo signing key, for use with account creation. Necessary so that a DID PLC update operation can be constructed during an account migraiton. Public and does not require auth; implemented by PDS. NOTE: this endpoint may change when full account migration is implemented. */
 export declare namespace ComAtprotoServerReserveSigningKey {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** The DID to reserve a key for. */
     did?: At.DID;
   }
-  interface Output {
+  interface Output extends TypedBase {
     /** The public key for the reserved signing key, in did:key serialization. */
     signingKey: string;
   }
@@ -3810,13 +3681,13 @@ export declare namespace ComAtprotoServerReserveSigningKey {
 
 /** Reset a user account password using a token. */
 export declare namespace ComAtprotoServerResetPassword {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     password: string;
     token: string;
   }
   type Output = undefined;
-  interface Errors {
+  interface Errors extends TypedBase {
     ExpiredToken: {};
     InvalidToken: {};
   }
@@ -3824,8 +3695,8 @@ export declare namespace ComAtprotoServerResetPassword {
 
 /** Revoke an App Password by name. */
 export declare namespace ComAtprotoServerRevokeAppPassword {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     name: string;
   }
   type Output = undefined;
@@ -3833,15 +3704,15 @@ export declare namespace ComAtprotoServerRevokeAppPassword {
 
 /** Update an account's email. */
 export declare namespace ComAtprotoServerUpdateEmail {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     email: string;
     emailAuthFactor?: boolean;
     /** Requires a token from com.atproto.sever.requestEmailUpdate if the account's email has been confirmed. */
     token?: string;
   }
   type Output = undefined;
-  interface Errors {
+  interface Errors extends TypedBase {
     ExpiredToken: {};
     InvalidToken: {};
     TokenRequired: {};
@@ -3850,7 +3721,7 @@ export declare namespace ComAtprotoServerUpdateEmail {
 
 /** Get a blob associated with a given account. Returns the full blob as originally uploaded. Does not require auth; implemented by PDS. */
 export declare namespace ComAtprotoSyncGetBlob {
-  interface Params {
+  interface Params extends TypedBase {
     /** The CID of the blob to fetch */
     cid: At.CID;
     /** The DID of the account. */
@@ -3858,7 +3729,7 @@ export declare namespace ComAtprotoSyncGetBlob {
   }
   type Input = undefined;
   type Output = Uint8Array;
-  interface Errors {
+  interface Errors extends TypedBase {
     BlobNotFound: {};
     RepoNotFound: {};
     RepoTakendown: {};
@@ -3869,14 +3740,14 @@ export declare namespace ComAtprotoSyncGetBlob {
 
 /** Get data blocks from a given repo, by CID. For example, intermediate MST nodes, or records. Does not require auth; implemented by PDS. */
 export declare namespace ComAtprotoSyncGetBlocks {
-  interface Params {
+  interface Params extends TypedBase {
     cids: At.CID[];
     /** The DID of the repo. */
     did: At.DID;
   }
   type Input = undefined;
   type Output = Uint8Array;
-  interface Errors {
+  interface Errors extends TypedBase {
     BlockNotFound: {};
     RepoNotFound: {};
     RepoTakendown: {};
@@ -3890,7 +3761,7 @@ export declare namespace ComAtprotoSyncGetBlocks {
  * \@deprecated
  */
 export declare namespace ComAtprotoSyncGetCheckout {
-  interface Params {
+  interface Params extends TypedBase {
     /** The DID of the repo. */
     did: At.DID;
   }
@@ -3903,31 +3774,31 @@ export declare namespace ComAtprotoSyncGetCheckout {
  * \@deprecated
  */
 export declare namespace ComAtprotoSyncGetHead {
-  interface Params {
+  interface Params extends TypedBase {
     /** The DID of the repo. */
     did: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     root: At.CID;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     HeadNotFound: {};
   }
 }
 
 /** Get the current commit CID & revision of the specified repo. Does not require auth. */
 export declare namespace ComAtprotoSyncGetLatestCommit {
-  interface Params {
+  interface Params extends TypedBase {
     /** The DID of the repo. */
     did: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     cid: At.CID;
     rev: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     RepoNotFound: {};
     RepoTakendown: {};
     RepoSuspended: {};
@@ -3937,7 +3808,7 @@ export declare namespace ComAtprotoSyncGetLatestCommit {
 
 /** Get data blocks needed to prove the existence or non-existence of record in the current version of repo. Does not require auth. */
 export declare namespace ComAtprotoSyncGetRecord {
-  interface Params {
+  interface Params extends TypedBase {
     collection: string;
     /** The DID of the repo. */
     did: At.DID;
@@ -3951,7 +3822,7 @@ export declare namespace ComAtprotoSyncGetRecord {
   }
   type Input = undefined;
   type Output = Uint8Array;
-  interface Errors {
+  interface Errors extends TypedBase {
     RecordNotFound: {};
     RepoNotFound: {};
     RepoTakendown: {};
@@ -3962,7 +3833,7 @@ export declare namespace ComAtprotoSyncGetRecord {
 
 /** Download a repository export as CAR file. Optionally only a 'diff' since a previous revision. Does not require auth; implemented by PDS. */
 export declare namespace ComAtprotoSyncGetRepo {
-  interface Params {
+  interface Params extends TypedBase {
     /** The DID of the repo. */
     did: At.DID;
     /** The revision ('rev') of the repo to create a diff from. */
@@ -3970,7 +3841,7 @@ export declare namespace ComAtprotoSyncGetRepo {
   }
   type Input = undefined;
   type Output = Uint8Array;
-  interface Errors {
+  interface Errors extends TypedBase {
     RepoNotFound: {};
     RepoTakendown: {};
     RepoSuspended: {};
@@ -3980,12 +3851,12 @@ export declare namespace ComAtprotoSyncGetRepo {
 
 /** Get the hosting status for a repository, on this server. Expected to be implemented by PDS and Relay. */
 export declare namespace ComAtprotoSyncGetRepoStatus {
-  interface Params {
+  interface Params extends TypedBase {
     /** The DID of the repo. */
     did: At.DID;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     active: boolean;
     did: At.DID;
     /** Optional field, the current rev of the repo, if active=true */
@@ -3993,14 +3864,14 @@ export declare namespace ComAtprotoSyncGetRepoStatus {
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
     status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     RepoNotFound: {};
   }
 }
 
 /** List blob CIDs for an account, since some repo revision. Does not require auth; implemented by PDS. */
 export declare namespace ComAtprotoSyncListBlobs {
-  interface Params {
+  interface Params extends TypedBase {
     /** The DID of the repo. */
     did: At.DID;
     cursor?: string;
@@ -4014,11 +3885,11 @@ export declare namespace ComAtprotoSyncListBlobs {
     since?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     cids: At.CID[];
     cursor?: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     RepoNotFound: {};
     RepoTakendown: {};
     RepoSuspended: {};
@@ -4028,7 +3899,7 @@ export declare namespace ComAtprotoSyncListBlobs {
 
 /** Enumerates all the DID, rev, and commit CID for all repos hosted by this service. Does not require auth; implemented by PDS and Relay. */
 export declare namespace ComAtprotoSyncListRepos {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -4038,12 +3909,11 @@ export declare namespace ComAtprotoSyncListRepos {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     repos: Repo[];
     cursor?: string;
   }
-  interface Repo {
-    [Brand.Type]: "com.atproto.sync.listRepos#repo";
+  interface Repo extends TypedBase {
     did: At.DID;
     /** Current repo commit CID */
     head: At.CID;
@@ -4056,8 +3926,8 @@ export declare namespace ComAtprotoSyncListRepos {
 
 /** Notify a crawling service of a recent update, and that crawling should resume. Intended use is after a gap between repo stream events caused the crawling service to disconnect. Does not require auth; implemented by Relay. */
 export declare namespace ComAtprotoSyncNotifyOfUpdate {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Hostname of the current service (usually a PDS) that is notifying of update. */
     hostname: string;
   }
@@ -4066,8 +3936,8 @@ export declare namespace ComAtprotoSyncNotifyOfUpdate {
 
 /** Request a service to persistently crawl hosted repos. Expected use is new PDS instances declaring their existence to Relays. Does not require auth. */
 export declare namespace ComAtprotoSyncRequestCrawl {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Hostname of the current service (eg, PDS) that is requesting to be crawled. */
     hostname: string;
   }
@@ -4075,20 +3945,19 @@ export declare namespace ComAtprotoSyncRequestCrawl {
 }
 
 export declare namespace ComAtprotoSyncSubscribeRepos {
-  interface Params {
+  interface Params extends TypedBase {
     /** The last known event seq number to backfill from. */
     cursor?: number;
   }
-  type Message = Brand.Union<
+  type Message = TypeUnion<
     Account | Commit | Handle | Identity | Info | Migrate | Tombstone
   >;
-  interface Errors {
+  interface Errors extends TypedBase {
     FutureCursor: {};
     ConsumerTooSlow: {};
   }
   /** Represents a change to an account's status on a host (eg, PDS or Relay). The semantics of this event are that the status is at the host which emitted the event, not necessarily that at the currently active PDS. Eg, a Relay takedown would emit a takedown with active=false, even if the PDS is still active. */
-  interface Account {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#account";
+  interface Account extends TypedBase {
     /** Indicates that the account has a repository which can be fetched from the host that emitted this event. */
     active: boolean;
     did: At.DID;
@@ -4103,8 +3972,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
       | (string & {});
   }
   /** Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature. */
-  interface Commit {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#commit";
+  interface Commit extends TypedBase {
     /** List of new blobs (by CID) referenced by records in this commit. */
     blobs: At.CIDLink[];
     /** CAR file containing relevant blocks, as a diff since the previous repo state. */
@@ -4143,24 +4011,21 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
    * DEPRECATED -- Use #identity event instead
    * \@deprecated
    */
-  interface Handle {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#handle";
+  interface Handle extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     seq: number;
     time: string;
   }
   /** Represents a change to an account's identity. Could be an updated handle, signing key, or pds hosting endpoint. Serves as a prod to all downstream services to refresh their identity cache. */
-  interface Identity {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#identity";
+  interface Identity extends TypedBase {
     did: At.DID;
     seq: number;
     time: string;
     /** The current handle for the account, or 'handle.invalid' if validation fails. This field is optional, might have been validated or passed-through from an upstream source. Semantics and behaviors for PDS vs Relay may evolve in the future; see atproto specs for more details. */
     handle?: At.Handle;
   }
-  interface Info {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#info";
+  interface Info extends TypedBase {
     name: "OutdatedCursor" | (string & {});
     message?: string;
   }
@@ -4168,16 +4033,14 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
    * DEPRECATED -- Use #account event instead
    * \@deprecated
    */
-  interface Migrate {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#migrate";
+  interface Migrate extends TypedBase {
     did: At.DID;
     migrateTo: string | null;
     seq: number;
     time: string;
   }
   /** A repo operation, ie a mutation of a single record. */
-  interface RepoOp {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#repoOp";
+  interface RepoOp extends TypedBase {
     action: "create" | "delete" | "update" | (string & {});
     /** For creates and updates, the new record CID. For deletions, null. */
     cid: At.CIDLink | null;
@@ -4187,8 +4050,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
    * DEPRECATED -- Use #account event instead
    * \@deprecated
    */
-  interface Tombstone {
-    [Brand.Type]: "com.atproto.sync.subscribeRepos#tombstone";
+  interface Tombstone extends TypedBase {
     did: At.DID;
     seq: number;
     time: string;
@@ -4197,18 +4059,18 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
 
 /** Add a handle to the set of reserved handles. */
 export declare namespace ComAtprotoTempAddReservedHandle {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     handle: string;
   }
-  interface Output {}
+  interface Output extends TypedBase {}
 }
 
 /** Check accounts location in signup queue. */
 export declare namespace ComAtprotoTempCheckSignupQueue {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     activated: boolean;
     estimatedTimeMs?: number;
     placeInQueue?: number;
@@ -4220,7 +4082,7 @@ export declare namespace ComAtprotoTempCheckSignupQueue {
  * \@deprecated
  */
 export declare namespace ComAtprotoTempFetchLabels {
-  interface Params {
+  interface Params extends TypedBase {
     /**
      * Minimum: 1
      * Maximum: 250
@@ -4230,15 +4092,15 @@ export declare namespace ComAtprotoTempFetchLabels {
     since?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     labels: ComAtprotoLabelDefs.Label[];
   }
 }
 
 /** Request a verification code to be sent to the supplied phone number */
 export declare namespace ComAtprotoTempRequestPhoneVerification {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     phoneNumber: string;
   }
   type Output = undefined;
@@ -4246,8 +4108,8 @@ export declare namespace ComAtprotoTempRequestPhoneVerification {
 
 /** Administrative action to create a new, re-usable communication (email for now) template. */
 export declare namespace ToolsOzoneCommunicationCreateTemplate {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Content of the template, markdown supported, can contain variable placeholders. */
     contentMarkdown: string;
     /** Name of the template. */
@@ -4260,14 +4122,13 @@ export declare namespace ToolsOzoneCommunicationCreateTemplate {
     lang?: string;
   }
   type Output = ToolsOzoneCommunicationDefs.TemplateView;
-  interface Errors {
+  interface Errors extends TypedBase {
     DuplicateTemplateName: {};
   }
 }
 
 export declare namespace ToolsOzoneCommunicationDefs {
-  interface TemplateView {
-    [Brand.Type]: "tools.ozone.communication.defs#templateView";
+  interface TemplateView extends TypedBase {
     /** Subject of the message, used in emails. */
     contentMarkdown: string;
     createdAt: string;
@@ -4287,8 +4148,8 @@ export declare namespace ToolsOzoneCommunicationDefs {
 
 /** Delete a communication template. */
 export declare namespace ToolsOzoneCommunicationDeleteTemplate {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     id: string;
   }
   type Output = undefined;
@@ -4296,17 +4157,17 @@ export declare namespace ToolsOzoneCommunicationDeleteTemplate {
 
 /** Get list of all communication templates. */
 export declare namespace ToolsOzoneCommunicationListTemplates {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     communicationTemplates: ToolsOzoneCommunicationDefs.TemplateView[];
   }
 }
 
 /** Administrative action to update an existing communication template. Allows passing partial fields to patch specific fields only. */
 export declare namespace ToolsOzoneCommunicationUpdateTemplate {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** ID of the template to be updated. */
     id: string;
     /** Content of the template, markdown supported, can contain variable placeholders. */
@@ -4322,15 +4183,14 @@ export declare namespace ToolsOzoneCommunicationUpdateTemplate {
     updatedBy?: At.DID;
   }
   type Output = ToolsOzoneCommunicationDefs.TemplateView;
-  interface Errors {
+  interface Errors extends TypedBase {
     DuplicateTemplateName: {};
   }
 }
 
 export declare namespace ToolsOzoneModerationDefs {
   /** Logs account status related events on a repo subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
-  interface AccountEvent {
-    [Brand.Type]: "tools.ozone.moderation.defs#accountEvent";
+  interface AccountEvent extends TypedBase {
     /** Indicates that the account has a repository which can be fetched from the host that emitted this event. */
     active: boolean;
     timestamp: string;
@@ -4344,8 +4204,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | "unknown"
       | (string & {});
   }
-  interface AccountHosting {
-    [Brand.Type]: "tools.ozone.moderation.defs#accountHosting";
+  interface AccountHosting extends TypedBase {
     status:
       | "deactivated"
       | "deleted"
@@ -4359,56 +4218,47 @@ export declare namespace ToolsOzoneModerationDefs {
     reactivatedAt?: string;
     updatedAt?: string;
   }
-  interface BlobView {
-    [Brand.Type]: "tools.ozone.moderation.defs#blobView";
+  interface BlobView extends TypedBase {
     cid: At.CID;
     createdAt: string;
     mimeType: string;
     size: number;
-    details?: Brand.Union<ImageDetails | VideoDetails>;
+    details?: TypeUnion<ImageDetails | VideoDetails>;
     moderation?: Moderation;
   }
   /** Logs identity related events on a repo subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
-  interface IdentityEvent {
-    [Brand.Type]: "tools.ozone.moderation.defs#identityEvent";
+  interface IdentityEvent extends TypedBase {
     timestamp: string;
     comment?: string;
     handle?: At.Handle;
     pdsHost?: string;
     tombstone?: boolean;
   }
-  interface ImageDetails {
-    [Brand.Type]: "tools.ozone.moderation.defs#imageDetails";
+  interface ImageDetails extends TypedBase {
     height: number;
     width: number;
   }
-  interface Moderation {
-    [Brand.Type]: "tools.ozone.moderation.defs#moderation";
+  interface Moderation extends TypedBase {
     subjectStatus?: SubjectStatusView;
   }
-  interface ModerationDetail {
-    [Brand.Type]: "tools.ozone.moderation.defs#moderationDetail";
+  interface ModerationDetail extends TypedBase {
     subjectStatus?: SubjectStatusView;
   }
-  interface ModEventAcknowledge {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventAcknowledge";
+  interface ModEventAcknowledge extends TypedBase {
     comment?: string;
   }
   /** Add a comment to a subject */
-  interface ModEventComment {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventComment";
+  interface ModEventComment extends TypedBase {
     comment: string;
     /** Make the comment persistent on the subject */
     sticky?: boolean;
   }
   /** Divert a record's blobs to a 3rd party service for further scanning/tagging */
-  interface ModEventDivert {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventDivert";
+  interface ModEventDivert extends TypedBase {
     comment?: string;
   }
   /** Keep a log of outgoing email to a user */
-  interface ModEventEmail {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventEmail";
+  interface ModEventEmail extends TypedBase {
     /** The subject line of the email sent to the user. */
     subjectLine: string;
     /** Additional comment about the outgoing comm. */
@@ -4416,54 +4266,46 @@ export declare namespace ToolsOzoneModerationDefs {
     /** The content of the email sent to the user. */
     content?: string;
   }
-  interface ModEventEscalate {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventEscalate";
+  interface ModEventEscalate extends TypedBase {
     comment?: string;
   }
   /** Apply/Negate labels on a subject */
-  interface ModEventLabel {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventLabel";
+  interface ModEventLabel extends TypedBase {
     createLabelVals: string[];
     negateLabelVals: string[];
     comment?: string;
   }
   /** Mute incoming reports on a subject */
-  interface ModEventMute {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventMute";
+  interface ModEventMute extends TypedBase {
     /** Indicates how long the subject should remain muted. */
     durationInHours: number;
     comment?: string;
   }
   /** Mute incoming reports from an account */
-  interface ModEventMuteReporter {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventMuteReporter";
+  interface ModEventMuteReporter extends TypedBase {
     comment?: string;
     /** Indicates how long the account should remain muted. Falsy value here means a permanent mute. */
     durationInHours?: number;
   }
   /** Report a subject */
-  interface ModEventReport {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventReport";
+  interface ModEventReport extends TypedBase {
     reportType: ComAtprotoModerationDefs.ReasonType;
     comment?: string;
     /** Set to true if the reporter was muted from reporting at the time of the event. These reports won't impact the reviewState of the subject. */
     isReporterMuted?: boolean;
   }
   /** Resolve appeal on a subject */
-  interface ModEventResolveAppeal {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventResolveAppeal";
+  interface ModEventResolveAppeal extends TypedBase {
     /** Describe resolution. */
     comment?: string;
   }
   /** Revert take down action on a subject */
-  interface ModEventReverseTakedown {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventReverseTakedown";
+  interface ModEventReverseTakedown extends TypedBase {
     /** Describe reasoning behind the reversal. */
     comment?: string;
   }
   /** Add/Remove a tag on a subject */
-  interface ModEventTag {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventTag";
+  interface ModEventTag extends TypedBase {
     /** Tags to be added to the subject. If already exists, won't be duplicated. */
     add: string[];
     /** Tags to be removed to the subject. Ignores a tag If it doesn't exist, won't be duplicated. */
@@ -4472,8 +4314,7 @@ export declare namespace ToolsOzoneModerationDefs {
     comment?: string;
   }
   /** Take down a subject permanently or temporarily */
-  interface ModEventTakedown {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventTakedown";
+  interface ModEventTakedown extends TypedBase {
     /** If true, all other reports on content authored by this account will be resolved (acknowledged). */
     acknowledgeAccountSubjects?: boolean;
     comment?: string;
@@ -4481,22 +4322,19 @@ export declare namespace ToolsOzoneModerationDefs {
     durationInHours?: number;
   }
   /** Unmute action on a subject */
-  interface ModEventUnmute {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventUnmute";
+  interface ModEventUnmute extends TypedBase {
     /** Describe reasoning behind the reversal. */
     comment?: string;
   }
   /** Unmute incoming reports from an account */
-  interface ModEventUnmuteReporter {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventUnmuteReporter";
+  interface ModEventUnmuteReporter extends TypedBase {
     /** Describe reasoning behind the reversal. */
     comment?: string;
   }
-  interface ModEventView {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventView";
+  interface ModEventView extends TypedBase {
     createdAt: string;
     createdBy: At.DID;
-    event: Brand.Union<
+    event: TypeUnion<
       | AccountEvent
       | IdentityEvent
       | ModEventAcknowledge
@@ -4517,7 +4355,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | RecordEvent
     >;
     id: number;
-    subject: Brand.Union<
+    subject: TypeUnion<
       | ChatBskyConvoDefs.MessageRef
       | ComAtprotoAdminDefs.RepoRef
       | ComAtprotoRepoStrongRef.Main
@@ -4526,11 +4364,10 @@ export declare namespace ToolsOzoneModerationDefs {
     creatorHandle?: string;
     subjectHandle?: string;
   }
-  interface ModEventViewDetail {
-    [Brand.Type]: "tools.ozone.moderation.defs#modEventViewDetail";
+  interface ModEventViewDetail extends TypedBase {
     createdAt: string;
     createdBy: At.DID;
-    event: Brand.Union<
+    event: TypeUnion<
       | AccountEvent
       | IdentityEvent
       | ModEventAcknowledge
@@ -4551,28 +4388,25 @@ export declare namespace ToolsOzoneModerationDefs {
       | RecordEvent
     >;
     id: number;
-    subject: Brand.Union<
+    subject: TypeUnion<
       RecordView | RecordViewNotFound | RepoView | RepoViewNotFound
     >;
     subjectBlobs: BlobView[];
   }
   /** Logs lifecycle event on a record subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
-  interface RecordEvent {
-    [Brand.Type]: "tools.ozone.moderation.defs#recordEvent";
+  interface RecordEvent extends TypedBase {
     op: "create" | "delete" | "update" | (string & {});
     timestamp: string;
     cid?: At.CID;
     comment?: string;
   }
-  interface RecordHosting {
-    [Brand.Type]: "tools.ozone.moderation.defs#recordHosting";
+  interface RecordHosting extends TypedBase {
     status: "deleted" | "unknown" | (string & {});
     createdAt?: string;
     deletedAt?: string;
     updatedAt?: string;
   }
-  interface RecordView {
-    [Brand.Type]: "tools.ozone.moderation.defs#recordView";
+  interface RecordView extends TypedBase {
     blobCids: At.CID[];
     cid: At.CID;
     indexedAt: string;
@@ -4581,8 +4415,7 @@ export declare namespace ToolsOzoneModerationDefs {
     uri: At.Uri;
     value: unknown;
   }
-  interface RecordViewDetail {
-    [Brand.Type]: "tools.ozone.moderation.defs#recordViewDetail";
+  interface RecordViewDetail extends TypedBase {
     blobs: BlobView[];
     cid: At.CID;
     indexedAt: string;
@@ -4592,12 +4425,10 @@ export declare namespace ToolsOzoneModerationDefs {
     value: unknown;
     labels?: ComAtprotoLabelDefs.Label[];
   }
-  interface RecordViewNotFound {
-    [Brand.Type]: "tools.ozone.moderation.defs#recordViewNotFound";
+  interface RecordViewNotFound extends TypedBase {
     uri: At.Uri;
   }
-  interface RepoView {
-    [Brand.Type]: "tools.ozone.moderation.defs#repoView";
+  interface RepoView extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     indexedAt: string;
@@ -4610,8 +4441,7 @@ export declare namespace ToolsOzoneModerationDefs {
     invitesDisabled?: boolean;
     threatSignatures?: ComAtprotoAdminDefs.ThreatSignature[];
   }
-  interface RepoViewDetail {
-    [Brand.Type]: "tools.ozone.moderation.defs#repoViewDetail";
+  interface RepoViewDetail extends TypedBase {
     did: At.DID;
     handle: At.Handle;
     indexedAt: string;
@@ -4627,8 +4457,7 @@ export declare namespace ToolsOzoneModerationDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     threatSignatures?: ComAtprotoAdminDefs.ThreatSignature[];
   }
-  interface RepoViewNotFound {
-    [Brand.Type]: "tools.ozone.moderation.defs#repoViewNotFound";
+  interface RepoViewNotFound extends TypedBase {
     did: At.DID;
   }
   type ReviewClosed = "tools.ozone.moderation.defs#reviewClosed";
@@ -4641,13 +4470,12 @@ export declare namespace ToolsOzoneModerationDefs {
     | "#reviewNone"
     | "#reviewOpen"
     | (string & {});
-  interface SubjectStatusView {
-    [Brand.Type]: "tools.ozone.moderation.defs#subjectStatusView";
+  interface SubjectStatusView extends TypedBase {
     /** Timestamp referencing the first moderation status impacting event was emitted on the subject */
     createdAt: string;
     id: number;
     reviewState: SubjectReviewState;
-    subject: Brand.Union<
+    subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
     >;
     /** Timestamp referencing when the last update was made to the moderation status of the subject */
@@ -4656,7 +4484,7 @@ export declare namespace ToolsOzoneModerationDefs {
     appealed?: boolean;
     /** Sticky comment on the subject. */
     comment?: string;
-    hosting?: Brand.Union<AccountHosting | RecordHosting>;
+    hosting?: TypeUnion<AccountHosting | RecordHosting>;
     /** Timestamp referencing when the author of the subject appealed a moderation action */
     lastAppealedAt?: string;
     lastReportedAt?: string;
@@ -4670,8 +4498,7 @@ export declare namespace ToolsOzoneModerationDefs {
     tags?: string[];
     takendown?: boolean;
   }
-  interface VideoDetails {
-    [Brand.Type]: "tools.ozone.moderation.defs#videoDetails";
+  interface VideoDetails extends TypedBase {
     height: number;
     length: number;
     width: number;
@@ -4680,10 +4507,10 @@ export declare namespace ToolsOzoneModerationDefs {
 
 /** Take a moderation action on an actor. */
 export declare namespace ToolsOzoneModerationEmitEvent {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     createdBy: At.DID;
-    event: Brand.Union<
+    event: TypeUnion<
       | ToolsOzoneModerationDefs.AccountEvent
       | ToolsOzoneModerationDefs.IdentityEvent
       | ToolsOzoneModerationDefs.ModEventAcknowledge
@@ -4702,20 +4529,20 @@ export declare namespace ToolsOzoneModerationEmitEvent {
       | ToolsOzoneModerationDefs.ModEventUnmuteReporter
       | ToolsOzoneModerationDefs.RecordEvent
     >;
-    subject: Brand.Union<
+    subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
     >;
     subjectBlobCids?: At.CID[];
   }
   type Output = ToolsOzoneModerationDefs.ModEventView;
-  interface Errors {
+  interface Errors extends TypedBase {
     SubjectHasAction: {};
   }
 }
 
 /** Get details about a moderation event. */
 export declare namespace ToolsOzoneModerationGetEvent {
-  interface Params {
+  interface Params extends TypedBase {
     id: number;
   }
   type Input = undefined;
@@ -4724,26 +4551,26 @@ export declare namespace ToolsOzoneModerationGetEvent {
 
 /** Get details about a record. */
 export declare namespace ToolsOzoneModerationGetRecord {
-  interface Params {
+  interface Params extends TypedBase {
     uri: At.Uri;
     cid?: At.CID;
   }
   type Input = undefined;
   type Output = ToolsOzoneModerationDefs.RecordViewDetail;
-  interface Errors {
+  interface Errors extends TypedBase {
     RecordNotFound: {};
   }
 }
 
 /** Get details about some records. */
 export declare namespace ToolsOzoneModerationGetRecords {
-  interface Params {
+  interface Params extends TypedBase {
     /** Maximum array length: 100 */
     uris: At.Uri[];
   }
   type Input = undefined;
-  interface Output {
-    records: Brand.Union<
+  interface Output extends TypedBase {
+    records: TypeUnion<
       | ToolsOzoneModerationDefs.RecordViewDetail
       | ToolsOzoneModerationDefs.RecordViewNotFound
     >[];
@@ -4752,25 +4579,25 @@ export declare namespace ToolsOzoneModerationGetRecords {
 
 /** Get details about a repository. */
 export declare namespace ToolsOzoneModerationGetRepo {
-  interface Params {
+  interface Params extends TypedBase {
     did: At.DID;
   }
   type Input = undefined;
   type Output = ToolsOzoneModerationDefs.RepoViewDetail;
-  interface Errors {
+  interface Errors extends TypedBase {
     RepoNotFound: {};
   }
 }
 
 /** Get details about some repositories. */
 export declare namespace ToolsOzoneModerationGetRepos {
-  interface Params {
+  interface Params extends TypedBase {
     /** Maximum array length: 100 */
     dids: At.DID[];
   }
   type Input = undefined;
-  interface Output {
-    repos: Brand.Union<
+  interface Output extends TypedBase {
+    repos: TypeUnion<
       | ToolsOzoneModerationDefs.RepoViewDetail
       | ToolsOzoneModerationDefs.RepoViewNotFound
     >[];
@@ -4779,7 +4606,7 @@ export declare namespace ToolsOzoneModerationGetRepos {
 
 /** List moderation events related to a subject. */
 export declare namespace ToolsOzoneModerationQueryEvents {
-  interface Params {
+  interface Params extends TypedBase {
     /** If specified, only events where all of these labels were added are returned */
     addedLabels?: string[];
     /** If specified, only events where all of these tags were added are returned */
@@ -4827,7 +4654,7 @@ export declare namespace ToolsOzoneModerationQueryEvents {
     types?: string[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     events: ToolsOzoneModerationDefs.ModEventView[];
     cursor?: string;
   }
@@ -4835,7 +4662,7 @@ export declare namespace ToolsOzoneModerationQueryEvents {
 
 /** View moderation statuses of subjects (record or repo). */
 export declare namespace ToolsOzoneModerationQueryStatuses {
-  interface Params {
+  interface Params extends TypedBase {
     /** Get subjects in unresolved appealed status */
     appealed?: boolean;
     /**
@@ -4895,7 +4722,7 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     takendown?: boolean;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     subjectStatuses: ToolsOzoneModerationDefs.SubjectStatusView[];
     cursor?: string;
   }
@@ -4903,7 +4730,7 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
 
 /** Find repositories based on a search term. */
 export declare namespace ToolsOzoneModerationSearchRepos {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -4919,7 +4746,7 @@ export declare namespace ToolsOzoneModerationSearchRepos {
     term?: string;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     repos: ToolsOzoneModerationDefs.RepoView[];
     cursor?: string;
   }
@@ -4927,21 +4754,19 @@ export declare namespace ToolsOzoneModerationSearchRepos {
 
 /** Get details about ozone's server configuration. */
 export declare namespace ToolsOzoneServerGetConfig {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     appview?: ServiceConfig;
     blobDivert?: ServiceConfig;
     chat?: ServiceConfig;
     pds?: ServiceConfig;
     viewer?: ViewerConfig;
   }
-  interface ServiceConfig {
-    [Brand.Type]: "tools.ozone.server.getConfig#serviceConfig";
+  interface ServiceConfig extends TypedBase {
     url?: string;
   }
-  interface ViewerConfig {
-    [Brand.Type]: "tools.ozone.server.getConfig#viewerConfig";
+  interface ViewerConfig extends TypedBase {
     role?:
       | "tools.ozone.team.defs#roleAdmin"
       | "tools.ozone.team.defs#roleModerator"
@@ -4952,8 +4777,8 @@ export declare namespace ToolsOzoneServerGetConfig {
 
 /** Add values to a specific set. Attempting to add values to a set that does not exist will result in an error. */
 export declare namespace ToolsOzoneSetAddValues {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Name of the set to add values to */
     name: string;
     /**
@@ -4967,8 +4792,7 @@ export declare namespace ToolsOzoneSetAddValues {
 }
 
 export declare namespace ToolsOzoneSetDefs {
-  interface Set {
-    [Brand.Type]: "tools.ozone.set.defs#set";
+  interface Set extends TypedBase {
     /**
      * Minimum string length: 3
      * Maximum string length: 128
@@ -4980,8 +4804,7 @@ export declare namespace ToolsOzoneSetDefs {
      */
     description?: string;
   }
-  interface SetView {
-    [Brand.Type]: "tools.ozone.set.defs#setView";
+  interface SetView extends TypedBase {
     createdAt: string;
     /**
      * Minimum string length: 3
@@ -5000,21 +4823,21 @@ export declare namespace ToolsOzoneSetDefs {
 
 /** Delete an entire set. Attempting to delete a set that does not exist will result in an error. */
 export declare namespace ToolsOzoneSetDeleteSet {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Name of the set to delete */
     name: string;
   }
-  interface Output {}
-  interface Errors {
+  interface Output extends TypedBase {}
+  interface Errors extends TypedBase {
     SetNotFound: {};
   }
 }
 
 /** Delete values from a specific set. Attempting to delete values that are not in the set will not result in an error */
 export declare namespace ToolsOzoneSetDeleteValues {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /** Name of the set to delete values from */
     name: string;
     /**
@@ -5024,14 +4847,14 @@ export declare namespace ToolsOzoneSetDeleteValues {
     values: string[];
   }
   type Output = undefined;
-  interface Errors {
+  interface Errors extends TypedBase {
     SetNotFound: {};
   }
 }
 
 /** Get a specific set and its values */
 export declare namespace ToolsOzoneSetGetValues {
-  interface Params {
+  interface Params extends TypedBase {
     name: string;
     cursor?: string;
     /**
@@ -5042,19 +4865,19 @@ export declare namespace ToolsOzoneSetGetValues {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     set: ToolsOzoneSetDefs.SetView;
     values: string[];
     cursor?: string;
   }
-  interface Errors {
+  interface Errors extends TypedBase {
     SetNotFound: {};
   }
 }
 
 /** Query available sets */
 export declare namespace ToolsOzoneSetQuerySets {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -5072,7 +4895,7 @@ export declare namespace ToolsOzoneSetQuerySets {
     sortDirection?: "asc" | "desc";
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     sets: ToolsOzoneSetDefs.SetView[];
     cursor?: string;
   }
@@ -5080,14 +4903,13 @@ export declare namespace ToolsOzoneSetQuerySets {
 
 /** Create or update set metadata */
 export declare namespace ToolsOzoneSetUpsertSet {
-  interface Params {}
+  interface Params extends TypedBase {}
   type Input = ToolsOzoneSetDefs.Set;
   type Output = ToolsOzoneSetDefs.SetView;
 }
 
 export declare namespace ToolsOzoneSettingDefs {
-  interface Option {
-    [Brand.Type]: "tools.ozone.setting.defs#option";
+  interface Option extends TypedBase {
     createdBy: At.DID;
     did: At.DID;
     key: string;
@@ -5111,7 +4933,7 @@ export declare namespace ToolsOzoneSettingDefs {
 
 /** List settings with optional filtering */
 export declare namespace ToolsOzoneSettingListOptions {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Filter for only the specified keys. Ignored if prefix is provided
@@ -5130,7 +4952,7 @@ export declare namespace ToolsOzoneSettingListOptions {
     scope?: "instance" | "personal" | (string & {});
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     options: ToolsOzoneSettingDefs.Option[];
     cursor?: string;
   }
@@ -5138,8 +4960,8 @@ export declare namespace ToolsOzoneSettingListOptions {
 
 /** Delete settings by key */
 export declare namespace ToolsOzoneSettingRemoveOptions {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     /**
      * Minimum array length: 1
      * Maximum array length: 200
@@ -5147,13 +4969,13 @@ export declare namespace ToolsOzoneSettingRemoveOptions {
     keys: string[];
     scope: "instance" | "personal" | (string & {});
   }
-  interface Output {}
+  interface Output extends TypedBase {}
 }
 
 /** Create or update setting option */
 export declare namespace ToolsOzoneSettingUpsertOption {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     key: string;
     scope: "instance" | "personal" | (string & {});
     value: unknown;
@@ -5165,14 +4987,13 @@ export declare namespace ToolsOzoneSettingUpsertOption {
       | "tools.ozone.team.defs#roleTriage"
       | (string & {});
   }
-  interface Output {
+  interface Output extends TypedBase {
     option: ToolsOzoneSettingDefs.Option;
   }
 }
 
 export declare namespace ToolsOzoneSignatureDefs {
-  interface SigDetail {
-    [Brand.Type]: "tools.ozone.signature.defs#sigDetail";
+  interface SigDetail extends TypedBase {
     property: string;
     value: string;
   }
@@ -5180,18 +5001,18 @@ export declare namespace ToolsOzoneSignatureDefs {
 
 /** Find all correlated threat signatures between 2 or more accounts. */
 export declare namespace ToolsOzoneSignatureFindCorrelation {
-  interface Params {
+  interface Params extends TypedBase {
     dids: At.DID[];
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     details: ToolsOzoneSignatureDefs.SigDetail[];
   }
 }
 
 /** Get accounts that share some matching threat signatures with the root account. */
 export declare namespace ToolsOzoneSignatureFindRelatedAccounts {
-  interface Params {
+  interface Params extends TypedBase {
     did: At.DID;
     cursor?: string;
     /**
@@ -5202,12 +5023,11 @@ export declare namespace ToolsOzoneSignatureFindRelatedAccounts {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     accounts: RelatedAccount[];
     cursor?: string;
   }
-  interface RelatedAccount {
-    [Brand.Type]: "tools.ozone.signature.findRelatedAccounts#relatedAccount";
+  interface RelatedAccount extends TypedBase {
     account: ComAtprotoAdminDefs.AccountView;
     similarities?: ToolsOzoneSignatureDefs.SigDetail[];
   }
@@ -5215,7 +5035,7 @@ export declare namespace ToolsOzoneSignatureFindRelatedAccounts {
 
 /** Search for accounts that match one or more threat signature values. */
 export declare namespace ToolsOzoneSignatureSearchAccounts {
-  interface Params {
+  interface Params extends TypedBase {
     values: string[];
     cursor?: string;
     /**
@@ -5226,7 +5046,7 @@ export declare namespace ToolsOzoneSignatureSearchAccounts {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     accounts: ComAtprotoAdminDefs.AccountView[];
     cursor?: string;
   }
@@ -5234,8 +5054,8 @@ export declare namespace ToolsOzoneSignatureSearchAccounts {
 
 /** Add a member to the ozone team. Requires admin role. */
 export declare namespace ToolsOzoneTeamAddMember {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     did: At.DID;
     role:
       | "tools.ozone.team.defs#roleAdmin"
@@ -5244,14 +5064,13 @@ export declare namespace ToolsOzoneTeamAddMember {
       | (string & {});
   }
   type Output = ToolsOzoneTeamDefs.Member;
-  interface Errors {
+  interface Errors extends TypedBase {
     MemberAlreadyExists: {};
   }
 }
 
 export declare namespace ToolsOzoneTeamDefs {
-  interface Member {
-    [Brand.Type]: "tools.ozone.team.defs#member";
+  interface Member extends TypedBase {
     did: At.DID;
     role: "#roleAdmin" | "#roleModerator" | "#roleTriage" | (string & {});
     createdAt?: string;
@@ -5267,12 +5086,12 @@ export declare namespace ToolsOzoneTeamDefs {
 
 /** Delete a member from ozone team. Requires admin role. */
 export declare namespace ToolsOzoneTeamDeleteMember {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     did: At.DID;
   }
   type Output = undefined;
-  interface Errors {
+  interface Errors extends TypedBase {
     MemberNotFound: {};
     CannotDeleteSelf: {};
   }
@@ -5280,7 +5099,7 @@ export declare namespace ToolsOzoneTeamDeleteMember {
 
 /** List all members with access to the ozone service. */
 export declare namespace ToolsOzoneTeamListMembers {
-  interface Params {
+  interface Params extends TypedBase {
     cursor?: string;
     /**
      * Minimum: 1
@@ -5290,7 +5109,7 @@ export declare namespace ToolsOzoneTeamListMembers {
     limit?: number;
   }
   type Input = undefined;
-  interface Output {
+  interface Output extends TypedBase {
     members: ToolsOzoneTeamDefs.Member[];
     cursor?: string;
   }
@@ -5298,8 +5117,8 @@ export declare namespace ToolsOzoneTeamListMembers {
 
 /** Update a member in the ozone service. Requires admin role. */
 export declare namespace ToolsOzoneTeamUpdateMember {
-  interface Params {}
-  interface Input {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
     did: At.DID;
     disabled?: boolean;
     role?:
@@ -5309,12 +5128,12 @@ export declare namespace ToolsOzoneTeamUpdateMember {
       | (string & {});
   }
   type Output = ToolsOzoneTeamDefs.Member;
-  interface Errors {
+  interface Errors extends TypedBase {
     MemberNotFound: {};
   }
 }
 
-export declare interface Records {
+export declare interface Records extends RecordBase {
   "app.bsky.actor.profile": AppBskyActorProfile.Record;
   "app.bsky.feed.generator": AppBskyFeedGenerator.Record;
   "app.bsky.feed.like": AppBskyFeedLike.Record;

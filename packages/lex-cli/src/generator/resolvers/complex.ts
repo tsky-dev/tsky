@@ -17,7 +17,7 @@ export function resolveUnionType(def: RefUnionSchema): string {
     const [ns, ref] = raw.split('#');
     return (ns ? `${toNamespace(ns)}.` : '') + (ref ? toUpper(ref) : 'Main');
   });
-  return `Brand.Union<${refs.join('|')}>`;
+  return `TypeUnion<${refs.join('|')}>`;
 }
 
 export function resolveObjectType(

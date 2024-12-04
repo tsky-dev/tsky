@@ -1,4 +1,4 @@
-import type { Procedures, Queries, Records } from './lib/lexicons.js';
+import { isRecord, type Procedures, type Queries, type Records } from './lib/lexicons.js';
 
 export * from './lib/lexicons.js';
 
@@ -16,8 +16,8 @@ export type KnownNSID = BskyNSID | AtProtoNSID;
 
 // --- Record Types ---
 export type RecordDefs = LexiconUnion<Records>;
-export type BskyRecord = RecordDefs & { $type: BskyNSID };
-export type AtProtoRecord = RecordDefs & { $type: AtProtoNSID };
+export type BskyRecord = Extract<RecordDefs, { $type: BskyNSID }>;
+export type AtProtoRecord = Extract<RecordDefs, { $type: AtProtoNSID }>;
 
 // --- Query Types ---
 export type QueryDefs = LexiconUnion<Queries>;
@@ -73,29 +73,12 @@ export type ProcedureErrors<T extends keyof Procedures> =
     : never;
 
 // --- Common Bluesky Types ---
-export type BskyPost = BskyRecord & {
-  $type: `${typeof APP_BSKY_PREFIX}feed.post`;
-};
-export type BskyProfile = BskyRecord & {
-  $type: `${typeof APP_BSKY_PREFIX}actor.profile`;
-};
-export type BskyLike = BskyRecord & {
-  $type: `${typeof APP_BSKY_PREFIX}feed.like`;
-};
-export type BskyFollow = BskyRecord & {
-  $type: `${typeof APP_BSKY_PREFIX}graph.follow`;
-};
+export type BskyPost = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}feed.post` }>;
+export type BskyProfile = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}actor.profile` }>;
+export type BskyLike = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}feed.like` }>;
+export type BskyFollow = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}graph.follow` }>;
 
 // --- Type Guards ---
-export function isRecord(value: unknown): value is RecordDefs {
-  return (
-    typeof value === 'object'
-    && value !== null
-    && '$type' in value
-    && typeof value.$type === 'string'
-  );
-}
-
 export function isBskyRecord(value: unknown): value is BskyRecord {
   return isRecord(value) && value.$type.startsWith(APP_BSKY_PREFIX);
 }

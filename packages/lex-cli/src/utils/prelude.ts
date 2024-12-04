@@ -1,18 +1,24 @@
-export const mainPrelude = `type ObjectOmit<T, K extends keyof any> = Omit<T, K>;
+export const mainPrelude = `/** Base type with optional type field */
+export interface TypedBase {
+  $type?: string;
+}
 
-/** Handles type branding in objects */
-export declare namespace Brand {
-  /** Symbol used to brand objects, this does not actually exist in runtime */
-  const Type: unique symbol;
+/** Base type for all record types */
+export interface RecordBase {
+  $type: string;
+}
 
-  /** Get the intended \`$type\` field */
-  type GetType<T extends { [Type]: string }> = T[typeof Type];
+/** Makes $type required and specific */
+export type Typed<T extends TypedBase, Type extends string> = Omit<T, '$type'> & {
+  $type: Type;
+};
 
-  /** Creates a union of objects where it's discriminated by \`$type\` field. */
-  type Union<T extends { [Type]: string }> = T extends any ? T & { $type: GetType<T> } : never;
+/** Creates a union of objects discriminated by $type */
+export type TypeUnion<T extends TypedBase> = T extends any ? Typed<T, string> : never;
 
-  /** Omits the type branding from object */
-  type Omit<T extends { [Type]: string }> = ObjectOmit<T, typeof Type>;
+/** Type guard for records */
+export function isRecord(value: unknown): value is RecordBase {
+  return typeof value === 'object' && value !== null && '$type' in value && typeof value.$type === 'string';
 }
 
 /** Base AT Protocol schema types */
@@ -40,7 +46,7 @@ export declare namespace At {
   }
 
   /** Blob interface */
-  interface Blob<T extends string = string> {
+  interface Blob<T extends string = string> extends RecordBase {
     $type: 'blob';
     mimeType: T;
     ref: {

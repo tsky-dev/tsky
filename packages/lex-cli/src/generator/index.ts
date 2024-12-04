@@ -81,8 +81,7 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
         const descs = getDescriptions(def);
 
         chunk += writeJsdoc(descs);
-        chunk += `interface ${typeName} {`;
-        chunk += `[Brand.Type]: '${nsid}';`;
+        chunk += `interface ${typeName} extends TypedBase {`;
 
         for (const prop of propKeys) {
           const isOptional = !required || !required.includes(prop);
@@ -123,7 +122,7 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
         const descs = getDescriptions(def);
 
         chunk += writeJsdoc(descs);
-        chunk += 'interface Record {';
+        chunk += `interface Record extends RecordBase {`;
         chunk += `$type: '${nsid}';`;
 
         for (const prop of propKeys) {
@@ -158,11 +157,11 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
             const { value, descriptions } = resolveType(nsid, parameters);
 
             chunk += writeJsdoc(descriptions);
-            chunk += `interface Params ${value}`;
+            chunk += `interface Params extends TypedBase ${value}`;
           }
         }
         else {
-          chunk += 'interface Params {}';
+          chunk += 'interface Params extends TypedBase {}';
         }
 
         if (input) {
@@ -172,7 +171,7 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
             chunk += writeJsdoc(descriptions);
 
             if (input.schema?.type === 'object') {
-              chunk += `interface Input ${value}`;
+              chunk += `interface Input extends TypedBase ${value}`;
             }
             else {
               chunk += `type Input = ${value};`;
@@ -193,7 +192,7 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
             chunk += writeJsdoc(descriptions);
 
             if (output.schema?.type === 'object') {
-              chunk += `interface Output ${value}`;
+              chunk += `interface Output extends TypedBase ${value}`;
             }
             else {
               chunk += `type Output = ${value};`;
@@ -208,7 +207,7 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
         }
 
         if (errors) {
-          chunk += 'interface Errors {';
+          chunk += 'interface Errors extends TypedBase {';
 
           for (const error of errors) {
             chunk += `${error.name}: {};`;
@@ -256,10 +255,10 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
         if (def.parameters) {
           const { value, descriptions } = resolveType(nsid, def.parameters);
           chunk += writeJsdoc(descriptions);
-          chunk += `interface Params ${value}`;
+          chunk += `interface Params extends TypedBase ${value}`;
         }
         else {
-          chunk += 'interface Params {}';
+          chunk += 'interface Params extends TypedBase {}';
         }
 
         if (def.message?.schema) {
@@ -270,7 +269,7 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
         }
 
         if (def.errors) {
-          chunk += 'interface Errors {';
+          chunk += 'interface Errors extends TypedBase {';
           for (const error of def.errors) {
             chunk += `${error.name}: {};`;
           }
@@ -302,7 +301,7 @@ export async function generateDefinitions(opts: GenerateDefinitionsOptions) {
     code += '}\n\n';
   }
 
-  code += `export declare interface Records {${records}}\n\n`;
+  code += `export declare interface Records extends RecordBase {${records}}\n\n`;
   code += `export declare interface Queries {${queries}}\n\n`;
   code += `export declare interface Procedures {${procedures}}\n\n`;
   code += `export declare interface Subscriptions {${subscriptions}}\n\n`;
