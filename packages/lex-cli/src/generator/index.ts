@@ -150,7 +150,7 @@ ${metadataLines.join('\n')}`;
         const descs = getDescriptions(def);
 
         chunk += writeJsdoc(descs);
-        chunk += `interface Record extends RecordBase {`;
+        chunk += 'interface Record extends RecordBase {';
         chunk += `$type: '${nsid}';`;
 
         for (const prop of propKeys) {
