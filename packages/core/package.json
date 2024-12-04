@@ -23,9 +23,8 @@
   "types": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
+    "dev": "pkgroll --watch",
     "build": "pkgroll",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix",
     "test": "vitest",
     "test:typescript": "tsc --noEmit"
   },
