@@ -32,8 +32,6 @@
     "typescript-eslint": "^8.16.0"
   },
   "nano-staged": {
-    "*.{js,ts,cjs,mjs}": [
-      "biome check --write --"
-    ]
+    "*.{js,ts,cjs,mjs}": ["biome check --write --"]
   }
 }
