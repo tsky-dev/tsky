@@ -26,6 +26,8 @@ async function downloadLexicons() {
 
   const commits = await shaResponse.json();
   const sha = commits[0]?.sha;
+  const version = commits[0]?.commit?.message?.match(/Release v([\d.]+)/)?.[1] || 'main';
+
   if (!sha) {
     throw new Error('No commits found for lexicons');
   }
@@ -49,6 +51,12 @@ async function downloadLexicons() {
   });
 
   await fs.unlink(tarFile);
+
+  return {
+    sha,
+    version,
+    sourceUrl: `https://github.com/${REPO}/tree/${sha}/lexicons`,
+  };
 }
 
 async function main() {
@@ -56,7 +64,7 @@ async function main() {
     await fs.mkdir(LEXICONS_DIR, { recursive: true });
     await fs.mkdir(path.dirname(TYPES_OUTPUT_PATH), { recursive: true });
 
-    await downloadLexicons();
+    const metadata = await downloadLexicons();
 
     const globPatterns = [
       'app/bsky/**/*.json',
@@ -89,6 +97,8 @@ async function main() {
       TYPES_OUTPUT_PATH,
       '--description',
       '"Contains type declarations for Bluesky lexicons"',
+      '--metadata',
+      JSON.stringify(JSON.stringify(metadata)),
     ].join(' ');
 
     console.log('Running lex-cli to generate types...');
