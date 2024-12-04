@@ -46,6 +46,11 @@ cli.register(
       description: 'Custom banner text to insert at the top of the generated file',
     });
 
+    metadata = Option.String('--metadata', {
+      required: false,
+      description: 'JSON metadata to add to the generated file header',
+    });
+
     files = Option.Rest({
       required: 1,
       name: 'files',
@@ -59,6 +64,7 @@ cli.register(
           files: this.files,
           banner: this.banner,
           description: this.desc,
+          lexiconMetadata: this.metadata ? JSON.parse(this.metadata) : undefined,
         });
       }
       catch (err) {
