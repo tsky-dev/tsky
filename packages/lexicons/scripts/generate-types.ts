@@ -26,7 +26,8 @@ async function downloadLexicons() {
 
   const commits = await shaResponse.json();
   const sha = commits[0]?.sha;
-  const version = commits[0]?.commit?.message?.match(/Release v([\d.]+)/)?.[1] || 'main';
+  const version =
+    commits[0]?.commit?.message?.match(/Release v([\d.]+)/)?.[1] || 'main';
 
   if (!sha) {
     throw new Error('No commits found for lexicons');
@@ -46,7 +47,7 @@ async function downloadLexicons() {
   await tar.x({
     file: tarFile,
     cwd: LEXICONS_DIR,
-    filter: path => path.includes('/lexicons/'),
+    filter: (path) => path.includes('/lexicons/'),
     strip: 2,
   });
 
@@ -108,8 +109,7 @@ async function main() {
     });
 
     console.log('Done! Types generated at', TYPES_OUTPUT_PATH);
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error:', error);
     process.exit(1);
   }

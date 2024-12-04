@@ -1,4 +1,9 @@
-import { isRecord, type Procedures, type Queries, type Records } from './lib/lexicons.js';
+import {
+  isRecord,
+  type Procedures,
+  type Queries,
+  type Records,
+} from './lib/lexicons.js';
 
 export * from './lib/lexicons.js';
 
@@ -73,10 +78,22 @@ export type ProcedureErrors<T extends keyof Procedures> =
     : never;
 
 // --- Common Bluesky Types ---
-export type BskyPost = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}feed.post` }>;
-export type BskyProfile = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}actor.profile` }>;
-export type BskyLike = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}feed.like` }>;
-export type BskyFollow = Extract<BskyRecord, { $type: `${typeof APP_BSKY_PREFIX}graph.follow` }>;
+export type BskyPost = Extract<
+  BskyRecord,
+  { $type: `${typeof APP_BSKY_PREFIX}feed.post` }
+>;
+export type BskyProfile = Extract<
+  BskyRecord,
+  { $type: `${typeof APP_BSKY_PREFIX}actor.profile` }
+>;
+export type BskyLike = Extract<
+  BskyRecord,
+  { $type: `${typeof APP_BSKY_PREFIX}feed.like` }
+>;
+export type BskyFollow = Extract<
+  BskyRecord,
+  { $type: `${typeof APP_BSKY_PREFIX}graph.follow` }
+>;
 
 // --- Type Guards ---
 export function isBskyRecord(value: unknown): value is BskyRecord {
@@ -102,12 +119,12 @@ export interface BskyError {
 
 export function isBskyError(value: unknown): value is BskyError {
   return (
-    typeof value === 'object'
-    && value !== null
-    && 'error' in value
-    && 'message' in value
-    && typeof (value as BskyError).error === 'string'
-    && typeof (value as BskyError).message === 'string'
+    typeof value === 'object' &&
+    value !== null &&
+    'error' in value &&
+    'message' in value &&
+    typeof (value as BskyError).error === 'string' &&
+    typeof (value as BskyError).message === 'string'
   );
 }
 

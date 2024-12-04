@@ -79,14 +79,14 @@ export function resolveType(
       if (def.errors) {
         output.push({
           value: `interface Errors {${def.errors
-            .map(error => `${error.name}: {};`)
+            .map((error) => `${error.name}: {};`)
             .join('')}}`,
           descriptions: [],
         });
       }
 
-      val = output.map(o => o.value).join('\n');
-      descs = descs.concat(output.flatMap(o => o.descriptions));
+      val = output.map((o) => o.value).join('\n');
+      descs = descs.concat(output.flatMap((o) => o.descriptions));
       break;
     }
     default:

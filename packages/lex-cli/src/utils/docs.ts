@@ -12,7 +12,7 @@ export function getDescriptions(def: { description?: string }): string[] {
 export function writeJsdoc(descriptions: string[]) {
   if (!descriptions.length) return '';
 
-  const escaped = descriptions.map(desc =>
+  const escaped = descriptions.map((desc) =>
     desc.replace(/\*\//g, '*\\/').replace(/@/g, '\\@'),
   );
 
@@ -20,5 +20,5 @@ export function writeJsdoc(descriptions: string[]) {
     return `\n/** ${escaped[0]} */\n`;
   }
 
-  return `\n/**${escaped.map(desc => `\n * ${desc}`).join('')}\n */\n`;
+  return `\n/**${escaped.map((desc) => `\n * ${desc}`).join('')}\n */\n`;
 }

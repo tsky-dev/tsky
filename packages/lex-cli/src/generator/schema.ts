@@ -96,10 +96,10 @@ export const stringSchema: t.StrictValidator<
   } => {
     if (value.format !== undefined && value.format !== 'uri') {
       if (
-        value.maxLength !== undefined
-        || value.minLength !== undefined
-        || value.maxGraphemes !== undefined
-        || value.minGraphemes !== undefined
+        value.maxLength !== undefined ||
+        value.minLength !== undefined ||
+        value.maxGraphemes !== undefined ||
+        value.minGraphemes !== undefined
       ) {
         throw new Error(
           `${value.format} format can't be used with length or grapheme constraints`,
@@ -364,9 +364,9 @@ export const userTypeSchema = t.isOneOf([
 
 export type UserTypeSchema = t.InferType<typeof userTypeSchema>;
 
-const NSID_RE
-  = /^[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\.[a-z]{1,63}$/i;
-const nsidType = t.cascade(t.isString(), value => NSID_RE.test(value));
+const NSID_RE =
+  /^[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\.[a-z]{1,63}$/i;
+const nsidType = t.cascade(t.isString(), (value) => NSID_RE.test(value));
 
 export const documentSchema = t.cascade(
   t.isObject({
@@ -390,11 +390,11 @@ export const documentSchema = t.cascade(
       const type = def.type;
 
       if (
-        id !== 'main'
-        && (type === 'record'
-          || type === 'query'
-          || type === 'procedure'
-          || type === 'subscription')
+        id !== 'main' &&
+        (type === 'record' ||
+          type === 'query' ||
+          type === 'procedure' ||
+          type === 'subscription')
       ) {
         throw new Error(
           `${type} must be the \`main\` definition (in defs.${id})`,

@@ -4,7 +4,13 @@ import type {
   RefUnionSchema,
   XrpcParametersSchema,
 } from '../schema.js';
-import { toNamespace, toUpper, writeJsdoc, sortName, sortPropertyKeys } from '../../utils/index.js';
+import {
+  toNamespace,
+  toUpper,
+  writeJsdoc,
+  sortName,
+  sortPropertyKeys,
+} from '../../utils/index.js';
 import { resolveType } from './type.js';
 
 export function resolveRefType(def: RefSchema): string {

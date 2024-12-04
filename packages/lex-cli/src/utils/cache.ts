@@ -18,8 +18,9 @@ export function toNamespace(s: string) {
   if (s in toNamespaceCache) {
     return toNamespaceCache[s];
   }
-  const value = s.replace(/^\w|\.\w/g, m =>
-    m[m.length === 1 ? 0 : 1].toUpperCase());
+  const value = s.replace(/^\w|\.\w/g, (m) =>
+    m[m.length === 1 ? 0 : 1].toUpperCase(),
+  );
   toNamespaceCache[s] = value;
   return value;
 }

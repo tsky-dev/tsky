@@ -1,5 +1,13 @@
 import { readFile } from 'node:fs/promises';
-import { toNamespace, getDescriptions, writeJsdoc, mainPrelude, sortDefinition, sortName, sortPropertyKeys } from '../utils/index.js';
+import {
+  toNamespace,
+  getDescriptions,
+  writeJsdoc,
+  mainPrelude,
+  sortDefinition,
+  sortName,
+  sortPropertyKeys,
+} from '../utils/index.js';
 import { resolveType } from './resolvers/index.js';
 import { type DocumentSchema, documentSchema } from './schema.js';
 
@@ -67,8 +75,7 @@ ${metadataLines.join('\n')}`;
         throw new Error('Invalid document schema');
       }
       document = parsed;
-    }
-    catch (err) {
+    } catch (err) {
       throw new Error(`failed to read ${filename}`, { cause: err });
     }
 
@@ -93,11 +100,9 @@ ${metadataLines.join('\n')}`;
 
         chunk += writeJsdoc(descriptions);
         chunk += `type ${typeName} = ${value};`;
-      }
-      else if (type === 'token') {
+      } else if (type === 'token') {
         chunk += `type ${typeName} = '${nsid}';`;
-      }
-      else if (type === 'object') {
+      } else if (type === 'object') {
         const required = def.required;
         const nullable = def.nullable;
         const properties = def.properties;
@@ -121,8 +126,7 @@ ${metadataLines.join('\n')}`;
         }
 
         chunk += '}';
-      }
-      else if (type === 'array') {
+      } else if (type === 'array') {
         const { value, descriptions } = resolveType(nsid, def.items);
         const descs = [];
 
@@ -136,8 +140,7 @@ ${metadataLines.join('\n')}`;
 
         chunk += writeJsdoc(descs.concat(descriptions));
         chunk += `type ${typeName} = (${value})[];`;
-      }
-      else if (type === 'record') {
+      } else if (type === 'record') {
         const obj = def.record;
         const required = obj.required;
         const nullable = obj.nullable;
@@ -165,8 +168,7 @@ ${metadataLines.join('\n')}`;
         chunk += '}';
 
         records += `\n'${nsid}': ${tsNamespace}.Record;`;
-      }
-      else if (type === 'query' || type === 'procedure') {
+      } else if (type === 'query' || type === 'procedure') {
         let parameters = def.parameters;
         const input = type === 'procedure' ? def.input : undefined;
         const output = def.output;
@@ -177,15 +179,13 @@ ${metadataLines.join('\n')}`;
         if (parameters) {
           if (Object.values(parameters.properties).length === 0) {
             parameters = undefined;
-          }
-          else {
+          } else {
             const { value, descriptions } = resolveType(nsid, parameters);
 
             chunk += writeJsdoc(descriptions);
             chunk += `interface Params extends TypedBase ${value}`;
           }
-        }
-        else {
+        } else {
           chunk += 'interface Params extends TypedBase {}';
         }
 
@@ -197,16 +197,13 @@ ${metadataLines.join('\n')}`;
 
             if (input.schema?.type === 'object') {
               chunk += `interface Input extends TypedBase ${value}`;
-            }
-            else {
+            } else {
               chunk += `type Input = ${value};`;
             }
-          }
-          else {
+          } else {
             chunk += 'type Input = Blob | ArrayBufferView;';
           }
-        }
-        else {
+        } else {
           chunk += 'type Input = undefined;';
         }
 
@@ -218,16 +215,13 @@ ${metadataLines.join('\n')}`;
 
             if (output.schema?.type === 'object') {
               chunk += `interface Output extends TypedBase ${value}`;
-            }
-            else {
+            } else {
               chunk += `type Output = ${value};`;
             }
-          }
-          else {
+          } else {
             chunk += 'type Output = Uint8Array;';
           }
-        }
-        else {
+        } else {
           chunk += 'type Output = undefined;';
         }
 
@@ -258,37 +252,32 @@ ${metadataLines.join('\n')}`;
 
           if (type === 'query') {
             queries += rc;
-          }
-          else if (type === 'procedure') {
+          } else if (type === 'procedure') {
             procedures += rc;
           }
         }
-      }
-      else if (type === 'blob') {
+      } else if (type === 'blob') {
         const { value, descriptions } = resolveType(nsid, def);
 
         chunk += writeJsdoc(descriptions);
         chunk += `type ${typeName} = ${value};`;
-      }
-      else if (type === 'bytes') {
+      } else if (type === 'bytes') {
         const { value, descriptions } = resolveType(nsid, def);
 
         chunk += writeJsdoc(descriptions);
         chunk += `type ${typeName} = ${value};`;
-      }
-      else if (type === 'subscription') {
+      } else if (type === 'subscription') {
         if (def.parameters) {
           const { value, descriptions } = resolveType(nsid, def.parameters);
           chunk += writeJsdoc(descriptions);
           chunk += `interface Params extends TypedBase ${value}`;
-        }
-        else {
+        } else {
           chunk += 'interface Params extends TypedBase {}';
         }
 
         if (def.message?.schema) {
-          const { value: messageValue, descriptions: messageDesc }
-            = resolveType(nsid, def.message.schema);
+          const { value: messageValue, descriptions: messageDesc } =
+            resolveType(nsid, def.message.schema);
           chunk += writeJsdoc(messageDesc);
           chunk += `type Message = ${messageValue};`;
         }
@@ -313,8 +302,7 @@ ${metadataLines.join('\n')}`;
         }
         rc += '};';
         subscriptions += rc;
-      }
-      else {
+      } else {
         // eslint-disable-next-line no-console
         console.log(`${nsid}: unhandled type ${type}`);
       }
