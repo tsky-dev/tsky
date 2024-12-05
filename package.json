@@ -1,7 +1,8 @@
 {
-  "name": "tsky-workspace",
+  "name": "tsky",
   "type": "module",
   "version": "0.1.0",
+  "private": true,
   "packageManager": "pnpm@9.14.2",
   "license": "MIT",
   "homepage": "https://tsky.dev/",
@@ -10,27 +11,23 @@
     "url": "git+https://github.com/tsky-dev/tsky.git"
   },
   "scripts": {
-    "build": "pnpm run --filter tsky build",
-    "docs:dev": "pnpm run --filter tsky-docs dev",
-    "docs:build": "pnpm run --filter tsky-docs build",
-    "docs:preview": "pnpm run --filter tsky-docs preview",
-    "format": "biome check --write .",
-    "format:check": "biome check",
-    "lint": "eslint ./packages ./docs",
-    "lint:fix": "eslint . --fix"
+    "dev": "pnpm run --filter @tsky/core dev",
+    "build": "pnpm run --filter @tsky/core build",
+    "docs:dev": "pnpm run --filter @tsky/docs dev",
+    "docs:build": "pnpm run --filter @tsky/docs build",
+    "docs:preview": "pnpm run --filter @tsky/docs preview",
+    "format": "biome format",
+    "format:fix": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check",
+    "check:fix": "biome check --write ."
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.11.2",
     "@biomejs/biome": "^1.9.4",
-    "@eslint/js": "^9.15.0",
-    "eslint": "^8.57.1",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
-    "eslint-plugin-promise": "^6.0.0",
-    "nano-staged": "^0.8.0",
-    "typescript-eslint": "^8.16.0"
+    "nano-staged": "^0.8.0"
   },
   "nano-staged": {
-    "*.{js,ts,cjs,mjs}": ["biome check --write --"]
+    "*.{js,ts,cjs,mjs,json}": ["biome check --write --"]
   }
 }

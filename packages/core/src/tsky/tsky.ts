@@ -2,7 +2,7 @@ import { type FetchHandler, XRPC } from '@atcute/client';
 import { Feed } from '~/bsky';
 import { Paginator } from './paginator';
 
-export class TSky {
+export class Tsky {
   xrpc: XRPC;
 
   constructor(handler: FetchHandler) {

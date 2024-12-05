@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'TSky',
-  description: 'A BlueSky API client for nimble apps and tools',
+  title: 'tsky',
+  description: 'A Bluesky API client for nimble apps and tools',
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },

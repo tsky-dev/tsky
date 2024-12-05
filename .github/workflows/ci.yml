@@ -32,10 +32,10 @@ jobs:
         timeout-minutes: 10
 
       - name: 📝 Lint
-        run: pnpm -r lint
+        run: pnpm run lint
 
       - name: 📝 Check format
-        run: pnpm format:check
+        run: pnpm run format
 
       - name: 💪 Type check
         run: pnpm -r test:typecheck

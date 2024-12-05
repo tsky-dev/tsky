@@ -1,8 +1,11 @@
 {
-  "name": "tsky",
+  "name": "@tsky/core",
   "type": "module",
   "version": "0.0.1",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "import": {
@@ -20,9 +23,8 @@
   "types": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
+    "dev": "pkgroll --watch",
     "build": "pkgroll",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix",
     "test": "vitest",
     "test:typescript": "tsc --noEmit"
   },
