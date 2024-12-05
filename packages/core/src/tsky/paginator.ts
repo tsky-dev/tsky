@@ -6,16 +6,25 @@ interface CursorResponse {
 export class Paginator<T extends CursorResponse> {
   readonly values: T[] = [];
 
-  constructor(
+  private constructor(
     private onNext: (cursor?: string) => Promise<T>,
     defaultValues?: T[],
   ) {
     if (defaultValues) {
       this.values = defaultValues;
     }
+  }
 
-    // TODO: Should we call this here to get the first value?
-    // this.next();
+  static async init<T extends CursorResponse>(
+    onNext: (cursor?: string) => Promise<T>,
+    defaultValues?: T[],
+  ): Promise<Paginator<CursorResponse>> {
+    const paginator = new Paginator(onNext, defaultValues);
+
+    // load the first page
+    await paginator.next();
+
+    return paginator;
   }
 
   clone() {
