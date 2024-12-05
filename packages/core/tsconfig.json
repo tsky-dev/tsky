@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "paths": {
       "~/*": ["src/*"]
     },
