@@ -28,8 +28,6 @@ export class Client<Q = Queries, P = Procedures> {
    * @param options Options to include like parameters
    * @returns The response of the request
    */
-  // get<K extends keyof Queries>(nsid: K, options: RPCOptions<Queries[K]>): Promise<XRPCResponse<OutputOf<Queries[K]>>>;
-
   async get<K extends keyof Q>(
     nsid: K,
     options: RPCOptions<Q[K]>,
