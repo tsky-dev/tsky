@@ -40,7 +40,6 @@ Use an identity & password login:
 import { Tsky } from 'tsky';
 import { CredentialManager } from '@atcute/client';
 
-// use either the credential manager
 const manager = new CredentialManager({ service: 'https://bsky.social' });
 await manager.login({
   identifier: 'alice.tsky.dev',
@@ -54,19 +53,8 @@ or the [@atcute/oauth-browser-client](https://github.com/mary-ext/atcute/tree/tr
 import { Tsky } from 'tsky';
 import { OAuthUserAgent, finalizeAuthorization } from '@atcute/oauth-browser-client';
 
-// `createAuthorizationUrl` asks for the server to redirect here with the
-// parameters assigned in the hash, not the search string.
-const params = new URLSearchParams(location.hash.slice(1));
+// get a session as described at: https://github.com/mary-ext/atcute/tree/trunk/packages/oauth/browser-client
 
-// this is optional, but after retrieving the parameters, we should ideally
-// scrub it from history to prevent this authorization state to be replayed,
-// just for good measure.
-history.replaceState(null, '', location.pathname + location.search);
-
-// you'd be given a session object that you can then pass to OAuthUserAgent!
-const session = await finalizeAuthorization(params);
-
-// now you can start making requests!
 const manager = new OAuthUserAgent(session);
 ```
 
