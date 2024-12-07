@@ -34,14 +34,37 @@ bun add tsky
 
 ## Usage
 
+Use an identity & password login:
+
 ```ts
-import { Tsky } from 'tsky'
+import { Tsky } from 'tsky';
+import { CredentialManager } from '@atcute/client';
 
+const manager = new CredentialManager({ service: 'https://bsky.social' });
+await manager.login({
+  identifier: 'alice.tsky.dev',
+  password: 'password',
+});
+```
 
-const app = new AppBskyNS(); // TODO
-const tsky = new Tsky(app);
+or the [@atcute/oauth-browser-client](https://github.com/mary-ext/atcute/tree/trunk/packages/oauth/browser-client):
 
-const profile = await tsky.profile('did:plc:giohuovwawlijq7jkuysq5dd');
+```ts
+import { Tsky } from 'tsky';
+import { OAuthUserAgent, finalizeAuthorization } from '@atcute/oauth-browser-client';
+
+// get a session as described at: https://github.com/mary-ext/atcute/tree/trunk/packages/oauth/browser-client
+
+const manager = new OAuthUserAgent(session);
+```
+
+and then initialize the tsky client:
+
+```ts
+const tsky = new Tsky(manager);
+
+// get the profile of a user
+const profile = await tsky.bsky.profile('did:plc:giohuovwawlijq7jkuysq5dd');
 
 console.log(profile.handle);
 ```
