@@ -23,7 +23,7 @@ async function getAliceTsky() {
     password: TEST_CREDENTIALS.alice.appPassword,
   });
 
-  return new Tsky(manager.fetch);
+  return new Tsky(manager);
 }
 
 describe('tSky', () => {

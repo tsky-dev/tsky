@@ -6,8 +6,8 @@ import { Client } from './client';
 export class Tsky {
   client: Client<Queries>;
 
-  constructor(handler: FetchHandler) {
-    this.client = new Client(handler);
+  constructor({ handle }: { handle: FetchHandler }) {
+    this.client = new Client(handle);
   }
 
   get bsky() {
