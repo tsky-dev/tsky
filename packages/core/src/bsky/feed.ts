@@ -14,9 +14,10 @@ export class Feed {
   async getFeed(
     params: AppBskyFeedGetFeed.Params,
     options?: AppBskyFeedGetFeed.Input,
-  ) {
+  ): Promise<Paginator<AppBskyFeedGetFeed.Output>> {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getFeed', {
+        ...(options ?? {}),
         params: {
           cursor,
           ...params,
@@ -30,13 +31,13 @@ export class Feed {
   /**
    * Get a view of the requesting account's home timeline. This is expected to be some form of reverse-chronological feed.
    */
-  timeline(
+  getTimeline(
     params: AppBskyFeedGetTimeline.Params,
     options?: AppBskyFeedGetTimeline.Input,
-  ) {
+  ): Promise<Paginator<AppBskyFeedGetTimeline.Output>> {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getTimeline', {
-        ...options,
+        ...(options ?? {}),
         params: {
           cursor,
           ...params,

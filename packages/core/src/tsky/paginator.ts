@@ -1,6 +1,5 @@
 interface CursorResponse {
   cursor?: string;
-  [key: string]: unknown;
 }
 
 export class Paginator<T extends CursorResponse> {
@@ -18,8 +17,8 @@ export class Paginator<T extends CursorResponse> {
   static async init<T extends CursorResponse>(
     onNext: (cursor?: string) => Promise<T>,
     defaultValues?: T[],
-  ): Promise<Paginator<CursorResponse>> {
-    const paginator = new Paginator(onNext, defaultValues);
+  ): Promise<Paginator<T>> {
+    const paginator = new Paginator<T>(onNext, defaultValues);
 
     // load the first page
     await paginator.next();
