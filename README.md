@@ -35,13 +35,20 @@ bun add tsky
 ## Usage
 
 ```ts
-import { Tsky } from 'tsky'
+import { Tsky } from 'tsky';
+import { CredentialManager } from '@atcute/client';
 
+// use either the credential manager or
+const manager = new CredentialManager({ service: 'https://bsky.social' });
+await manager.login({
+  identifier: 'alice.tsky.dev',
+  password: 'password',
+});
 
-const app = new AppBskyNS(); // TODO
-const tsky = new Tsky(app);
+const tsky = new Tsky(manager);
 
-const profile = await tsky.profile('did:plc:giohuovwawlijq7jkuysq5dd');
+// get the profile of a user
+const profile = await tsky.bsky.profile('did:plc:giohuovwawlijq7jkuysq5dd');
 
 console.log(profile.handle);
 ```
