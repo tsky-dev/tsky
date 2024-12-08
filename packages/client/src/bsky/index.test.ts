@@ -1,18 +1,21 @@
 import { CredentialManager } from '@atcute/client';
 import { describe, expect, it } from 'vitest';
-import { Tsky } from './index';
+import { Tsky } from '~/index';
+
+const formatSecret = (secret: string | undefined) =>
+  secret?.replace(/^tsky /g, '').trim() ?? '';
 
 const env = process.env;
 const TEST_CREDENTIALS = {
   alice: {
     handle: 'alice.tsky.dev',
     did: 'did:plc:jguhdmnjclquqf5lsvkyxqy3',
-    appPassword: env.ALICE_APP_PASSWORD ?? '',
+    appPassword: formatSecret(env.ALICE_APP_PASSWORD),
   },
   bob: {
     handle: 'bob.tsky.dev',
     did: 'did:plc:2ig7akkyfq256j42uxvc4g2h',
-    appPassword: env.BOB_APP_PASSWORD ?? '',
+    appPassword: formatSecret(env.BOB_APP_PASSWORD),
   },
 };
 
@@ -26,7 +29,7 @@ async function getAliceTsky() {
   return new Tsky(manager);
 }
 
-describe('tSky', () => {
+describe('bsky', () => {
   it('.profile()', async () => {
     const tsky = await getAliceTsky();
     const profile = await tsky.bsky.profile(TEST_CREDENTIALS.alice.did);
