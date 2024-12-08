@@ -24,6 +24,8 @@ const TEST_CREDENTIALS = {
   },
 };
 
+console.log('env keys', Object.keys(process.env));
+
 async function getAliceTsky() {
   const manager = new CredentialManager({ service: 'https://bsky.social' });
   await manager.login({
