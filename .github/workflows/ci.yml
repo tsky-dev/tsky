@@ -30,8 +30,8 @@ jobs:
       - name: 🧪 Test project
         run: pnpm -r test
         env:
-          ALICE_APP_PASSWORD: ${{ secrets.ALICE_APP_PASSWORD }}
-          BOB_APP_PASSWORD: ${{ secrets.BOB_APP_PASSWORD }}
+          ALICE_APP_PASSWORD: ${{ secrets.ALICE_PASSWORD }}
+          BOB_APP_PASSWORD: ${{ secrets.BOB_PASSWORD }}
         timeout-minutes: 10
 
       - name: 📝 Lint
