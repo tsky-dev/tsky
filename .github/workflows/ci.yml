@@ -29,6 +29,9 @@ jobs:
 
       - name: 🧪 Test project
         run: pnpm -r test
+        env:
+          ALICE_APP_PASSWORD: ${{ secrets.ALICE_PASSWORD }}
+          BOB_APP_PASSWORD: ${{ secrets.BOB_PASSWORD }}
         timeout-minutes: 10
 
       - name: 📝 Lint
@@ -39,10 +42,10 @@ jobs:
 
       - name: 💪 Type check
         run: pnpm -r test:typecheck
-      
+
       - name: 📦 Build
         run: pnpm -r build
-      
+
       # - name: 🚢 Continuous Release
       #   run: pnpm dlx pkg-pr-new publish './packages/core'
       #   if: github.event_name == 'pull_request'

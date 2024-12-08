@@ -1,5 +1,5 @@
 {
-  "name": "@tsky/core",
+  "name": "@tsky/client",
   "type": "module",
   "version": "0.0.1",
   "license": "MIT",
@@ -29,7 +29,8 @@
     "test:typescript": "tsc --noEmit"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.18"
+    "@atcute/client": "^2.0.6",
+    "@tsky/lexicons": "workspace:*"
   },
   "devDependencies": {
     "globals": "^15.12.0",
