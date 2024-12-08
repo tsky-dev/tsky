@@ -2,8 +2,13 @@ import { CredentialManager } from '@atcute/client';
 import { describe, expect, it } from 'vitest';
 import { Tsky } from '~/index';
 
-const formatSecret = (secret: string | undefined) =>
-  secret?.replace(/^tsky /g, '').trim() ?? '';
+const formatSecret = (secret: string | undefined) => {
+  if (!secret) {
+    throw new Error('Secret is required');
+  }
+
+  return secret.replace(/^tsky /g, '').trim();
+};
 
 const env = process.env;
 const TEST_CREDENTIALS = {
