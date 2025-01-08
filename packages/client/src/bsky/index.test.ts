@@ -60,5 +60,23 @@ describe('bsky', () => {
       expect(paginator.values[0].feed.length).toBeGreaterThan(0); // alice has some posts ;)
       expect(paginator.values[0].feed[0]).toHaveProperty('post');
     });
+
+    it('.feed()', async () => {
+      const tsky = await getAliceTsky();
+
+      const paginator = await tsky.bsky.feed.getFeed({
+        // "Birds! 🦉" custom feed
+        // - https://bsky.app/profile/daryllmarie.bsky.social/feed/aaagllxbcbsje
+        feed: 'at://did:plc:ffkgesg3jsv2j7aagkzrtcvt/app.bsky.feed.generator/aaagllxbcbsje',
+        limit: 30,
+      });
+
+      expect(paginator).toBeDefined();
+      expect(paginator.values).toBeDefined();
+      expect(paginator.values).toBeInstanceOf(Array);
+      expect(paginator.values.length).toBe(1); // we should get the first page from the paginator
+      expect(paginator.values[0].feed.length).toBeGreaterThan(0); // we found some birds posts ;)
+      expect(paginator.values[0].feed[0]).toHaveProperty('post');
+    });
   });
 });
