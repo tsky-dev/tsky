@@ -1,9 +1,8 @@
-import {
-  type FetchHandler,
-  type RPCOptions,
+import type {
+  RPCOptions,
   XRPC,
-  type XRPCRequestOptions,
-  type XRPCResponse,
+  XRPCRequestOptions,
+  XRPCResponse,
 } from '@atcute/client';
 import type { Procedures, Queries } from '@tsky/lexicons';
 
