@@ -17,8 +17,8 @@ type OutputOf<T> = T extends {
 export class Client<Q = Queries, P = Procedures> {
   xrpc: XRPC;
 
-  constructor(handler: FetchHandler) {
-    this.xrpc = new XRPC({ handler });
+  constructor(xrpc: XRPC) {
+    this.xrpc = xrpc;
   }
 
   /**
