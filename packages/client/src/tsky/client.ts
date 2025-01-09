@@ -1,9 +1,8 @@
-import {
-  type FetchHandler,
-  type RPCOptions,
+import type {
+  RPCOptions,
   XRPC,
-  type XRPCRequestOptions,
-  type XRPCResponse,
+  XRPCRequestOptions,
+  XRPCResponse,
 } from '@atcute/client';
 import type { Procedures, Queries } from '@tsky/lexicons';
 
@@ -18,8 +17,8 @@ type OutputOf<T> = T extends {
 export class Client<Q = Queries, P = Procedures> {
   xrpc: XRPC;
 
-  constructor(handler: FetchHandler) {
-    this.xrpc = new XRPC({ handler });
+  constructor(xrpc: XRPC) {
+    this.xrpc = xrpc;
   }
 
   /**
