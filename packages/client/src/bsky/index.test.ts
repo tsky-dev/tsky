@@ -14,12 +14,12 @@ const TEST_CREDENTIALS = {
   alice: {
     handle: 'alice.tsky.dev',
     did: 'did:plc:jguhdmnjclquqf5lsvkyxqy3',
-    appPassword: formatSecret(process.env.ALICE_APP_PASSWORD),
+    password: formatSecret(process.env.ALICE_PASSWORD),
   },
   bob: {
     handle: 'bob.tsky.dev',
     did: 'did:plc:2ig7akkyfq256j42uxvc4g2h',
-    appPassword: formatSecret(process.env.BOB_APP_PASSWORD),
+    password: formatSecret(process.env.BOB_PASSWORD),
   },
 };
 
@@ -27,7 +27,7 @@ async function getAliceTsky() {
   const manager = new CredentialManager({ service: 'https://bsky.social' });
   await manager.login({
     identifier: TEST_CREDENTIALS.alice.handle,
-    password: TEST_CREDENTIALS.alice.appPassword,
+    password: TEST_CREDENTIALS.alice.password,
   });
 
   return new Tsky(manager);
