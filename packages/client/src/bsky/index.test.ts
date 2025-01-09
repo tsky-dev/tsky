@@ -1,4 +1,4 @@
-import { CredentialManager, XRPC } from '@atcute/client';
+import { CredentialManager } from '@atcute/client';
 import { describe, expect, it } from 'vitest';
 import { Tsky } from '~/index';
 
@@ -31,9 +31,7 @@ async function getAliceTsky() {
     password: TEST_CREDENTIALS.alice.appPassword,
   });
 
-  const xrpc = new XRPC({ handler: manager });
-
-  return new Tsky(xrpc);
+  return new Tsky(manager);
 }
 
 describe('bsky', () => {
