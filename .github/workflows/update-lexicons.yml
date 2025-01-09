@@ -1,0 +1,46 @@
+name: Update lexicons
+
+permissions: {}
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+  merge_group: {}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 📦 Update lexicons
+        run: pnpm --filter @tsky/lexicons build
+
+      - name: ✅ Check if lexicons version was updated
+        id: check-version-change
+        run: echo "VERSION_CHANGED=$(pnpm run --silent --filter @tsky/lexicons check-version-change)" >> "$GITHUB_OUTPUT"
+
+      - name: 🔼 commit and push
+        if: ${{ steps.check-version-change.outputs.VERSION_CHANGED == 'yes' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (git add . && git commit -m "chore: update lexicons.ts")
+          git push
