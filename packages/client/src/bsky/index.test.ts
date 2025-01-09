@@ -10,19 +10,19 @@ const formatSecret = (secret: string | undefined) => {
   return secret.replace(/^tsky /g, '').trim();
 };
 
-const env = process.env;
 const TEST_CREDENTIALS = {
   alice: {
     handle: 'alice.tsky.dev',
     did: 'did:plc:jguhdmnjclquqf5lsvkyxqy3',
-    appPassword: formatSecret(env.ALICE_APP_PASSWORD),
+    appPassword: formatSecret(process.env.ALICE_APP_PASSWORD),
   },
   bob: {
     handle: 'bob.tsky.dev',
     did: 'did:plc:2ig7akkyfq256j42uxvc4g2h',
-    appPassword: formatSecret(env.BOB_APP_PASSWORD),
+    appPassword: formatSecret(process.env.BOB_APP_PASSWORD),
   },
 };
+
 
 async function getAliceTsky() {
   const manager = new CredentialManager({ service: 'https://bsky.social' });
