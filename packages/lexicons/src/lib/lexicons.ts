@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2024-12-04T01:51:07.265Z
+ * Generated on: 2025-01-09T12:45:41.061Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/c72145dbeb2d67068bc28c00a13447e0d382d121/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/53621f8e100a3aa3c1caff10a08d3f4ea919875a/lexicons
  */
 
 /** Base type with optional type field */
@@ -23,7 +23,7 @@ export interface RecordBase {
 /** Makes $type required and specific */
 export type Typed<T extends TypedBase, Type extends string> = Omit<
   T,
-  '$type'
+  "$type"
 > & {
   $type: Type;
 };
@@ -36,10 +36,10 @@ export type TypeUnion<T extends TypedBase> = T extends any
 /** Type guard for records */
 export function isRecord(value: unknown): value is RecordBase {
   return (
-    typeof value === 'object' &&
+    typeof value === "object" &&
     value !== null &&
-    '$type' in value &&
-    typeof value.$type === 'string'
+    "$type" in value &&
+    typeof value.$type === "string"
   );
 }
 
@@ -69,7 +69,7 @@ export declare namespace At {
 
   /** Blob interface */
   interface Blob<T extends string = string> extends RecordBase {
-    $type: 'blob';
+    $type: "blob";
     mimeType: T;
     ref: {
       $link: string;
@@ -104,7 +104,7 @@ export declare namespace AppBskyActorDefs {
   }
   interface ContentLabelPref extends TypedBase {
     label: string;
-    visibility: 'hide' | 'ignore' | 'show' | 'warn' | (string & {});
+    visibility: "hide" | "ignore" | "show" | "warn" | (string & {});
     /** Which labeler does this preference apply to? If undefined, applies globally. */
     labelerDid?: At.DID;
   }
@@ -167,7 +167,7 @@ export declare namespace AppBskyActorDefs {
      * Groups of users to apply the muted word to. If undefined, applies to all users.
      * \@default "all"
      */
-    actorTarget?: 'all' | 'exclude-following' | (string & {});
+    actorTarget?: "all" | "exclude-following" | (string & {});
     /** The date and time at which the muted word will expire and no longer be applied. */
     expiresAt?: string;
     id?: string;
@@ -180,7 +180,7 @@ export declare namespace AppBskyActorDefs {
    * Maximum string length: 640
    * Maximum grapheme length: 64
    */
-  type MutedWordTarget = 'content' | 'tag' | (string & {});
+  type MutedWordTarget = "content" | "tag" | (string & {});
   /** A new user experiences (NUX) storage object */
   interface Nux extends TypedBase {
     /** \@default false */
@@ -222,7 +222,7 @@ export declare namespace AppBskyActorDefs {
     starterPacks?: number;
   }
   interface ProfileAssociatedChat extends TypedBase {
-    allowIncoming: 'all' | 'following' | 'none' | (string & {});
+    allowIncoming: "all" | "following" | "none" | (string & {});
   }
   interface ProfileView extends TypedBase {
     did: At.DID;
@@ -287,7 +287,7 @@ export declare namespace AppBskyActorDefs {
   interface SavedFeed extends TypedBase {
     id: string;
     pinned: boolean;
-    type: 'feed' | 'list' | 'timeline' | (string & {});
+    type: "feed" | "list" | "timeline" | (string & {});
     value: string;
   }
   interface SavedFeedsPref extends TypedBase {
@@ -303,11 +303,11 @@ export declare namespace AppBskyActorDefs {
     prioritizeFollowedUsers?: boolean;
     /** Sorting mode for threads. */
     sort?:
-      | 'hotness'
-      | 'most-likes'
-      | 'newest'
-      | 'oldest'
-      | 'random'
+      | "hotness"
+      | "most-likes"
+      | "newest"
+      | "oldest"
+      | "random"
       | (string & {});
   }
   /** Metadata about the requesting account's relationship with the subject account. Only has meaningful content for authed requests. */
@@ -374,7 +374,7 @@ export declare namespace AppBskyActorGetSuggestions {
 export declare namespace AppBskyActorProfile {
   /** A declaration of a Bluesky account profile. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.actor.profile';
+    $type: "app.bsky.actor.profile";
     /** Small image to be displayed next to posts from account. AKA, 'profile picture' */
     avatar?: At.Blob;
     /** Larger horizontal image to display behind profile view. */
@@ -623,10 +623,10 @@ export declare namespace AppBskyFeedDefs {
     blocked: boolean;
     uri: At.Uri;
   }
-  type ClickthroughAuthor = 'app.bsky.feed.defs#clickthroughAuthor';
-  type ClickthroughEmbed = 'app.bsky.feed.defs#clickthroughEmbed';
-  type ClickthroughItem = 'app.bsky.feed.defs#clickthroughItem';
-  type ClickthroughReposter = 'app.bsky.feed.defs#clickthroughReposter';
+  type ClickthroughAuthor = "app.bsky.feed.defs#clickthroughAuthor";
+  type ClickthroughEmbed = "app.bsky.feed.defs#clickthroughEmbed";
+  type ClickthroughItem = "app.bsky.feed.defs#clickthroughItem";
+  type ClickthroughReposter = "app.bsky.feed.defs#clickthroughReposter";
   interface FeedViewPost extends TypedBase {
     post: PostView;
     /**
@@ -662,18 +662,18 @@ export declare namespace AppBskyFeedDefs {
   }
   interface Interaction extends TypedBase {
     event?:
-      | 'app.bsky.feed.defs#clickthroughAuthor'
-      | 'app.bsky.feed.defs#clickthroughEmbed'
-      | 'app.bsky.feed.defs#clickthroughItem'
-      | 'app.bsky.feed.defs#clickthroughReposter'
-      | 'app.bsky.feed.defs#interactionLike'
-      | 'app.bsky.feed.defs#interactionQuote'
-      | 'app.bsky.feed.defs#interactionReply'
-      | 'app.bsky.feed.defs#interactionRepost'
-      | 'app.bsky.feed.defs#interactionSeen'
-      | 'app.bsky.feed.defs#interactionShare'
-      | 'app.bsky.feed.defs#requestLess'
-      | 'app.bsky.feed.defs#requestMore'
+      | "app.bsky.feed.defs#clickthroughAuthor"
+      | "app.bsky.feed.defs#clickthroughEmbed"
+      | "app.bsky.feed.defs#clickthroughItem"
+      | "app.bsky.feed.defs#clickthroughReposter"
+      | "app.bsky.feed.defs#interactionLike"
+      | "app.bsky.feed.defs#interactionQuote"
+      | "app.bsky.feed.defs#interactionReply"
+      | "app.bsky.feed.defs#interactionRepost"
+      | "app.bsky.feed.defs#interactionSeen"
+      | "app.bsky.feed.defs#interactionShare"
+      | "app.bsky.feed.defs#requestLess"
+      | "app.bsky.feed.defs#requestMore"
       | (string & {});
     /**
      * Context on a feed item that was originally supplied by the feed generator on getFeedSkeleton.
@@ -682,12 +682,12 @@ export declare namespace AppBskyFeedDefs {
     feedContext?: string;
     item?: At.Uri;
   }
-  type InteractionLike = 'app.bsky.feed.defs#interactionLike';
-  type InteractionQuote = 'app.bsky.feed.defs#interactionQuote';
-  type InteractionReply = 'app.bsky.feed.defs#interactionReply';
-  type InteractionRepost = 'app.bsky.feed.defs#interactionRepost';
-  type InteractionSeen = 'app.bsky.feed.defs#interactionSeen';
-  type InteractionShare = 'app.bsky.feed.defs#interactionShare';
+  type InteractionLike = "app.bsky.feed.defs#interactionLike";
+  type InteractionQuote = "app.bsky.feed.defs#interactionQuote";
+  type InteractionReply = "app.bsky.feed.defs#interactionReply";
+  type InteractionRepost = "app.bsky.feed.defs#interactionRepost";
+  type InteractionSeen = "app.bsky.feed.defs#interactionSeen";
+  type InteractionShare = "app.bsky.feed.defs#interactionShare";
   interface NotFoundPost extends TypedBase {
     notFound: boolean;
     uri: At.Uri;
@@ -724,8 +724,8 @@ export declare namespace AppBskyFeedDefs {
     /** When parent is a reply to another post, this is the author of that post. */
     grandparentAuthor?: AppBskyActorDefs.ProfileViewBasic;
   }
-  type RequestLess = 'app.bsky.feed.defs#requestLess';
-  type RequestMore = 'app.bsky.feed.defs#requestMore';
+  type RequestLess = "app.bsky.feed.defs#requestLess";
+  type RequestMore = "app.bsky.feed.defs#requestMore";
   interface SkeletonFeedPost extends TypedBase {
     post: At.Uri;
     /**
@@ -782,7 +782,7 @@ export declare namespace AppBskyFeedDescribeFeedGenerator {
 export declare namespace AppBskyFeedGenerator {
   /** Record declaring of the existence of a feed generator, and containing metadata about it. The record can exist in any repository. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.feed.generator';
+    $type: "app.bsky.feed.generator";
     createdAt: string;
     did: At.DID;
     /**
@@ -856,10 +856,10 @@ export declare namespace AppBskyFeedGetAuthorFeed {
      * \@default "posts_with_replies"
      */
     filter?:
-      | 'posts_and_author_threads'
-      | 'posts_no_replies'
-      | 'posts_with_media'
-      | 'posts_with_replies'
+      | "posts_and_author_threads"
+      | "posts_no_replies"
+      | "posts_with_media"
+      | "posts_with_replies"
       | (string & {});
     /** \@default false */
     includePins?: boolean;
@@ -1143,7 +1143,7 @@ export declare namespace AppBskyFeedGetTimeline {
 export declare namespace AppBskyFeedLike {
   /** Record declaring a 'like' of a piece of subject content. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.feed.like';
+    $type: "app.bsky.feed.like";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
   }
@@ -1152,7 +1152,7 @@ export declare namespace AppBskyFeedLike {
 export declare namespace AppBskyFeedPost {
   /** Record containing a Bluesky post. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.feed.post';
+    $type: "app.bsky.feed.post";
     /** Client-declared timestamp when this post was originally created. */
     createdAt: string;
     /**
@@ -1220,7 +1220,7 @@ export declare namespace AppBskyFeedPost {
 export declare namespace AppBskyFeedPostgate {
   /** Record defining interaction rules for a post. The record key (rkey) of the postgate record must match the record key of the post, and that record must be in the same repository. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.feed.postgate';
+    $type: "app.bsky.feed.postgate";
     createdAt: string;
     /** Reference (AT-URI) to the post record. */
     post: At.Uri;
@@ -1239,7 +1239,7 @@ export declare namespace AppBskyFeedPostgate {
 export declare namespace AppBskyFeedRepost {
   /** Record representing a 'repost' of an existing Bluesky post. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.feed.repost';
+    $type: "app.bsky.feed.repost";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
   }
@@ -1272,7 +1272,7 @@ export declare namespace AppBskyFeedSearchPosts {
      * Specifies the ranking order of results.
      * \@default "latest"
      */
-    sort?: 'latest' | 'top' | (string & {});
+    sort?: "latest" | "top" | (string & {});
     /**
      * Filter to posts with the given tag (hashtag), based on rich-text facet or tag field. Do not include the hash (#) prefix. Multiple tags can be specified, with 'AND' matching.
      * Maximum string length: 640
@@ -1308,7 +1308,7 @@ export declare namespace AppBskyFeedSendInteractions {
 export declare namespace AppBskyFeedThreadgate {
   /** Record defining interaction gating rules for a thread (aka, reply controls). The record key (rkey) of the threadgate record must match the record key of the thread's root post, and that record must be in the same repository. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.feed.threadgate';
+    $type: "app.bsky.feed.threadgate";
     createdAt: string;
     /** Reference (AT-URI) to the post record. */
     post: At.Uri;
@@ -1333,7 +1333,7 @@ export declare namespace AppBskyFeedThreadgate {
 export declare namespace AppBskyGraphBlock {
   /** Record declaring a 'block' relationship against another account. NOTE: blocks are public in Bluesky; see blog posts for details. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.graph.block';
+    $type: "app.bsky.graph.block";
     createdAt: string;
     /** DID of the account to be blocked. */
     subject: At.DID;
@@ -1341,15 +1341,15 @@ export declare namespace AppBskyGraphBlock {
 }
 
 export declare namespace AppBskyGraphDefs {
-  type Curatelist = 'app.bsky.graph.defs#curatelist';
+  type Curatelist = "app.bsky.graph.defs#curatelist";
   interface ListItemView extends TypedBase {
     subject: AppBskyActorDefs.ProfileView;
     uri: At.Uri;
   }
   type ListPurpose =
-    | 'app.bsky.graph.defs#curatelist'
-    | 'app.bsky.graph.defs#modlist'
-    | 'app.bsky.graph.defs#referencelist'
+    | "app.bsky.graph.defs#curatelist"
+    | "app.bsky.graph.defs#modlist"
+    | "app.bsky.graph.defs#referencelist"
     | (string & {});
   interface ListView extends TypedBase {
     cid: At.CID;
@@ -1394,13 +1394,13 @@ export declare namespace AppBskyGraphDefs {
     blocked?: At.Uri;
     muted?: boolean;
   }
-  type Modlist = 'app.bsky.graph.defs#modlist';
+  type Modlist = "app.bsky.graph.defs#modlist";
   /** indicates that a handle or DID could not be resolved */
   interface NotFoundActor extends TypedBase {
     actor: string;
     notFound: boolean;
   }
-  type Referencelist = 'app.bsky.graph.defs#referencelist';
+  type Referencelist = "app.bsky.graph.defs#referencelist";
   /** lists the bi-directional graph relationships between one actor (not indicated in the object), and the target actors (the DID included in the object) */
   interface Relationship extends TypedBase {
     did: At.DID;
@@ -1445,7 +1445,7 @@ export declare namespace AppBskyGraphDefs {
 export declare namespace AppBskyGraphFollow {
   /** Record declaring a social 'follow' relationship of another account. Duplicate follows will be ignored by the AppView. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.graph.follow';
+    $type: "app.bsky.graph.follow";
     createdAt: string;
     subject: At.DID;
   }
@@ -1709,7 +1709,7 @@ export declare namespace AppBskyGraphGetSuggestedFollowsByActor {
 export declare namespace AppBskyGraphList {
   /** Record representing a list of accounts (actors). Scope includes both moderation-oriented lists and curration-oriented lists. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.graph.list';
+    $type: "app.bsky.graph.list";
     createdAt: string;
     /**
      * Display name for list; can not be empty.
@@ -1733,7 +1733,7 @@ export declare namespace AppBskyGraphList {
 export declare namespace AppBskyGraphListblock {
   /** Record representing a block relationship against an entire an entire list of accounts (actors). */
   interface Record extends RecordBase {
-    $type: 'app.bsky.graph.listblock';
+    $type: "app.bsky.graph.listblock";
     createdAt: string;
     /** Reference (AT-URI) to the mod list record. */
     subject: At.Uri;
@@ -1743,7 +1743,7 @@ export declare namespace AppBskyGraphListblock {
 export declare namespace AppBskyGraphListitem {
   /** Record representing an account's inclusion on a specific list. The AppView will ignore duplicate listitem records. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.graph.listitem';
+    $type: "app.bsky.graph.listitem";
     createdAt: string;
     /** Reference (AT-URI) to the list record (app.bsky.graph.list). */
     list: At.Uri;
@@ -1802,7 +1802,7 @@ export declare namespace AppBskyGraphSearchStarterPacks {
 export declare namespace AppBskyGraphStarterpack {
   /** Record defining a starter pack of actors and feeds for new users. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.graph.starterpack';
+    $type: "app.bsky.graph.starterpack";
     createdAt: string;
     /** Reference (AT-URI) to the list record. */
     list: At.Uri;
@@ -1905,7 +1905,7 @@ export declare namespace AppBskyLabelerGetServices {
 export declare namespace AppBskyLabelerService {
   /** A declaration of the existence of labeler service. */
   interface Record extends RecordBase {
-    $type: 'app.bsky.labeler.service';
+    $type: "app.bsky.labeler.service";
     createdAt: string;
     policies: AppBskyLabelerDefs.LabelerPolicies;
     labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
@@ -1935,6 +1935,11 @@ export declare namespace AppBskyNotificationListNotifications {
      */
     limit?: number;
     priority?: boolean;
+    /**
+     * Notification reasons to include in response.
+     * A reason that matches the reason property of #notification.
+     */
+    reasons?: string[];
     seenAt?: string;
   }
   type Input = undefined;
@@ -1951,13 +1956,13 @@ export declare namespace AppBskyNotificationListNotifications {
     isRead: boolean;
     /** Expected values are 'like', 'repost', 'follow', 'mention', 'reply', 'quote', and 'starterpack-joined'. */
     reason:
-      | 'follow'
-      | 'like'
-      | 'mention'
-      | 'quote'
-      | 'reply'
-      | 'repost'
-      | 'starterpack-joined'
+      | "follow"
+      | "like"
+      | "mention"
+      | "quote"
+      | "reply"
+      | "repost"
+      | "starterpack-joined"
       | (string & {});
     record: unknown;
     uri: At.Uri;
@@ -1980,7 +1985,7 @@ export declare namespace AppBskyNotificationRegisterPush {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
     appId: string;
-    platform: 'android' | 'ios' | 'web' | (string & {});
+    platform: "android" | "ios" | "web" | (string & {});
     serviceDid: At.DID;
     token: string;
   }
@@ -2036,6 +2041,12 @@ export declare namespace AppBskyUnspeccedDefs {
   }
   interface SkeletonSearchStarterPack extends TypedBase {
     uri: At.Uri;
+  }
+  interface TrendingTopic extends TypedBase {
+    link: string;
+    topic: string;
+    description?: string;
+    displayName?: string;
   }
 }
 
@@ -2099,8 +2110,27 @@ export declare namespace AppBskyUnspeccedGetTaggedSuggestions {
   }
   interface Suggestion extends TypedBase {
     subject: string;
-    subjectType: 'actor' | 'feed' | (string & {});
+    subjectType: "actor" | "feed" | (string & {});
     tag: string;
+  }
+}
+
+/** Get a list of trending topics */
+export declare namespace AppBskyUnspeccedGetTrendingTopics {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). Used to boost followed accounts in ranking. */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    suggested: AppBskyUnspeccedDefs.TrendingTopic[];
+    topics: AppBskyUnspeccedDefs.TrendingTopic[];
   }
 }
 
@@ -2161,7 +2191,7 @@ export declare namespace AppBskyUnspeccedSearchPostsSkeleton {
      * Specifies the ranking order of results.
      * \@default "latest"
      */
-    sort?: 'latest' | 'top' | (string & {});
+    sort?: "latest" | "top" | (string & {});
     /**
      * Filter to posts with the given tag (hashtag), based on rich-text facet or tag field. Do not include the hash (#) prefix. Multiple tags can be specified, with 'AND' matching.
      * Maximum string length: 640
@@ -2220,7 +2250,7 @@ export declare namespace AppBskyVideoDefs {
     did: At.DID;
     jobId: string;
     /** The state of the video processing job. All values not listed as a known value indicate that the job is in process. */
-    state: 'JOB_STATE_COMPLETED' | 'JOB_STATE_FAILED' | (string & {});
+    state: "JOB_STATE_COMPLETED" | "JOB_STATE_FAILED" | (string & {});
     blob?: At.Blob;
     error?: string;
     message?: string;
@@ -2269,8 +2299,8 @@ export declare namespace AppBskyVideoUploadVideo {
 export declare namespace ChatBskyActorDeclaration {
   /** A declaration of a Bluesky chat account. */
   interface Record extends RecordBase {
-    $type: 'chat.bsky.actor.declaration';
-    allowIncoming: 'all' | 'following' | 'none' | (string & {});
+    $type: "chat.bsky.actor.declaration";
+    allowIncoming: "all" | "following" | "none" | (string & {});
   }
 }
 
@@ -2675,7 +2705,7 @@ export declare namespace ComAtprotoAdminGetInviteCodes {
      */
     limit?: number;
     /** \@default "recent" */
-    sort?: 'recent' | 'usage' | (string & {});
+    sort?: "recent" | "usage" | (string & {});
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -2885,22 +2915,22 @@ export declare namespace ComAtprotoLabelDefs {
     ver?: number;
   }
   type LabelValue =
-    | '!hide'
-    | '!no-promote'
-    | '!no-unauthenticated'
-    | '!warn'
-    | 'dmca-violation'
-    | 'doxxing'
-    | 'gore'
-    | 'nsfl'
-    | 'nudity'
-    | 'porn'
-    | 'sexual'
+    | "!hide"
+    | "!no-promote"
+    | "!no-unauthenticated"
+    | "!warn"
+    | "dmca-violation"
+    | "doxxing"
+    | "gore"
+    | "nsfl"
+    | "nudity"
+    | "porn"
+    | "sexual"
     | (string & {});
   /** Declares a label value and its expected interpretations and behaviors. */
   interface LabelValueDefinition extends TypedBase {
     /** What should this label hide in the UI, if applied? 'content' hides all of the target; 'media' hides the images/video/audio; 'none' hides nothing. */
-    blurs: 'content' | 'media' | 'none' | (string & {});
+    blurs: "content" | "media" | "none" | (string & {});
     /**
      * The value of the label being defined. Must only include lowercase ascii and the '-' character ([a-z-]+).
      * Maximum string length: 100
@@ -2909,14 +2939,14 @@ export declare namespace ComAtprotoLabelDefs {
     identifier: string;
     locales: LabelValueDefinitionStrings[];
     /** How should a client visually convey this label? 'inform' means neutral and informational; 'alert' means negative and warning; 'none' means show nothing. */
-    severity: 'alert' | 'inform' | 'none' | (string & {});
+    severity: "alert" | "inform" | "none" | (string & {});
     /** Does the user need to have adult content enabled in order to configure this label? */
     adultOnly?: boolean;
     /**
      * The default setting for this label.
      * \@default "warn"
      */
-    defaultSetting?: 'hide' | 'ignore' | 'warn' | (string & {});
+    defaultSetting?: "hide" | "ignore" | "warn" | (string & {});
   }
   /** Strings which describe the label in the UI, localized into a specific language. */
   interface LabelValueDefinitionStrings extends TypedBase {
@@ -2982,7 +3012,7 @@ export declare namespace ComAtprotoLabelSubscribeLabels {
     FutureCursor: {};
   }
   interface Info extends TypedBase {
-    name: 'OutdatedCursor' | (string & {});
+    name: "OutdatedCursor" | (string & {});
     message?: string;
   }
   interface Labels extends TypedBase {
@@ -3024,22 +3054,22 @@ export declare namespace ComAtprotoModerationCreateReport {
 }
 
 export declare namespace ComAtprotoModerationDefs {
-  type ReasonAppeal = 'com.atproto.moderation.defs#reasonAppeal';
-  type ReasonMisleading = 'com.atproto.moderation.defs#reasonMisleading';
-  type ReasonOther = 'com.atproto.moderation.defs#reasonOther';
-  type ReasonRude = 'com.atproto.moderation.defs#reasonRude';
-  type ReasonSexual = 'com.atproto.moderation.defs#reasonSexual';
-  type ReasonSpam = 'com.atproto.moderation.defs#reasonSpam';
+  type ReasonAppeal = "com.atproto.moderation.defs#reasonAppeal";
+  type ReasonMisleading = "com.atproto.moderation.defs#reasonMisleading";
+  type ReasonOther = "com.atproto.moderation.defs#reasonOther";
+  type ReasonRude = "com.atproto.moderation.defs#reasonRude";
+  type ReasonSexual = "com.atproto.moderation.defs#reasonSexual";
+  type ReasonSpam = "com.atproto.moderation.defs#reasonSpam";
   type ReasonType =
-    | 'com.atproto.moderation.defs#reasonAppeal'
-    | 'com.atproto.moderation.defs#reasonMisleading'
-    | 'com.atproto.moderation.defs#reasonOther'
-    | 'com.atproto.moderation.defs#reasonRude'
-    | 'com.atproto.moderation.defs#reasonSexual'
-    | 'com.atproto.moderation.defs#reasonSpam'
-    | 'com.atproto.moderation.defs#reasonViolation'
+    | "com.atproto.moderation.defs#reasonAppeal"
+    | "com.atproto.moderation.defs#reasonMisleading"
+    | "com.atproto.moderation.defs#reasonOther"
+    | "com.atproto.moderation.defs#reasonRude"
+    | "com.atproto.moderation.defs#reasonSexual"
+    | "com.atproto.moderation.defs#reasonSpam"
+    | "com.atproto.moderation.defs#reasonViolation"
     | (string & {});
-  type ReasonViolation = 'com.atproto.moderation.defs#reasonViolation';
+  type ReasonViolation = "com.atproto.moderation.defs#reasonViolation";
 }
 
 /** Apply a batch transaction of repository creates, updates, and deletes. Requires auth, implemented by PDS. */
@@ -3071,7 +3101,7 @@ export declare namespace ComAtprotoRepoApplyWrites {
   interface CreateResult extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
-    validationStatus?: 'unknown' | 'valid' | (string & {});
+    validationStatus?: "unknown" | "valid" | (string & {});
   }
   /** Operation which deletes an existing record. */
   interface Delete extends TypedBase {
@@ -3088,7 +3118,7 @@ export declare namespace ComAtprotoRepoApplyWrites {
   interface UpdateResult extends TypedBase {
     cid: At.CID;
     uri: At.Uri;
-    validationStatus?: 'unknown' | 'valid' | (string & {});
+    validationStatus?: "unknown" | "valid" | (string & {});
   }
 }
 
@@ -3116,7 +3146,7 @@ export declare namespace ComAtprotoRepoCreateRecord {
     cid: At.CID;
     uri: At.Uri;
     commit?: ComAtprotoRepoDefs.CommitMeta;
-    validationStatus?: 'unknown' | 'valid' | (string & {});
+    validationStatus?: "unknown" | "valid" | (string & {});
   }
   interface Errors extends TypedBase {
     InvalidSwap: {};
@@ -3290,7 +3320,7 @@ export declare namespace ComAtprotoRepoPutRecord {
     cid: At.CID;
     uri: At.Uri;
     commit?: ComAtprotoRepoDefs.CommitMeta;
-    validationStatus?: 'unknown' | 'valid' | (string & {});
+    validationStatus?: "unknown" | "valid" | (string & {});
   }
   interface Errors extends TypedBase {
     InvalidSwap: {};
@@ -3451,6 +3481,8 @@ export declare namespace ComAtprotoServerCreateSession {
     /** Handle or other identifier supported by the server for the authenticating user. */
     identifier: string;
     password: string;
+    /** When true, instead of throwing error for takendown accounts, a valid response with a narrow scoped token will be returned */
+    allowTakendown?: boolean;
     authFactorToken?: string;
   }
   interface Output extends TypedBase {
@@ -3464,7 +3496,7 @@ export declare namespace ComAtprotoServerCreateSession {
     emailAuthFactor?: boolean;
     emailConfirmed?: boolean;
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
-    status?: 'deactivated' | 'suspended' | 'takendown' | (string & {});
+    status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
   interface Errors extends TypedBase {
     AccountTakedown: {};
@@ -3598,7 +3630,7 @@ export declare namespace ComAtprotoServerGetSession {
     emailAuthFactor?: boolean;
     emailConfirmed?: boolean;
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
-    status?: 'deactivated' | 'suspended' | 'takendown' | (string & {});
+    status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
 }
 
@@ -3631,7 +3663,7 @@ export declare namespace ComAtprotoServerRefreshSession {
     active?: boolean;
     didDoc?: unknown;
     /** Hosting status of the account. If not specified, then assume 'active'. */
-    status?: 'deactivated' | 'suspended' | 'takendown' | (string & {});
+    status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
   interface Errors extends TypedBase {
     AccountTakedown: {};
@@ -3866,7 +3898,7 @@ export declare namespace ComAtprotoSyncGetRepoStatus {
     /** Optional field, the current rev of the repo, if active=true */
     rev?: string;
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
-    status?: 'deactivated' | 'suspended' | 'takendown' | (string & {});
+    status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
   interface Errors extends TypedBase {
     RepoNotFound: {};
@@ -3924,7 +3956,7 @@ export declare namespace ComAtprotoSyncListRepos {
     rev: string;
     active?: boolean;
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
-    status?: 'deactivated' | 'suspended' | 'takendown' | (string & {});
+    status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
 }
 
@@ -3969,10 +4001,10 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     time: string;
     /** If active=false, this optional field indicates a reason for why the account is not active. */
     status?:
-      | 'deactivated'
-      | 'deleted'
-      | 'suspended'
-      | 'takendown'
+      | "deactivated"
+      | "deleted"
+      | "suspended"
+      | "takendown"
       | (string & {});
   }
   /** Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature. */
@@ -4030,7 +4062,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     handle?: At.Handle;
   }
   interface Info extends TypedBase {
-    name: 'OutdatedCursor' | (string & {});
+    name: "OutdatedCursor" | (string & {});
     message?: string;
   }
   /**
@@ -4045,7 +4077,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
   }
   /** A repo operation, ie a mutation of a single record. */
   interface RepoOp extends TypedBase {
-    action: 'create' | 'delete' | 'update' | (string & {});
+    action: "create" | "delete" | "update" | (string & {});
     /** For creates and updates, the new record CID. For deletions, null. */
     cid: At.CIDLink | null;
     path: string;
@@ -4200,21 +4232,21 @@ export declare namespace ToolsOzoneModerationDefs {
     timestamp: string;
     comment?: string;
     status?:
-      | 'deactivated'
-      | 'deleted'
-      | 'suspended'
-      | 'takendown'
-      | 'tombstoned'
-      | 'unknown'
+      | "deactivated"
+      | "deleted"
+      | "suspended"
+      | "takendown"
+      | "tombstoned"
+      | "unknown"
       | (string & {});
   }
   interface AccountHosting extends TypedBase {
     status:
-      | 'deactivated'
-      | 'deleted'
-      | 'suspended'
-      | 'takendown'
-      | 'unknown'
+      | "deactivated"
+      | "deleted"
+      | "suspended"
+      | "takendown"
+      | "unknown"
       | (string & {});
     createdAt?: string;
     deactivatedAt?: string;
@@ -4249,6 +4281,8 @@ export declare namespace ToolsOzoneModerationDefs {
     subjectStatus?: SubjectStatusView;
   }
   interface ModEventAcknowledge extends TypedBase {
+    /** If true, all other reports on content authored by this account will be resolved (acknowledged). */
+    acknowledgeAccountSubjects?: boolean;
     comment?: string;
   }
   /** Add a comment to a subject */
@@ -4324,6 +4358,11 @@ export declare namespace ToolsOzoneModerationDefs {
     comment?: string;
     /** Indicates how long the takedown should be in effect before automatically expiring. */
     durationInHours?: number;
+    /**
+     * Names/Keywords of the policies that drove the decision.
+     * Maximum array length: 5
+     */
+    policies?: string[];
   }
   /** Unmute action on a subject */
   interface ModEventUnmute extends TypedBase {
@@ -4399,13 +4438,13 @@ export declare namespace ToolsOzoneModerationDefs {
   }
   /** Logs lifecycle event on a record subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
   interface RecordEvent extends TypedBase {
-    op: 'create' | 'delete' | 'update' | (string & {});
+    op: "create" | "delete" | "update" | (string & {});
     timestamp: string;
     cid?: At.CID;
     comment?: string;
   }
   interface RecordHosting extends TypedBase {
-    status: 'deleted' | 'unknown' | (string & {});
+    status: "deleted" | "unknown" | (string & {});
     createdAt?: string;
     deletedAt?: string;
     updatedAt?: string;
@@ -4464,15 +4503,15 @@ export declare namespace ToolsOzoneModerationDefs {
   interface RepoViewNotFound extends TypedBase {
     did: At.DID;
   }
-  type ReviewClosed = 'tools.ozone.moderation.defs#reviewClosed';
-  type ReviewEscalated = 'tools.ozone.moderation.defs#reviewEscalated';
-  type ReviewNone = 'tools.ozone.moderation.defs#reviewNone';
-  type ReviewOpen = 'tools.ozone.moderation.defs#reviewOpen';
+  type ReviewClosed = "tools.ozone.moderation.defs#reviewClosed";
+  type ReviewEscalated = "tools.ozone.moderation.defs#reviewEscalated";
+  type ReviewNone = "tools.ozone.moderation.defs#reviewNone";
+  type ReviewOpen = "tools.ozone.moderation.defs#reviewOpen";
   type SubjectReviewState =
-    | '#reviewClosed'
-    | '#reviewEscalated'
-    | '#reviewNone'
-    | '#reviewOpen'
+    | "#reviewClosed"
+    | "#reviewEscalated"
+    | "#reviewNone"
+    | "#reviewOpen"
     | (string & {});
   interface SubjectStatusView extends TypedBase {
     /** Timestamp referencing the first moderation status impacting event was emitted on the subject */
@@ -4641,6 +4680,8 @@ export declare namespace ToolsOzoneModerationQueryEvents {
      * \@default 50
      */
     limit?: number;
+    /** If specified, only events where the action policies match any of the given policies are returned */
+    policies?: string[];
     /** If specified, only events where all of these labels were removed are returned */
     removedLabels?: string[];
     /** If specified, only events where all of these tags were removed are returned */
@@ -4650,10 +4691,10 @@ export declare namespace ToolsOzoneModerationQueryEvents {
      * Sort direction for the events. Defaults to descending order of created at timestamp.
      * \@default "desc"
      */
-    sortDirection?: 'asc' | 'desc';
+    sortDirection?: "asc" | "desc";
     subject?: string;
     /** If specified, only events where the subject is of the given type (account or record) will be returned. When this is set to 'account' the 'collections' parameter will be ignored. When includeAllUserRecords or subject is set, this will be ignored. */
-    subjectType?: 'account' | 'record' | (string & {});
+    subjectType?: "account" | "record" | (string & {});
     /** The types of events (fully qualified string in the format of tools.ozone.moderation.defs#modEvent<name>) to filter by. If not specified, all events are returned. */
     types?: string[];
   }
@@ -4703,6 +4744,12 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     limit?: number;
     /** When set to true, only muted subjects and reporters will be returned. */
     onlyMuted?: boolean;
+    /** Number of queues being used by moderators. Subjects will be split among all queues. */
+    queueCount?: number;
+    /** Index of the queue to fetch subjects from. Works only when queueCount value is specified. */
+    queueIndex?: number;
+    /** A seeder to shuffle/balance the queue items. */
+    queueSeed?: string;
     /** Search subjects reported after a given timestamp */
     reportedAfter?: string;
     /** Search subjects reported before a given timestamp */
@@ -4714,13 +4761,17 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     /** Specify when fetching subjects in a certain state */
     reviewState?: string;
     /** \@default "desc" */
-    sortDirection?: 'asc' | 'desc';
+    sortDirection?: "asc" | "desc";
     /** \@default "lastReportedAt" */
-    sortField?: 'lastReviewedAt' | 'lastReportedAt';
+    sortField?: "lastReviewedAt" | "lastReportedAt";
     /** The subject to get the status for. */
     subject?: string;
     /** If specified, subjects of the given type (account or record) will be returned. When this is set to 'account' the 'collections' parameter will be ignored. When includeAllUserRecords or subject is set, this will be ignored. */
-    subjectType?: 'account' | 'record' | (string & {});
+    subjectType?: "account" | "record" | (string & {});
+    /**
+     * Maximum array length: 25
+     * Items in this array are applied with OR filters. To apply AND filter, put all tags in the same string and separate using && characters
+     */
     tags?: string[];
     /** Get subjects that were taken down */
     takendown?: boolean;
@@ -4772,9 +4823,9 @@ export declare namespace ToolsOzoneServerGetConfig {
   }
   interface ViewerConfig extends TypedBase {
     role?:
-      | 'tools.ozone.team.defs#roleAdmin'
-      | 'tools.ozone.team.defs#roleModerator'
-      | 'tools.ozone.team.defs#roleTriage'
+      | "tools.ozone.team.defs#roleAdmin"
+      | "tools.ozone.team.defs#roleModerator"
+      | "tools.ozone.team.defs#roleTriage"
       | (string & {});
   }
 }
@@ -4891,12 +4942,12 @@ export declare namespace ToolsOzoneSetQuerySets {
     limit?: number;
     namePrefix?: string;
     /** \@default "name" */
-    sortBy?: 'name' | 'createdAt' | 'updatedAt';
+    sortBy?: "name" | "createdAt" | "updatedAt";
     /**
      * Defaults to ascending order of name field.
      * \@default "asc"
      */
-    sortDirection?: 'asc' | 'desc';
+    sortDirection?: "asc" | "desc";
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -4918,7 +4969,7 @@ export declare namespace ToolsOzoneSettingDefs {
     did: At.DID;
     key: string;
     lastUpdatedBy: At.DID;
-    scope: 'instance' | 'personal' | (string & {});
+    scope: "instance" | "personal" | (string & {});
     value: unknown;
     createdAt?: string;
     /**
@@ -4927,9 +4978,9 @@ export declare namespace ToolsOzoneSettingDefs {
      */
     description?: string;
     managerRole?:
-      | 'tools.ozone.team.defs#roleAdmin'
-      | 'tools.ozone.team.defs#roleModerator'
-      | 'tools.ozone.team.defs#roleTriage'
+      | "tools.ozone.team.defs#roleAdmin"
+      | "tools.ozone.team.defs#roleModerator"
+      | "tools.ozone.team.defs#roleTriage"
       | (string & {});
     updatedAt?: string;
   }
@@ -4953,7 +5004,7 @@ export declare namespace ToolsOzoneSettingListOptions {
     /** Filter keys by prefix */
     prefix?: string;
     /** \@default "instance" */
-    scope?: 'instance' | 'personal' | (string & {});
+    scope?: "instance" | "personal" | (string & {});
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -4971,7 +5022,7 @@ export declare namespace ToolsOzoneSettingRemoveOptions {
      * Maximum array length: 200
      */
     keys: string[];
-    scope: 'instance' | 'personal' | (string & {});
+    scope: "instance" | "personal" | (string & {});
   }
   interface Output extends TypedBase {}
 }
@@ -4981,14 +5032,14 @@ export declare namespace ToolsOzoneSettingUpsertOption {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
     key: string;
-    scope: 'instance' | 'personal' | (string & {});
+    scope: "instance" | "personal" | (string & {});
     value: unknown;
     /** Maximum string length: 2000 */
     description?: string;
     managerRole?:
-      | 'tools.ozone.team.defs#roleAdmin'
-      | 'tools.ozone.team.defs#roleModerator'
-      | 'tools.ozone.team.defs#roleTriage'
+      | "tools.ozone.team.defs#roleAdmin"
+      | "tools.ozone.team.defs#roleModerator"
+      | "tools.ozone.team.defs#roleTriage"
       | (string & {});
   }
   interface Output extends TypedBase {
@@ -5062,9 +5113,9 @@ export declare namespace ToolsOzoneTeamAddMember {
   interface Input extends TypedBase {
     did: At.DID;
     role:
-      | 'tools.ozone.team.defs#roleAdmin'
-      | 'tools.ozone.team.defs#roleModerator'
-      | 'tools.ozone.team.defs#roleTriage'
+      | "tools.ozone.team.defs#roleAdmin"
+      | "tools.ozone.team.defs#roleModerator"
+      | "tools.ozone.team.defs#roleTriage"
       | (string & {});
   }
   type Output = ToolsOzoneTeamDefs.Member;
@@ -5076,16 +5127,16 @@ export declare namespace ToolsOzoneTeamAddMember {
 export declare namespace ToolsOzoneTeamDefs {
   interface Member extends TypedBase {
     did: At.DID;
-    role: '#roleAdmin' | '#roleModerator' | '#roleTriage' | (string & {});
+    role: "#roleAdmin" | "#roleModerator" | "#roleTriage" | (string & {});
     createdAt?: string;
     disabled?: boolean;
     lastUpdatedBy?: string;
     profile?: AppBskyActorDefs.ProfileViewDetailed;
     updatedAt?: string;
   }
-  type RoleAdmin = 'tools.ozone.team.defs#roleAdmin';
-  type RoleModerator = 'tools.ozone.team.defs#roleModerator';
-  type RoleTriage = 'tools.ozone.team.defs#roleTriage';
+  type RoleAdmin = "tools.ozone.team.defs#roleAdmin";
+  type RoleModerator = "tools.ozone.team.defs#roleModerator";
+  type RoleTriage = "tools.ozone.team.defs#roleTriage";
 }
 
 /** Delete a member from ozone team. Requires admin role. */
@@ -5126,9 +5177,9 @@ export declare namespace ToolsOzoneTeamUpdateMember {
     did: At.DID;
     disabled?: boolean;
     role?:
-      | 'tools.ozone.team.defs#roleAdmin'
-      | 'tools.ozone.team.defs#roleModerator'
-      | 'tools.ozone.team.defs#roleTriage'
+      | "tools.ozone.team.defs#roleAdmin"
+      | "tools.ozone.team.defs#roleModerator"
+      | "tools.ozone.team.defs#roleTriage"
       | (string & {});
   }
   type Output = ToolsOzoneTeamDefs.Member;
@@ -5138,697 +5189,701 @@ export declare namespace ToolsOzoneTeamUpdateMember {
 }
 
 export declare interface Records extends RecordBase {
-  'app.bsky.actor.profile': AppBskyActorProfile.Record;
-  'app.bsky.feed.generator': AppBskyFeedGenerator.Record;
-  'app.bsky.feed.like': AppBskyFeedLike.Record;
-  'app.bsky.feed.post': AppBskyFeedPost.Record;
-  'app.bsky.feed.postgate': AppBskyFeedPostgate.Record;
-  'app.bsky.feed.repost': AppBskyFeedRepost.Record;
-  'app.bsky.feed.threadgate': AppBskyFeedThreadgate.Record;
-  'app.bsky.graph.block': AppBskyGraphBlock.Record;
-  'app.bsky.graph.follow': AppBskyGraphFollow.Record;
-  'app.bsky.graph.list': AppBskyGraphList.Record;
-  'app.bsky.graph.listblock': AppBskyGraphListblock.Record;
-  'app.bsky.graph.listitem': AppBskyGraphListitem.Record;
-  'app.bsky.graph.starterpack': AppBskyGraphStarterpack.Record;
-  'app.bsky.labeler.service': AppBskyLabelerService.Record;
-  'chat.bsky.actor.declaration': ChatBskyActorDeclaration.Record;
+  "app.bsky.actor.profile": AppBskyActorProfile.Record;
+  "app.bsky.feed.generator": AppBskyFeedGenerator.Record;
+  "app.bsky.feed.like": AppBskyFeedLike.Record;
+  "app.bsky.feed.post": AppBskyFeedPost.Record;
+  "app.bsky.feed.postgate": AppBskyFeedPostgate.Record;
+  "app.bsky.feed.repost": AppBskyFeedRepost.Record;
+  "app.bsky.feed.threadgate": AppBskyFeedThreadgate.Record;
+  "app.bsky.graph.block": AppBskyGraphBlock.Record;
+  "app.bsky.graph.follow": AppBskyGraphFollow.Record;
+  "app.bsky.graph.list": AppBskyGraphList.Record;
+  "app.bsky.graph.listblock": AppBskyGraphListblock.Record;
+  "app.bsky.graph.listitem": AppBskyGraphListitem.Record;
+  "app.bsky.graph.starterpack": AppBskyGraphStarterpack.Record;
+  "app.bsky.labeler.service": AppBskyLabelerService.Record;
+  "chat.bsky.actor.declaration": ChatBskyActorDeclaration.Record;
 }
 
 export declare interface Queries {
-  'app.bsky.actor.getPreferences': {
+  "app.bsky.actor.getPreferences": {
     output: AppBskyActorGetPreferences.Output;
   };
-  'app.bsky.actor.getProfile': {
+  "app.bsky.actor.getProfile": {
     params: AppBskyActorGetProfile.Params;
     output: AppBskyActorGetProfile.Output;
   };
-  'app.bsky.actor.getProfiles': {
+  "app.bsky.actor.getProfiles": {
     params: AppBskyActorGetProfiles.Params;
     output: AppBskyActorGetProfiles.Output;
   };
-  'app.bsky.actor.getSuggestions': {
+  "app.bsky.actor.getSuggestions": {
     params: AppBskyActorGetSuggestions.Params;
     output: AppBskyActorGetSuggestions.Output;
   };
-  'app.bsky.actor.searchActors': {
+  "app.bsky.actor.searchActors": {
     params: AppBskyActorSearchActors.Params;
     output: AppBskyActorSearchActors.Output;
   };
-  'app.bsky.actor.searchActorsTypeahead': {
+  "app.bsky.actor.searchActorsTypeahead": {
     params: AppBskyActorSearchActorsTypeahead.Params;
     output: AppBskyActorSearchActorsTypeahead.Output;
   };
-  'app.bsky.feed.describeFeedGenerator': {
+  "app.bsky.feed.describeFeedGenerator": {
     output: AppBskyFeedDescribeFeedGenerator.Output;
   };
-  'app.bsky.feed.getActorFeeds': {
+  "app.bsky.feed.getActorFeeds": {
     params: AppBskyFeedGetActorFeeds.Params;
     output: AppBskyFeedGetActorFeeds.Output;
   };
-  'app.bsky.feed.getActorLikes': {
+  "app.bsky.feed.getActorLikes": {
     params: AppBskyFeedGetActorLikes.Params;
     output: AppBskyFeedGetActorLikes.Output;
   };
-  'app.bsky.feed.getAuthorFeed': {
+  "app.bsky.feed.getAuthorFeed": {
     params: AppBskyFeedGetAuthorFeed.Params;
     output: AppBskyFeedGetAuthorFeed.Output;
   };
-  'app.bsky.feed.getFeed': {
+  "app.bsky.feed.getFeed": {
     params: AppBskyFeedGetFeed.Params;
     output: AppBskyFeedGetFeed.Output;
   };
-  'app.bsky.feed.getFeedGenerator': {
+  "app.bsky.feed.getFeedGenerator": {
     params: AppBskyFeedGetFeedGenerator.Params;
     output: AppBskyFeedGetFeedGenerator.Output;
   };
-  'app.bsky.feed.getFeedGenerators': {
+  "app.bsky.feed.getFeedGenerators": {
     params: AppBskyFeedGetFeedGenerators.Params;
     output: AppBskyFeedGetFeedGenerators.Output;
   };
-  'app.bsky.feed.getFeedSkeleton': {
+  "app.bsky.feed.getFeedSkeleton": {
     params: AppBskyFeedGetFeedSkeleton.Params;
     output: AppBskyFeedGetFeedSkeleton.Output;
   };
-  'app.bsky.feed.getLikes': {
+  "app.bsky.feed.getLikes": {
     params: AppBskyFeedGetLikes.Params;
     output: AppBskyFeedGetLikes.Output;
   };
-  'app.bsky.feed.getListFeed': {
+  "app.bsky.feed.getListFeed": {
     params: AppBskyFeedGetListFeed.Params;
     output: AppBskyFeedGetListFeed.Output;
   };
-  'app.bsky.feed.getPosts': {
+  "app.bsky.feed.getPosts": {
     params: AppBskyFeedGetPosts.Params;
     output: AppBskyFeedGetPosts.Output;
   };
-  'app.bsky.feed.getPostThread': {
+  "app.bsky.feed.getPostThread": {
     params: AppBskyFeedGetPostThread.Params;
     output: AppBskyFeedGetPostThread.Output;
   };
-  'app.bsky.feed.getQuotes': {
+  "app.bsky.feed.getQuotes": {
     params: AppBskyFeedGetQuotes.Params;
     output: AppBskyFeedGetQuotes.Output;
   };
-  'app.bsky.feed.getRepostedBy': {
+  "app.bsky.feed.getRepostedBy": {
     params: AppBskyFeedGetRepostedBy.Params;
     output: AppBskyFeedGetRepostedBy.Output;
   };
-  'app.bsky.feed.getSuggestedFeeds': {
+  "app.bsky.feed.getSuggestedFeeds": {
     params: AppBskyFeedGetSuggestedFeeds.Params;
     output: AppBskyFeedGetSuggestedFeeds.Output;
   };
-  'app.bsky.feed.getTimeline': {
+  "app.bsky.feed.getTimeline": {
     params: AppBskyFeedGetTimeline.Params;
     output: AppBskyFeedGetTimeline.Output;
   };
-  'app.bsky.feed.searchPosts': {
+  "app.bsky.feed.searchPosts": {
     params: AppBskyFeedSearchPosts.Params;
     output: AppBskyFeedSearchPosts.Output;
   };
-  'app.bsky.graph.getActorStarterPacks': {
+  "app.bsky.graph.getActorStarterPacks": {
     params: AppBskyGraphGetActorStarterPacks.Params;
     output: AppBskyGraphGetActorStarterPacks.Output;
   };
-  'app.bsky.graph.getBlocks': {
+  "app.bsky.graph.getBlocks": {
     params: AppBskyGraphGetBlocks.Params;
     output: AppBskyGraphGetBlocks.Output;
   };
-  'app.bsky.graph.getFollowers': {
+  "app.bsky.graph.getFollowers": {
     params: AppBskyGraphGetFollowers.Params;
     output: AppBskyGraphGetFollowers.Output;
   };
-  'app.bsky.graph.getFollows': {
+  "app.bsky.graph.getFollows": {
     params: AppBskyGraphGetFollows.Params;
     output: AppBskyGraphGetFollows.Output;
   };
-  'app.bsky.graph.getKnownFollowers': {
+  "app.bsky.graph.getKnownFollowers": {
     params: AppBskyGraphGetKnownFollowers.Params;
     output: AppBskyGraphGetKnownFollowers.Output;
   };
-  'app.bsky.graph.getList': {
+  "app.bsky.graph.getList": {
     params: AppBskyGraphGetList.Params;
     output: AppBskyGraphGetList.Output;
   };
-  'app.bsky.graph.getListBlocks': {
+  "app.bsky.graph.getListBlocks": {
     params: AppBskyGraphGetListBlocks.Params;
     output: AppBskyGraphGetListBlocks.Output;
   };
-  'app.bsky.graph.getListMutes': {
+  "app.bsky.graph.getListMutes": {
     params: AppBskyGraphGetListMutes.Params;
     output: AppBskyGraphGetListMutes.Output;
   };
-  'app.bsky.graph.getLists': {
+  "app.bsky.graph.getLists": {
     params: AppBskyGraphGetLists.Params;
     output: AppBskyGraphGetLists.Output;
   };
-  'app.bsky.graph.getMutes': {
+  "app.bsky.graph.getMutes": {
     params: AppBskyGraphGetMutes.Params;
     output: AppBskyGraphGetMutes.Output;
   };
-  'app.bsky.graph.getRelationships': {
+  "app.bsky.graph.getRelationships": {
     params: AppBskyGraphGetRelationships.Params;
     output: AppBskyGraphGetRelationships.Output;
   };
-  'app.bsky.graph.getStarterPack': {
+  "app.bsky.graph.getStarterPack": {
     params: AppBskyGraphGetStarterPack.Params;
     output: AppBskyGraphGetStarterPack.Output;
   };
-  'app.bsky.graph.getStarterPacks': {
+  "app.bsky.graph.getStarterPacks": {
     params: AppBskyGraphGetStarterPacks.Params;
     output: AppBskyGraphGetStarterPacks.Output;
   };
-  'app.bsky.graph.getSuggestedFollowsByActor': {
+  "app.bsky.graph.getSuggestedFollowsByActor": {
     params: AppBskyGraphGetSuggestedFollowsByActor.Params;
     output: AppBskyGraphGetSuggestedFollowsByActor.Output;
   };
-  'app.bsky.graph.searchStarterPacks': {
+  "app.bsky.graph.searchStarterPacks": {
     params: AppBskyGraphSearchStarterPacks.Params;
     output: AppBskyGraphSearchStarterPacks.Output;
   };
-  'app.bsky.labeler.getServices': {
+  "app.bsky.labeler.getServices": {
     params: AppBskyLabelerGetServices.Params;
     output: AppBskyLabelerGetServices.Output;
   };
-  'app.bsky.notification.getUnreadCount': {
+  "app.bsky.notification.getUnreadCount": {
     params: AppBskyNotificationGetUnreadCount.Params;
     output: AppBskyNotificationGetUnreadCount.Output;
   };
-  'app.bsky.notification.listNotifications': {
+  "app.bsky.notification.listNotifications": {
     params: AppBskyNotificationListNotifications.Params;
     output: AppBskyNotificationListNotifications.Output;
   };
-  'app.bsky.unspecced.getConfig': {
+  "app.bsky.unspecced.getConfig": {
     output: AppBskyUnspeccedGetConfig.Output;
   };
-  'app.bsky.unspecced.getPopularFeedGenerators': {
+  "app.bsky.unspecced.getPopularFeedGenerators": {
     params: AppBskyUnspeccedGetPopularFeedGenerators.Params;
     output: AppBskyUnspeccedGetPopularFeedGenerators.Output;
   };
-  'app.bsky.unspecced.getSuggestionsSkeleton': {
+  "app.bsky.unspecced.getSuggestionsSkeleton": {
     params: AppBskyUnspeccedGetSuggestionsSkeleton.Params;
     output: AppBskyUnspeccedGetSuggestionsSkeleton.Output;
   };
-  'app.bsky.unspecced.getTaggedSuggestions': {
+  "app.bsky.unspecced.getTaggedSuggestions": {
     output: AppBskyUnspeccedGetTaggedSuggestions.Output;
   };
-  'app.bsky.unspecced.searchActorsSkeleton': {
+  "app.bsky.unspecced.getTrendingTopics": {
+    params: AppBskyUnspeccedGetTrendingTopics.Params;
+    output: AppBskyUnspeccedGetTrendingTopics.Output;
+  };
+  "app.bsky.unspecced.searchActorsSkeleton": {
     params: AppBskyUnspeccedSearchActorsSkeleton.Params;
     output: AppBskyUnspeccedSearchActorsSkeleton.Output;
   };
-  'app.bsky.unspecced.searchPostsSkeleton': {
+  "app.bsky.unspecced.searchPostsSkeleton": {
     params: AppBskyUnspeccedSearchPostsSkeleton.Params;
     output: AppBskyUnspeccedSearchPostsSkeleton.Output;
   };
-  'app.bsky.unspecced.searchStarterPacksSkeleton': {
+  "app.bsky.unspecced.searchStarterPacksSkeleton": {
     params: AppBskyUnspeccedSearchStarterPacksSkeleton.Params;
     output: AppBskyUnspeccedSearchStarterPacksSkeleton.Output;
   };
-  'app.bsky.video.getJobStatus': {
+  "app.bsky.video.getJobStatus": {
     params: AppBskyVideoGetJobStatus.Params;
     output: AppBskyVideoGetJobStatus.Output;
   };
-  'app.bsky.video.getUploadLimits': {
+  "app.bsky.video.getUploadLimits": {
     output: AppBskyVideoGetUploadLimits.Output;
   };
-  'chat.bsky.actor.exportAccountData': {
+  "chat.bsky.actor.exportAccountData": {
     output: ChatBskyActorExportAccountData.Output;
   };
-  'chat.bsky.convo.getConvo': {
+  "chat.bsky.convo.getConvo": {
     params: ChatBskyConvoGetConvo.Params;
     output: ChatBskyConvoGetConvo.Output;
   };
-  'chat.bsky.convo.getConvoForMembers': {
+  "chat.bsky.convo.getConvoForMembers": {
     params: ChatBskyConvoGetConvoForMembers.Params;
     output: ChatBskyConvoGetConvoForMembers.Output;
   };
-  'chat.bsky.convo.getLog': {
+  "chat.bsky.convo.getLog": {
     params: ChatBskyConvoGetLog.Params;
     output: ChatBskyConvoGetLog.Output;
   };
-  'chat.bsky.convo.getMessages': {
+  "chat.bsky.convo.getMessages": {
     params: ChatBskyConvoGetMessages.Params;
     output: ChatBskyConvoGetMessages.Output;
   };
-  'chat.bsky.convo.listConvos': {
+  "chat.bsky.convo.listConvos": {
     params: ChatBskyConvoListConvos.Params;
     output: ChatBskyConvoListConvos.Output;
   };
-  'chat.bsky.moderation.getActorMetadata': {
+  "chat.bsky.moderation.getActorMetadata": {
     params: ChatBskyModerationGetActorMetadata.Params;
     output: ChatBskyModerationGetActorMetadata.Output;
   };
-  'chat.bsky.moderation.getMessageContext': {
+  "chat.bsky.moderation.getMessageContext": {
     params: ChatBskyModerationGetMessageContext.Params;
     output: ChatBskyModerationGetMessageContext.Output;
   };
-  'com.atproto.admin.getAccountInfo': {
+  "com.atproto.admin.getAccountInfo": {
     params: ComAtprotoAdminGetAccountInfo.Params;
     output: ComAtprotoAdminGetAccountInfo.Output;
   };
-  'com.atproto.admin.getAccountInfos': {
+  "com.atproto.admin.getAccountInfos": {
     params: ComAtprotoAdminGetAccountInfos.Params;
     output: ComAtprotoAdminGetAccountInfos.Output;
   };
-  'com.atproto.admin.getInviteCodes': {
+  "com.atproto.admin.getInviteCodes": {
     params: ComAtprotoAdminGetInviteCodes.Params;
     output: ComAtprotoAdminGetInviteCodes.Output;
   };
-  'com.atproto.admin.getSubjectStatus': {
+  "com.atproto.admin.getSubjectStatus": {
     params: ComAtprotoAdminGetSubjectStatus.Params;
     output: ComAtprotoAdminGetSubjectStatus.Output;
   };
-  'com.atproto.admin.searchAccounts': {
+  "com.atproto.admin.searchAccounts": {
     params: ComAtprotoAdminSearchAccounts.Params;
     output: ComAtprotoAdminSearchAccounts.Output;
   };
-  'com.atproto.identity.getRecommendedDidCredentials': {
+  "com.atproto.identity.getRecommendedDidCredentials": {
     output: ComAtprotoIdentityGetRecommendedDidCredentials.Output;
   };
-  'com.atproto.identity.resolveHandle': {
+  "com.atproto.identity.resolveHandle": {
     params: ComAtprotoIdentityResolveHandle.Params;
     output: ComAtprotoIdentityResolveHandle.Output;
   };
-  'com.atproto.label.queryLabels': {
+  "com.atproto.label.queryLabels": {
     params: ComAtprotoLabelQueryLabels.Params;
     output: ComAtprotoLabelQueryLabels.Output;
   };
-  'com.atproto.repo.describeRepo': {
+  "com.atproto.repo.describeRepo": {
     params: ComAtprotoRepoDescribeRepo.Params;
     output: ComAtprotoRepoDescribeRepo.Output;
   };
-  'com.atproto.repo.getRecord': {
+  "com.atproto.repo.getRecord": {
     params: ComAtprotoRepoGetRecord.Params;
     output: ComAtprotoRepoGetRecord.Output;
   };
-  'com.atproto.repo.listMissingBlobs': {
+  "com.atproto.repo.listMissingBlobs": {
     params: ComAtprotoRepoListMissingBlobs.Params;
     output: ComAtprotoRepoListMissingBlobs.Output;
   };
-  'com.atproto.repo.listRecords': {
+  "com.atproto.repo.listRecords": {
     params: ComAtprotoRepoListRecords.Params;
     output: ComAtprotoRepoListRecords.Output;
   };
-  'com.atproto.server.checkAccountStatus': {
+  "com.atproto.server.checkAccountStatus": {
     output: ComAtprotoServerCheckAccountStatus.Output;
   };
-  'com.atproto.server.describeServer': {
+  "com.atproto.server.describeServer": {
     output: ComAtprotoServerDescribeServer.Output;
   };
-  'com.atproto.server.getAccountInviteCodes': {
+  "com.atproto.server.getAccountInviteCodes": {
     params: ComAtprotoServerGetAccountInviteCodes.Params;
     output: ComAtprotoServerGetAccountInviteCodes.Output;
   };
-  'com.atproto.server.getServiceAuth': {
+  "com.atproto.server.getServiceAuth": {
     params: ComAtprotoServerGetServiceAuth.Params;
     output: ComAtprotoServerGetServiceAuth.Output;
   };
-  'com.atproto.server.getSession': {
+  "com.atproto.server.getSession": {
     output: ComAtprotoServerGetSession.Output;
   };
-  'com.atproto.server.listAppPasswords': {
+  "com.atproto.server.listAppPasswords": {
     output: ComAtprotoServerListAppPasswords.Output;
   };
-  'com.atproto.sync.getBlob': {
+  "com.atproto.sync.getBlob": {
     params: ComAtprotoSyncGetBlob.Params;
     output: ComAtprotoSyncGetBlob.Output;
   };
-  'com.atproto.sync.getBlocks': {
+  "com.atproto.sync.getBlocks": {
     params: ComAtprotoSyncGetBlocks.Params;
     output: ComAtprotoSyncGetBlocks.Output;
   };
-  'com.atproto.sync.getCheckout': {
+  "com.atproto.sync.getCheckout": {
     params: ComAtprotoSyncGetCheckout.Params;
     output: ComAtprotoSyncGetCheckout.Output;
   };
-  'com.atproto.sync.getHead': {
+  "com.atproto.sync.getHead": {
     params: ComAtprotoSyncGetHead.Params;
     output: ComAtprotoSyncGetHead.Output;
   };
-  'com.atproto.sync.getLatestCommit': {
+  "com.atproto.sync.getLatestCommit": {
     params: ComAtprotoSyncGetLatestCommit.Params;
     output: ComAtprotoSyncGetLatestCommit.Output;
   };
-  'com.atproto.sync.getRecord': {
+  "com.atproto.sync.getRecord": {
     params: ComAtprotoSyncGetRecord.Params;
     output: ComAtprotoSyncGetRecord.Output;
   };
-  'com.atproto.sync.getRepo': {
+  "com.atproto.sync.getRepo": {
     params: ComAtprotoSyncGetRepo.Params;
     output: ComAtprotoSyncGetRepo.Output;
   };
-  'com.atproto.sync.getRepoStatus': {
+  "com.atproto.sync.getRepoStatus": {
     params: ComAtprotoSyncGetRepoStatus.Params;
     output: ComAtprotoSyncGetRepoStatus.Output;
   };
-  'com.atproto.sync.listBlobs': {
+  "com.atproto.sync.listBlobs": {
     params: ComAtprotoSyncListBlobs.Params;
     output: ComAtprotoSyncListBlobs.Output;
   };
-  'com.atproto.sync.listRepos': {
+  "com.atproto.sync.listRepos": {
     params: ComAtprotoSyncListRepos.Params;
     output: ComAtprotoSyncListRepos.Output;
   };
-  'com.atproto.temp.checkSignupQueue': {
+  "com.atproto.temp.checkSignupQueue": {
     output: ComAtprotoTempCheckSignupQueue.Output;
   };
-  'com.atproto.temp.fetchLabels': {
+  "com.atproto.temp.fetchLabels": {
     params: ComAtprotoTempFetchLabels.Params;
     output: ComAtprotoTempFetchLabels.Output;
   };
-  'tools.ozone.communication.listTemplates': {
+  "tools.ozone.communication.listTemplates": {
     output: ToolsOzoneCommunicationListTemplates.Output;
   };
-  'tools.ozone.moderation.getEvent': {
+  "tools.ozone.moderation.getEvent": {
     params: ToolsOzoneModerationGetEvent.Params;
     output: ToolsOzoneModerationGetEvent.Output;
   };
-  'tools.ozone.moderation.getRecord': {
+  "tools.ozone.moderation.getRecord": {
     params: ToolsOzoneModerationGetRecord.Params;
     output: ToolsOzoneModerationGetRecord.Output;
   };
-  'tools.ozone.moderation.getRecords': {
+  "tools.ozone.moderation.getRecords": {
     params: ToolsOzoneModerationGetRecords.Params;
     output: ToolsOzoneModerationGetRecords.Output;
   };
-  'tools.ozone.moderation.getRepo': {
+  "tools.ozone.moderation.getRepo": {
     params: ToolsOzoneModerationGetRepo.Params;
     output: ToolsOzoneModerationGetRepo.Output;
   };
-  'tools.ozone.moderation.getRepos': {
+  "tools.ozone.moderation.getRepos": {
     params: ToolsOzoneModerationGetRepos.Params;
     output: ToolsOzoneModerationGetRepos.Output;
   };
-  'tools.ozone.moderation.queryEvents': {
+  "tools.ozone.moderation.queryEvents": {
     params: ToolsOzoneModerationQueryEvents.Params;
     output: ToolsOzoneModerationQueryEvents.Output;
   };
-  'tools.ozone.moderation.queryStatuses': {
+  "tools.ozone.moderation.queryStatuses": {
     params: ToolsOzoneModerationQueryStatuses.Params;
     output: ToolsOzoneModerationQueryStatuses.Output;
   };
-  'tools.ozone.moderation.searchRepos': {
+  "tools.ozone.moderation.searchRepos": {
     params: ToolsOzoneModerationSearchRepos.Params;
     output: ToolsOzoneModerationSearchRepos.Output;
   };
-  'tools.ozone.server.getConfig': {
+  "tools.ozone.server.getConfig": {
     output: ToolsOzoneServerGetConfig.Output;
   };
-  'tools.ozone.set.getValues': {
+  "tools.ozone.set.getValues": {
     params: ToolsOzoneSetGetValues.Params;
     output: ToolsOzoneSetGetValues.Output;
   };
-  'tools.ozone.set.querySets': {
+  "tools.ozone.set.querySets": {
     params: ToolsOzoneSetQuerySets.Params;
     output: ToolsOzoneSetQuerySets.Output;
   };
-  'tools.ozone.setting.listOptions': {
+  "tools.ozone.setting.listOptions": {
     params: ToolsOzoneSettingListOptions.Params;
     output: ToolsOzoneSettingListOptions.Output;
   };
-  'tools.ozone.signature.findCorrelation': {
+  "tools.ozone.signature.findCorrelation": {
     params: ToolsOzoneSignatureFindCorrelation.Params;
     output: ToolsOzoneSignatureFindCorrelation.Output;
   };
-  'tools.ozone.signature.findRelatedAccounts': {
+  "tools.ozone.signature.findRelatedAccounts": {
     params: ToolsOzoneSignatureFindRelatedAccounts.Params;
     output: ToolsOzoneSignatureFindRelatedAccounts.Output;
   };
-  'tools.ozone.signature.searchAccounts': {
+  "tools.ozone.signature.searchAccounts": {
     params: ToolsOzoneSignatureSearchAccounts.Params;
     output: ToolsOzoneSignatureSearchAccounts.Output;
   };
-  'tools.ozone.team.listMembers': {
+  "tools.ozone.team.listMembers": {
     params: ToolsOzoneTeamListMembers.Params;
     output: ToolsOzoneTeamListMembers.Output;
   };
 }
 
 export declare interface Procedures {
-  'app.bsky.actor.putPreferences': {
+  "app.bsky.actor.putPreferences": {
     input: AppBskyActorPutPreferences.Input;
   };
-  'app.bsky.feed.sendInteractions': {
+  "app.bsky.feed.sendInteractions": {
     input: AppBskyFeedSendInteractions.Input;
     output: AppBskyFeedSendInteractions.Output;
   };
-  'app.bsky.graph.muteActor': {
+  "app.bsky.graph.muteActor": {
     input: AppBskyGraphMuteActor.Input;
   };
-  'app.bsky.graph.muteActorList': {
+  "app.bsky.graph.muteActorList": {
     input: AppBskyGraphMuteActorList.Input;
   };
-  'app.bsky.graph.muteThread': {
+  "app.bsky.graph.muteThread": {
     input: AppBskyGraphMuteThread.Input;
   };
-  'app.bsky.graph.unmuteActor': {
+  "app.bsky.graph.unmuteActor": {
     input: AppBskyGraphUnmuteActor.Input;
   };
-  'app.bsky.graph.unmuteActorList': {
+  "app.bsky.graph.unmuteActorList": {
     input: AppBskyGraphUnmuteActorList.Input;
   };
-  'app.bsky.graph.unmuteThread': {
+  "app.bsky.graph.unmuteThread": {
     input: AppBskyGraphUnmuteThread.Input;
   };
-  'app.bsky.notification.putPreferences': {
+  "app.bsky.notification.putPreferences": {
     input: AppBskyNotificationPutPreferences.Input;
   };
-  'app.bsky.notification.registerPush': {
+  "app.bsky.notification.registerPush": {
     input: AppBskyNotificationRegisterPush.Input;
   };
-  'app.bsky.notification.updateSeen': {
+  "app.bsky.notification.updateSeen": {
     input: AppBskyNotificationUpdateSeen.Input;
   };
-  'app.bsky.video.uploadVideo': {
+  "app.bsky.video.uploadVideo": {
     input: AppBskyVideoUploadVideo.Input;
     output: AppBskyVideoUploadVideo.Output;
   };
-  'chat.bsky.actor.deleteAccount': {
+  "chat.bsky.actor.deleteAccount": {
     output: ChatBskyActorDeleteAccount.Output;
   };
-  'chat.bsky.convo.deleteMessageForSelf': {
+  "chat.bsky.convo.deleteMessageForSelf": {
     input: ChatBskyConvoDeleteMessageForSelf.Input;
     output: ChatBskyConvoDeleteMessageForSelf.Output;
   };
-  'chat.bsky.convo.leaveConvo': {
+  "chat.bsky.convo.leaveConvo": {
     input: ChatBskyConvoLeaveConvo.Input;
     output: ChatBskyConvoLeaveConvo.Output;
   };
-  'chat.bsky.convo.muteConvo': {
+  "chat.bsky.convo.muteConvo": {
     input: ChatBskyConvoMuteConvo.Input;
     output: ChatBskyConvoMuteConvo.Output;
   };
-  'chat.bsky.convo.sendMessage': {
+  "chat.bsky.convo.sendMessage": {
     input: ChatBskyConvoSendMessage.Input;
     output: ChatBskyConvoSendMessage.Output;
   };
-  'chat.bsky.convo.sendMessageBatch': {
+  "chat.bsky.convo.sendMessageBatch": {
     input: ChatBskyConvoSendMessageBatch.Input;
     output: ChatBskyConvoSendMessageBatch.Output;
   };
-  'chat.bsky.convo.unmuteConvo': {
+  "chat.bsky.convo.unmuteConvo": {
     input: ChatBskyConvoUnmuteConvo.Input;
     output: ChatBskyConvoUnmuteConvo.Output;
   };
-  'chat.bsky.convo.updateRead': {
+  "chat.bsky.convo.updateRead": {
     input: ChatBskyConvoUpdateRead.Input;
     output: ChatBskyConvoUpdateRead.Output;
   };
-  'chat.bsky.moderation.updateActorAccess': {
+  "chat.bsky.moderation.updateActorAccess": {
     input: ChatBskyModerationUpdateActorAccess.Input;
   };
-  'com.atproto.admin.deleteAccount': {
+  "com.atproto.admin.deleteAccount": {
     input: ComAtprotoAdminDeleteAccount.Input;
   };
-  'com.atproto.admin.disableAccountInvites': {
+  "com.atproto.admin.disableAccountInvites": {
     input: ComAtprotoAdminDisableAccountInvites.Input;
   };
-  'com.atproto.admin.disableInviteCodes': {
+  "com.atproto.admin.disableInviteCodes": {
     input: ComAtprotoAdminDisableInviteCodes.Input;
   };
-  'com.atproto.admin.enableAccountInvites': {
+  "com.atproto.admin.enableAccountInvites": {
     input: ComAtprotoAdminEnableAccountInvites.Input;
   };
-  'com.atproto.admin.sendEmail': {
+  "com.atproto.admin.sendEmail": {
     input: ComAtprotoAdminSendEmail.Input;
     output: ComAtprotoAdminSendEmail.Output;
   };
-  'com.atproto.admin.updateAccountEmail': {
+  "com.atproto.admin.updateAccountEmail": {
     input: ComAtprotoAdminUpdateAccountEmail.Input;
   };
-  'com.atproto.admin.updateAccountHandle': {
+  "com.atproto.admin.updateAccountHandle": {
     input: ComAtprotoAdminUpdateAccountHandle.Input;
   };
-  'com.atproto.admin.updateAccountPassword': {
+  "com.atproto.admin.updateAccountPassword": {
     input: ComAtprotoAdminUpdateAccountPassword.Input;
   };
-  'com.atproto.admin.updateSubjectStatus': {
+  "com.atproto.admin.updateSubjectStatus": {
     input: ComAtprotoAdminUpdateSubjectStatus.Input;
     output: ComAtprotoAdminUpdateSubjectStatus.Output;
   };
-  'com.atproto.identity.requestPlcOperationSignature': {};
-  'com.atproto.identity.signPlcOperation': {
+  "com.atproto.identity.requestPlcOperationSignature": {};
+  "com.atproto.identity.signPlcOperation": {
     input: ComAtprotoIdentitySignPlcOperation.Input;
     output: ComAtprotoIdentitySignPlcOperation.Output;
   };
-  'com.atproto.identity.submitPlcOperation': {
+  "com.atproto.identity.submitPlcOperation": {
     input: ComAtprotoIdentitySubmitPlcOperation.Input;
   };
-  'com.atproto.identity.updateHandle': {
+  "com.atproto.identity.updateHandle": {
     input: ComAtprotoIdentityUpdateHandle.Input;
   };
-  'com.atproto.moderation.createReport': {
+  "com.atproto.moderation.createReport": {
     input: ComAtprotoModerationCreateReport.Input;
     output: ComAtprotoModerationCreateReport.Output;
   };
-  'com.atproto.repo.applyWrites': {
+  "com.atproto.repo.applyWrites": {
     input: ComAtprotoRepoApplyWrites.Input;
     output: ComAtprotoRepoApplyWrites.Output;
   };
-  'com.atproto.repo.createRecord': {
+  "com.atproto.repo.createRecord": {
     input: ComAtprotoRepoCreateRecord.Input;
     output: ComAtprotoRepoCreateRecord.Output;
   };
-  'com.atproto.repo.deleteRecord': {
+  "com.atproto.repo.deleteRecord": {
     input: ComAtprotoRepoDeleteRecord.Input;
     output: ComAtprotoRepoDeleteRecord.Output;
   };
-  'com.atproto.repo.importRepo': {
+  "com.atproto.repo.importRepo": {
     input: ComAtprotoRepoImportRepo.Input;
   };
-  'com.atproto.repo.putRecord': {
+  "com.atproto.repo.putRecord": {
     input: ComAtprotoRepoPutRecord.Input;
     output: ComAtprotoRepoPutRecord.Output;
   };
-  'com.atproto.repo.uploadBlob': {
+  "com.atproto.repo.uploadBlob": {
     input: ComAtprotoRepoUploadBlob.Input;
     output: ComAtprotoRepoUploadBlob.Output;
   };
-  'com.atproto.server.activateAccount': {};
-  'com.atproto.server.confirmEmail': {
+  "com.atproto.server.activateAccount": {};
+  "com.atproto.server.confirmEmail": {
     input: ComAtprotoServerConfirmEmail.Input;
   };
-  'com.atproto.server.createAccount': {
+  "com.atproto.server.createAccount": {
     input: ComAtprotoServerCreateAccount.Input;
     output: ComAtprotoServerCreateAccount.Output;
   };
-  'com.atproto.server.createAppPassword': {
+  "com.atproto.server.createAppPassword": {
     input: ComAtprotoServerCreateAppPassword.Input;
     output: ComAtprotoServerCreateAppPassword.Output;
   };
-  'com.atproto.server.createInviteCode': {
+  "com.atproto.server.createInviteCode": {
     input: ComAtprotoServerCreateInviteCode.Input;
     output: ComAtprotoServerCreateInviteCode.Output;
   };
-  'com.atproto.server.createInviteCodes': {
+  "com.atproto.server.createInviteCodes": {
     input: ComAtprotoServerCreateInviteCodes.Input;
     output: ComAtprotoServerCreateInviteCodes.Output;
   };
-  'com.atproto.server.createSession': {
+  "com.atproto.server.createSession": {
     input: ComAtprotoServerCreateSession.Input;
     output: ComAtprotoServerCreateSession.Output;
   };
-  'com.atproto.server.deactivateAccount': {
+  "com.atproto.server.deactivateAccount": {
     input: ComAtprotoServerDeactivateAccount.Input;
   };
-  'com.atproto.server.deleteAccount': {
+  "com.atproto.server.deleteAccount": {
     input: ComAtprotoServerDeleteAccount.Input;
   };
-  'com.atproto.server.deleteSession': {};
-  'com.atproto.server.refreshSession': {
+  "com.atproto.server.deleteSession": {};
+  "com.atproto.server.refreshSession": {
     output: ComAtprotoServerRefreshSession.Output;
   };
-  'com.atproto.server.requestAccountDelete': {};
-  'com.atproto.server.requestEmailConfirmation': {};
-  'com.atproto.server.requestEmailUpdate': {
+  "com.atproto.server.requestAccountDelete": {};
+  "com.atproto.server.requestEmailConfirmation": {};
+  "com.atproto.server.requestEmailUpdate": {
     output: ComAtprotoServerRequestEmailUpdate.Output;
   };
-  'com.atproto.server.requestPasswordReset': {
+  "com.atproto.server.requestPasswordReset": {
     input: ComAtprotoServerRequestPasswordReset.Input;
   };
-  'com.atproto.server.reserveSigningKey': {
+  "com.atproto.server.reserveSigningKey": {
     input: ComAtprotoServerReserveSigningKey.Input;
     output: ComAtprotoServerReserveSigningKey.Output;
   };
-  'com.atproto.server.resetPassword': {
+  "com.atproto.server.resetPassword": {
     input: ComAtprotoServerResetPassword.Input;
   };
-  'com.atproto.server.revokeAppPassword': {
+  "com.atproto.server.revokeAppPassword": {
     input: ComAtprotoServerRevokeAppPassword.Input;
   };
-  'com.atproto.server.updateEmail': {
+  "com.atproto.server.updateEmail": {
     input: ComAtprotoServerUpdateEmail.Input;
   };
-  'com.atproto.sync.notifyOfUpdate': {
+  "com.atproto.sync.notifyOfUpdate": {
     input: ComAtprotoSyncNotifyOfUpdate.Input;
   };
-  'com.atproto.sync.requestCrawl': {
+  "com.atproto.sync.requestCrawl": {
     input: ComAtprotoSyncRequestCrawl.Input;
   };
-  'com.atproto.temp.addReservedHandle': {
+  "com.atproto.temp.addReservedHandle": {
     input: ComAtprotoTempAddReservedHandle.Input;
     output: ComAtprotoTempAddReservedHandle.Output;
   };
-  'com.atproto.temp.requestPhoneVerification': {
+  "com.atproto.temp.requestPhoneVerification": {
     input: ComAtprotoTempRequestPhoneVerification.Input;
   };
-  'tools.ozone.communication.createTemplate': {
+  "tools.ozone.communication.createTemplate": {
     input: ToolsOzoneCommunicationCreateTemplate.Input;
     output: ToolsOzoneCommunicationCreateTemplate.Output;
   };
-  'tools.ozone.communication.deleteTemplate': {
+  "tools.ozone.communication.deleteTemplate": {
     input: ToolsOzoneCommunicationDeleteTemplate.Input;
   };
-  'tools.ozone.communication.updateTemplate': {
+  "tools.ozone.communication.updateTemplate": {
     input: ToolsOzoneCommunicationUpdateTemplate.Input;
     output: ToolsOzoneCommunicationUpdateTemplate.Output;
   };
-  'tools.ozone.moderation.emitEvent': {
+  "tools.ozone.moderation.emitEvent": {
     input: ToolsOzoneModerationEmitEvent.Input;
     output: ToolsOzoneModerationEmitEvent.Output;
   };
-  'tools.ozone.set.addValues': {
+  "tools.ozone.set.addValues": {
     input: ToolsOzoneSetAddValues.Input;
   };
-  'tools.ozone.set.deleteSet': {
+  "tools.ozone.set.deleteSet": {
     input: ToolsOzoneSetDeleteSet.Input;
     output: ToolsOzoneSetDeleteSet.Output;
   };
-  'tools.ozone.set.deleteValues': {
+  "tools.ozone.set.deleteValues": {
     input: ToolsOzoneSetDeleteValues.Input;
   };
-  'tools.ozone.set.upsertSet': {
+  "tools.ozone.set.upsertSet": {
     input: ToolsOzoneSetUpsertSet.Input;
     output: ToolsOzoneSetUpsertSet.Output;
   };
-  'tools.ozone.setting.removeOptions': {
+  "tools.ozone.setting.removeOptions": {
     input: ToolsOzoneSettingRemoveOptions.Input;
     output: ToolsOzoneSettingRemoveOptions.Output;
   };
-  'tools.ozone.setting.upsertOption': {
+  "tools.ozone.setting.upsertOption": {
     input: ToolsOzoneSettingUpsertOption.Input;
     output: ToolsOzoneSettingUpsertOption.Output;
   };
-  'tools.ozone.team.addMember': {
+  "tools.ozone.team.addMember": {
     input: ToolsOzoneTeamAddMember.Input;
     output: ToolsOzoneTeamAddMember.Output;
   };
-  'tools.ozone.team.deleteMember': {
+  "tools.ozone.team.deleteMember": {
     input: ToolsOzoneTeamDeleteMember.Input;
   };
-  'tools.ozone.team.updateMember': {
+  "tools.ozone.team.updateMember": {
     input: ToolsOzoneTeamUpdateMember.Input;
     output: ToolsOzoneTeamUpdateMember.Output;
   };
 }
 
 export declare interface Subscriptions {
-  'com.atproto.label.subscribeLabels': {
+  "com.atproto.label.subscribeLabels": {
     params: ComAtprotoLabelSubscribeLabels.Params;
     message: ComAtprotoLabelSubscribeLabels.Message;
     errors: ComAtprotoLabelSubscribeLabels.Errors;
   };
-  'com.atproto.sync.subscribeRepos': {
+  "com.atproto.sync.subscribeRepos": {
     params: ComAtprotoSyncSubscribeRepos.Params;
     message: ComAtprotoSyncSubscribeRepos.Message;
     errors: ComAtprotoSyncSubscribeRepos.Errors;
