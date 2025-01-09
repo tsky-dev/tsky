@@ -23,7 +23,6 @@ const TEST_CREDENTIALS = {
   },
 };
 
-
 async function getAliceTsky() {
   const manager = new CredentialManager({ service: 'https://bsky.social' });
   await manager.login({
