@@ -29,9 +29,6 @@ jobs:
 
       - name: 🧪 Test project
         run: pnpm -r test
-        env:
-          ALICE_PASSWORD: ${{ secrets.ALICE_PASSWORD }}
-          BOB_PASSWORD: ${{ secrets.BOB_PASSWORD }}
         timeout-minutes: 10
 
       - name: 📝 Lint
