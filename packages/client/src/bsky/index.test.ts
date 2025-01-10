@@ -14,12 +14,12 @@ const TEST_CREDENTIALS = {
   alice: {
     handle: 'alice.tsky.dev',
     did: 'did:plc:jguhdmnjclquqf5lsvkyxqy3',
-    password: formatSecret(process.env.ALICE_PASSWORD),
+    password: 'alice_and_bob',
   },
   bob: {
     handle: 'bob.tsky.dev',
     did: 'did:plc:2ig7akkyfq256j42uxvc4g2h',
-    password: formatSecret(process.env.BOB_PASSWORD),
+    password: 'alice_and_bob',
   },
 };
 
