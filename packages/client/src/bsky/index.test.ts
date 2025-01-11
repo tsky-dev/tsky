@@ -2,14 +2,6 @@ import { CredentialManager } from '@atcute/client';
 import { describe, expect, it } from 'vitest';
 import { Tsky } from '~/index';
 
-const formatSecret = (secret: string | undefined) => {
-  if (!secret) {
-    throw new Error('Secret is required');
-  }
-
-  return secret.replace(/^tsky /g, '').trim();
-};
-
 const TEST_CREDENTIALS = {
   alice: {
     handle: 'alice.tsky.dev',
