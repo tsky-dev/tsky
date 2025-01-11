@@ -1,6 +1,6 @@
 {
   "$schema": "https://typedoc-plugin-markdown.org/schema.json",
-  "entryPoints": ["../packages/core"],
+  "entryPoints": ["../packages/client"],
   "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
   "name": "Packages Example",
   "entryPointStrategy": "packages",
@@ -8,7 +8,7 @@
     "includeVersion": true,
     "entryPoints": ["src/*.ts"]
   },
-  "basePath": "../packages/core/src",
+  "basePath": "../packages/client/src",
   "readme": "none",
   "entryFileName": "index.md",
   "mergeReadme": true,
