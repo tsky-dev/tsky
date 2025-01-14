@@ -11,8 +11,8 @@
     "url": "git+https://github.com/tsky-dev/tsky.git"
   },
   "scripts": {
-    "dev": "pnpm run --filter @tsky/core dev",
-    "build": "pnpm run --filter @tsky/core build",
+    "dev": "pnpm run -r dev",
+    "build": "pnpm run -r build",
     "docs:dev": "pnpm run --filter @tsky/docs dev",
     "docs:build": "pnpm run --filter @tsky/docs build",
     "docs:preview": "pnpm run --filter @tsky/docs preview",
@@ -21,7 +21,8 @@
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "check": "biome check",
-    "check:fix": "biome check --write ."
+    "check:fix": "biome check --write .",
+    "typecheck": "pnpm run -r typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
