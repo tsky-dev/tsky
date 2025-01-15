@@ -39,10 +39,10 @@ jobs:
 
       - name: 💪 Type check
         run: pnpm -r test:typecheck
-      
+
       - name: 📦 Build
         run: pnpm -r build
-      
+
       # - name: 🚢 Continuous Release
       #   run: pnpm dlx pkg-pr-new publish './packages/core'
       #   if: github.event_name == 'pull_request'
