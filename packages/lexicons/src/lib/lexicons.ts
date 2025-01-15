@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2024-12-05T08:21:18.439Z
+ * Generated on: 2025-01-09T12:45:41.061Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/c72145dbeb2d67068bc28c00a13447e0d382d121/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/53621f8e100a3aa3c1caff10a08d3f4ea919875a/lexicons
  */
 
 /** Base type with optional type field */
@@ -1935,6 +1935,11 @@ export declare namespace AppBskyNotificationListNotifications {
      */
     limit?: number;
     priority?: boolean;
+    /**
+     * Notification reasons to include in response.
+     * A reason that matches the reason property of #notification.
+     */
+    reasons?: string[];
     seenAt?: string;
   }
   type Input = undefined;
@@ -2037,6 +2042,12 @@ export declare namespace AppBskyUnspeccedDefs {
   interface SkeletonSearchStarterPack extends TypedBase {
     uri: At.Uri;
   }
+  interface TrendingTopic extends TypedBase {
+    link: string;
+    topic: string;
+    description?: string;
+    displayName?: string;
+  }
 }
 
 /** Get miscellaneous runtime configuration. */
@@ -2101,6 +2112,25 @@ export declare namespace AppBskyUnspeccedGetTaggedSuggestions {
     subject: string;
     subjectType: "actor" | "feed" | (string & {});
     tag: string;
+  }
+}
+
+/** Get a list of trending topics */
+export declare namespace AppBskyUnspeccedGetTrendingTopics {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). Used to boost followed accounts in ranking. */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    suggested: AppBskyUnspeccedDefs.TrendingTopic[];
+    topics: AppBskyUnspeccedDefs.TrendingTopic[];
   }
 }
 
@@ -3451,6 +3481,8 @@ export declare namespace ComAtprotoServerCreateSession {
     /** Handle or other identifier supported by the server for the authenticating user. */
     identifier: string;
     password: string;
+    /** When true, instead of throwing error for takendown accounts, a valid response with a narrow scoped token will be returned */
+    allowTakendown?: boolean;
     authFactorToken?: string;
   }
   interface Output extends TypedBase {
@@ -4249,6 +4281,8 @@ export declare namespace ToolsOzoneModerationDefs {
     subjectStatus?: SubjectStatusView;
   }
   interface ModEventAcknowledge extends TypedBase {
+    /** If true, all other reports on content authored by this account will be resolved (acknowledged). */
+    acknowledgeAccountSubjects?: boolean;
     comment?: string;
   }
   /** Add a comment to a subject */
@@ -4324,6 +4358,11 @@ export declare namespace ToolsOzoneModerationDefs {
     comment?: string;
     /** Indicates how long the takedown should be in effect before automatically expiring. */
     durationInHours?: number;
+    /**
+     * Names/Keywords of the policies that drove the decision.
+     * Maximum array length: 5
+     */
+    policies?: string[];
   }
   /** Unmute action on a subject */
   interface ModEventUnmute extends TypedBase {
@@ -4641,6 +4680,8 @@ export declare namespace ToolsOzoneModerationQueryEvents {
      * \@default 50
      */
     limit?: number;
+    /** If specified, only events where the action policies match any of the given policies are returned */
+    policies?: string[];
     /** If specified, only events where all of these labels were removed are returned */
     removedLabels?: string[];
     /** If specified, only events where all of these tags were removed are returned */
@@ -4703,6 +4744,12 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     limit?: number;
     /** When set to true, only muted subjects and reporters will be returned. */
     onlyMuted?: boolean;
+    /** Number of queues being used by moderators. Subjects will be split among all queues. */
+    queueCount?: number;
+    /** Index of the queue to fetch subjects from. Works only when queueCount value is specified. */
+    queueIndex?: number;
+    /** A seeder to shuffle/balance the queue items. */
+    queueSeed?: string;
     /** Search subjects reported after a given timestamp */
     reportedAfter?: string;
     /** Search subjects reported before a given timestamp */
@@ -4721,6 +4768,10 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     subject?: string;
     /** If specified, subjects of the given type (account or record) will be returned. When this is set to 'account' the 'collections' parameter will be ignored. When includeAllUserRecords or subject is set, this will be ignored. */
     subjectType?: "account" | "record" | (string & {});
+    /**
+     * Maximum array length: 25
+     * Items in this array are applied with OR filters. To apply AND filter, put all tags in the same string and separate using && characters
+     */
     tags?: string[];
     /** Get subjects that were taken down */
     takendown?: boolean;
@@ -5331,6 +5382,10 @@ export declare interface Queries {
   };
   "app.bsky.unspecced.getTaggedSuggestions": {
     output: AppBskyUnspeccedGetTaggedSuggestions.Output;
+  };
+  "app.bsky.unspecced.getTrendingTopics": {
+    params: AppBskyUnspeccedGetTrendingTopics.Params;
+    output: AppBskyUnspeccedGetTrendingTopics.Output;
   };
   "app.bsky.unspecced.searchActorsSkeleton": {
     params: AppBskyUnspeccedSearchActorsSkeleton.Params;
