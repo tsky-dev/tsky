@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/assets/tsky-logo.png" width="200" height="200">
+  <img src="https://raw.githubusercontent.com/tsky-dev/tsky/refs/heads/main/.github/assets/tsky-logo.png" width="200" height="200">
 </p>
 
 <h1 align="center">tsky</h1>
