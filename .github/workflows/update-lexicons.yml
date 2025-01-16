@@ -34,10 +34,19 @@ jobs:
         id: check-version-change
         run: echo "VERSION_CHANGED=$(pnpm run --silent --filter @tsky/lexicons check-version-change)" >> "$GITHUB_OUTPUT"
 
-      - name: 🔼 commit and push
+      - name: 🔼 Create PR to update lexicons
         if: ${{ steps.check-version-change.outputs.VERSION_CHANGED == 'yes' }}
+        env:
+          BRANCH_NAME: gh-actions-update-lexicons
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git diff --quiet || (git add . && git commit -m "chore: update lexicons.ts")
-          git push
+          git diff --quiet || (
+            git switch --create $BRANCH_NAME &&
+            git add . &&
+            git commit -m "chore: update lexicons.ts"
+          )
+          git push -u origin $BRANCH_NAME
+          gh pr create \
+            --title 'chore: Update lexicons' \
+            --body 'This PR is made via GitHub Actions workflow ([update-lexicons.yml](https://github.com/tsky-dev/tsky/blob/main/.github/workflows/update-lexicons.yml)) automatically.'
