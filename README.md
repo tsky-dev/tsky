@@ -82,4 +82,4 @@ If you want to contribute to this project, please read the [CONTRIBUTING.md](CON
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/tsky-dev/tsky/blob/main/LICENSE) file for details.
