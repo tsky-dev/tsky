@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-01-09T12:45:41.061Z
+ * Generated on: 2025-01-17T07:29:49.080Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/53621f8e100a3aa3c1caff10a08d3f4ea919875a/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/07f11d3e0c46739bea93415fcd1439be35a6a266/lexicons
  */
 
 /** Base type with optional type field */
@@ -368,6 +368,8 @@ export declare namespace AppBskyActorGetSuggestions {
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
     cursor?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
   }
 }
 
@@ -1703,6 +1705,8 @@ export declare namespace AppBskyGraphGetSuggestedFollowsByActor {
      * \@default false
      */
     isFallback?: boolean;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
   }
 }
 
@@ -2097,6 +2101,8 @@ export declare namespace AppBskyUnspeccedGetSuggestionsSkeleton {
   interface Output extends TypedBase {
     actors: AppBskyUnspeccedDefs.SkeletonSearchActor[];
     cursor?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
     /** DID of the account these suggestions are relative to. If this is returned undefined, suggestions are based on the viewer. */
     relativeToDid?: At.DID;
   }
@@ -3018,6 +3024,15 @@ export declare namespace ComAtprotoLabelSubscribeLabels {
   interface Labels extends TypedBase {
     labels: ComAtprotoLabelDefs.Label[];
     seq: number;
+  }
+}
+
+export declare namespace ComAtprotoLexiconSchema {
+  /** Representation of Lexicon schemas themselves, when published as atproto records. Note that the schema language is not defined in Lexicon; this meta schema currently only includes a single version field ('lexicon'). See the atproto specifications for description of the other expected top-level fields ('id', 'defs', etc). */
+  interface Record extends RecordBase {
+    $type: "com.atproto.lexicon.schema";
+    /** Indicates the 'version' of the Lexicon language. Must be '1' for the current atproto/Lexicon schema system. */
+    lexicon: number;
   }
 }
 
@@ -5204,6 +5219,7 @@ export declare interface Records extends RecordBase {
   "app.bsky.graph.starterpack": AppBskyGraphStarterpack.Record;
   "app.bsky.labeler.service": AppBskyLabelerService.Record;
   "chat.bsky.actor.declaration": ChatBskyActorDeclaration.Record;
+  "com.atproto.lexicon.schema": ComAtprotoLexiconSchema.Record;
 }
 
 export declare interface Queries {
