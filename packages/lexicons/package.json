@@ -20,7 +20,7 @@
     "build": "tsx ./scripts/generate-types.ts && tsc",
     "check-version-change": "tsx ./scripts/check-version-change.ts && tsc",
     "clean": "rm -rf dist && rm -rf lexicons",
-    "prepublish": "pnpm run clean && pnpm run build"
+    "prepare": "pnpm run clean && pnpm run build"
   },
   "devDependencies": {
     "@tsky/lex-cli": "workspace:*",

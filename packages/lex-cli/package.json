@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "prepublish": "pnpm run clean && pnpm run build"
+    "prepare": "pnpm run clean && pnpm run build"
   },
   "dependencies": {
     "clipanion": "4.0.0-rc.4",
