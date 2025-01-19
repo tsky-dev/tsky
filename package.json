@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "pnpm run -r dev",
     "build": "pnpm run -r build",
+    "prepare": "pnpm build",
     "docs:dev": "pnpm run --filter @tsky/docs dev",
     "docs:build": "pnpm run --filter @tsky/docs build",
     "docs:preview": "pnpm run --filter @tsky/docs preview",
