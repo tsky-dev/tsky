@@ -1,0 +1,28 @@
+{
+  "name": "@tsky/lex-cli",
+  "type": "module",
+  "version": "0.0.1",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublish": "pnpm run clean && pnpm run build"
+  },
+  "dependencies": {
+    "clipanion": "4.0.0-rc.4",
+    "picocolors": "^1.1.1",
+    "prettier": "^3.3.3",
+    "typanion": "^3.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.1",
+    "typescript": "^5.7.2"
+  }
+}

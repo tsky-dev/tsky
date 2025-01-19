@@ -1,0 +1,42 @@
+{
+  "name": "@tsky/client",
+  "type": "module",
+  "version": "0.0.1",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "dev": "pkgroll --watch",
+    "build": "pkgroll",
+    "test": "vitest",
+    "test:typescript": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@atcute/client": "^2.0.6",
+    "@tsky/lexicons": "workspace:*"
+  },
+  "devDependencies": {
+    "globals": "^15.12.0",
+    "pkgroll": "^2.5.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.6"
+  }
+}
