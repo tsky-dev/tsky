@@ -4,6 +4,7 @@ layout: home
 
 hero:
   name: "tsky"
+  image: /tsky-logo.png
   text: "A Bluesky API client for nimble apps and tools"
   tagline: A Bluesky API client for nimble apps and tools
   actions:

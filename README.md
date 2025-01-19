@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/assets/tsky-logo.png" width="200" height="200">
+  <img src="https://raw.githubusercontent.com/tsky-dev/tsky/refs/heads/main/.github/assets/tsky-logo.png" width="200" height="200">
 </p>
 
 <h1 align="center">tsky</h1>
@@ -82,4 +82,4 @@ If you want to contribute to this project, please read the [CONTRIBUTING.md](CON
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/tsky-dev/tsky/blob/main/LICENSE) file for details.
