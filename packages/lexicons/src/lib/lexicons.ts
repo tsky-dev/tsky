@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-01-17T07:29:49.080Z
+ * Generated on: 2025-01-19T08:09:58.687Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/07f11d3e0c46739bea93415fcd1439be35a6a266/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/cbf17066f314fbc7f2e943127ee4a9f589f8bec2/lexicons
  */
 
 /** Base type with optional type field */
@@ -629,6 +629,8 @@ export declare namespace AppBskyFeedDefs {
   type ClickthroughEmbed = "app.bsky.feed.defs#clickthroughEmbed";
   type ClickthroughItem = "app.bsky.feed.defs#clickthroughItem";
   type ClickthroughReposter = "app.bsky.feed.defs#clickthroughReposter";
+  type ContentModeUnspecified = "app.bsky.feed.defs#contentModeUnspecified";
+  type ContentModeVideo = "app.bsky.feed.defs#contentModeVideo";
   interface FeedViewPost extends TypedBase {
     post: PostView;
     /**
@@ -648,6 +650,10 @@ export declare namespace AppBskyFeedDefs {
     uri: At.Uri;
     acceptsInteractions?: boolean;
     avatar?: string;
+    contentMode?:
+      | "app.bsky.feed.defs#contentModeUnspecified"
+      | "app.bsky.feed.defs#contentModeVideo"
+      | (string & {});
     /**
      * Maximum string length: 3000
      * Maximum grapheme length: 300
@@ -795,6 +801,10 @@ export declare namespace AppBskyFeedGenerator {
     /** Declaration that a feed accepts feedback interactions from a client through app.bsky.feed.sendInteractions */
     acceptsInteractions?: boolean;
     avatar?: At.Blob;
+    contentMode?:
+      | "app.bsky.feed.defs#contentModeUnspecified"
+      | "app.bsky.feed.defs#contentModeVideo"
+      | (string & {});
     /**
      * Maximum string length: 3000
      * Maximum grapheme length: 300
