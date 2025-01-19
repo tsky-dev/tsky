@@ -29,7 +29,7 @@
   "formatter": {
     "indentStyle": "space",
     "lineWidth": 80,
-    "lineEnding": "crlf"
+    "lineEnding": "lf"
   },
   "vcs": {
     "enabled": true,
