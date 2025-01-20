@@ -1,15 +1,15 @@
 import { XRPC } from '@atcute/client';
 import type { Queries } from '@tsky/lexicons';
+import { Auth } from '~/auth';
 import { Bsky } from '~/feed';
-import { Manager } from '~/manager';
 import { Client } from './client';
 
 export class Tsky {
-  auth: Manager;
+  auth: Auth;
   client: Client<Queries>;
 
   constructor() {
-    this.auth = new Manager();
+    this.auth = new Auth();
     const xrpc = new XRPC({ handler: this.auth.manager });
     this.client = new Client(xrpc);
   }
