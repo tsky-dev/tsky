@@ -1,5 +1,5 @@
 import type { AppBskyActorDefs } from '@tsky/lexicons';
-import { Feed } from '~/bsky/feed';
+import { Feed } from '~/feed/feed';
 import type { Client } from '~/tsky/client';
 
 export class Bsky {

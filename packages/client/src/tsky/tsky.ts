@@ -1,7 +1,7 @@
 import type { CredentialManager } from '@atcute/client';
 import { XRPC } from '@atcute/client';
 import type { Queries } from '@tsky/lexicons';
-import { Bsky } from '~/bsky';
+import { Bsky } from '~/feed';
 import { Client } from './client';
 
 export class Tsky {
