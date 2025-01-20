@@ -4,7 +4,7 @@ import {
   type CredentialManagerOptions,
 } from '@atcute/client';
 
-export class Manager {
+export class Auth {
   manager: CredentialManager;
   sessions: Map<string, AtpSessionData> = new Map();
 
