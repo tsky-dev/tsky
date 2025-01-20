@@ -9,7 +9,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "@tsky/lexicons": ["../lexicons/index.ts"],
     },
     "resolveJsonModule": true,
     "allowJs": true,
