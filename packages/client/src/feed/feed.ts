@@ -3,7 +3,7 @@ import type {
   AppBskyFeedGetTimeline,
 } from '@tsky/lexicons';
 import type { Client } from '~/tsky/client';
-import { Paginator } from '~/tsky/paginator';
+import { Paginator } from '~/utils';
 
 export class Feed {
   constructor(private client: Client) {}
