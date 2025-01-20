@@ -1,11 +1,17 @@
-import { type AtpSessionData, CredentialManager } from '@atcute/client';
+import {
+  type AtpSessionData,
+  CredentialManager,
+  type CredentialManagerOptions,
+} from '@atcute/client';
 
 export class Manager {
   manager: CredentialManager;
   sessions: Map<string, AtpSessionData> = new Map();
 
-  constructor() {
-    this.manager = new CredentialManager({ service: 'https://bsky.social' });
+  constructor(options?: CredentialManagerOptions) {
+    this.manager = new CredentialManager(
+      options ?? { service: 'https://bsky.social' },
+    );
   }
 
   async login(identifier: string, password: string) {
