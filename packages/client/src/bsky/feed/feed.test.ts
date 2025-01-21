@@ -28,7 +28,7 @@ async function getAliceTsky() {
 describe('feed', () => {
   it('.getFeed()', async () => {
     const tsky = await getAliceTsky();
-    const paginator = await tsky.bsky.feed.getFeed({
+    const paginator = await tsky.bsky.feed.get({
       // "Birds! 🦉" custom feed
       // - https://bsky.app/profile/daryllmarie.bsky.social/feed/aaagllxbcbsje
       feed: 'at://did:plc:ffkgesg3jsv2j7aagkzrtcvt/app.bsky.feed.generator/aaagllxbcbsje',
