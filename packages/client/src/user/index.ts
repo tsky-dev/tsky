@@ -7,7 +7,9 @@ import {
   MuteUnmuteActorList,
   MuteUnmuteThread,
 } from './mute_unmute';
+import { Muted } from './muted';
 import { Preferences } from './preferences';
+import { Suggestion } from './suggestion';
 
 export class User extends Actor {
   get preferences() {
@@ -46,6 +48,14 @@ export class User extends Actor {
 
       return res.data;
     });
+  }
+
+  get muted() {
+    return new Muted(this.client);
+  }
+
+  get suggestion() {
+    return new Suggestion(this.client);
   }
 
   /** ----- */
