@@ -3,11 +3,7 @@ import { Feed } from '~/bsky/feed';
 import type { Client } from '~/tsky/client';
 
 export class Bsky {
-  private client: Client;
-
-  constructor(client: Client) {
-    this.client = client;
-  }
+  constructor(private client: Client) {}
 
   /**
    * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
