@@ -1,7 +1,6 @@
 import type { AppBskyActorPutPreferences } from '@tsky/lexicons';
 import type { Client } from '~/tsky/client';
-
-type RPCOptions = { signal?: AbortSignal; headers?: HeadersInit };
+import type { RPCOptions } from '~/types';
 
 export class Preferences {
   constructor(private client: Client) {}

@@ -1,25 +1,73 @@
-import type { AppBskyActorDefs } from '@tsky/lexicons';
-import type { Client } from '~/tsky/client';
+import type { AppBskyFeedGetTimeline } from '@tsky/lexicons';
+import { Actor } from '~/bsky/autor';
+import type { RPCOptions } from '~/types';
+import { Paginator } from '~/utils';
+import {
+  MuteUnmuteActor,
+  MuteUnmuteActorList,
+  MuteUnmuteThread,
+} from './mute_unmute';
 import { Preferences } from './preferences';
 
-export class User {
-  constructor(
-    private client: Client,
-    private identifier: string,
-  ) {}
-
-  /**
-   * Get detailed profile view of the current user.
-   */
-  async profile(): Promise<AppBskyActorDefs.ProfileViewDetailed> {
-    const res = await this.client.get('app.bsky.actor.getProfile', {
-      params: { actor: this.identifier },
-    });
-
-    return res.data;
-  }
-
+export class User extends Actor {
   get preferences() {
     return new Preferences(this.client);
+  }
+
+  /**
+   * Get a view of the requesting account's home timeline. This is expected to be some form of reverse-chronological feed.
+   */
+  timeline(
+    params: AppBskyFeedGetTimeline.Params,
+    options?: AppBskyFeedGetTimeline.Input,
+  ): Promise<Paginator<AppBskyFeedGetTimeline.Output>> {
+    return Paginator.init(async (cursor) => {
+      const res = await this.client.get('app.bsky.feed.getTimeline', {
+        ...(options ?? {}),
+        params: {
+          cursor,
+          ...params,
+        },
+      });
+
+      return res.data;
+    });
+  }
+
+  /**
+   * Get a list of posts liked by the current user
+   */
+  likes(limit?: number, options: RPCOptions = {}) {
+    return Paginator.init(async (cursor) => {
+      const res = await this.client.get('app.bsky.feed.getActorLikes', {
+        params: { cursor, actor: this.identifier, limit },
+        ...options,
+      });
+
+      return res.data;
+    });
+  }
+
+  /** ----- */
+
+  /**
+   * Mute or unmute a thread
+   */
+  thread(thread: string) {
+    return new MuteUnmuteThread(this.client, thread);
+  }
+
+  /**
+   * Mute or unmute an actor
+   */
+  actor(identifier: string) {
+    return new MuteUnmuteActor(this.client, identifier);
+  }
+
+  /**
+   * Mute or unmute an actor list
+   */
+  actorList(identifier: string) {
+    return new MuteUnmuteActorList(this.client, identifier);
   }
 }
