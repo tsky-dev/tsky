@@ -19,7 +19,11 @@ export class Tsky {
   }
 
   get user() {
-    return new User(this.client);
+    if (!this.auth.currentSession) {
+      throw new Error('There is no active session');
+    }
+
+    return new User(this.client, this.auth.currentSession.handle);
   }
 
   get bsky() {
