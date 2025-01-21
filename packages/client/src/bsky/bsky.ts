@@ -1,9 +1,9 @@
 import type { AppBskyActorDefs } from '@tsky/lexicons';
-import { Feed } from '~/bsky/feed/feed';
+import { Feed } from '~/bsky/feed';
 import type { Client } from '~/tsky/client';
 
 export class Bsky {
-  client: Client;
+  private client: Client;
 
   constructor(client: Client) {
     this.client = client;

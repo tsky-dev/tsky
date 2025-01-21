@@ -6,7 +6,7 @@ import { Client } from './client';
 
 export class Tsky {
   auth: Auth;
-  client: Client<Queries>;
+  private client: Client<Queries>;
 
   constructor() {
     // Initialize the auth manager
