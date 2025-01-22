@@ -1,9 +1,11 @@
 import type {
   AppBskyFeedGetFeed,
-  AppBskyFeedGetTimeline,
+  AppBskyFeedSendInteractions,
 } from '@tsky/lexicons';
 import type { Client } from '~/tsky/client';
-import { Paginator } from '~/tsky/paginator';
+import type { RPCOptions } from '~/types';
+import { Paginator } from '~/utils';
+import { FeedGenerator } from './generator';
 
 export class Feed {
   constructor(private client: Client) {}
@@ -11,7 +13,7 @@ export class Feed {
   /**
    * Get a hydrated feed from an actor's selected feed generator. Implemented by App View.
    */
-  async getFeed(
+  async get(
     params: AppBskyFeedGetFeed.Params,
     options?: AppBskyFeedGetFeed.Input,
   ): Promise<Paginator<AppBskyFeedGetFeed.Output>> {
@@ -29,22 +31,21 @@ export class Feed {
   }
 
   /**
-   * Get a view of the requesting account's home timeline. This is expected to be some form of reverse-chronological feed.
+   * Send information about interactions with feed items back to the feed generator that served them.
    */
-  getTimeline(
-    params: AppBskyFeedGetTimeline.Params,
-    options?: AppBskyFeedGetTimeline.Input,
-  ): Promise<Paginator<AppBskyFeedGetTimeline.Output>> {
-    return Paginator.init(async (cursor) => {
-      const res = await this.client.get('app.bsky.feed.getTimeline', {
-        ...(options ?? {}),
-        params: {
-          cursor,
-          ...params,
-        },
-      });
-
-      return res.data;
+  async sendInteractions(
+    interactions: AppBskyFeedSendInteractions.Input['interactions'],
+    options: RPCOptions = {},
+  ) {
+    const res = await this.client.call('app.bsky.feed.sendInteractions', {
+      data: { interactions },
+      ...options,
     });
+
+    return res.data;
+  }
+
+  generator() {
+    return new FeedGenerator(this.client);
   }
 }
