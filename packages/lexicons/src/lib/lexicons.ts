@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-01-21T16:36:07.633Z
+ * Generated on: 2025-01-22T06:49:03.357Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/ee9779d07405d991b6be1b1780dae7828ff9d619/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/c0a75d310aa92c067799a97d1acc5bd0543114c5/lexicons
  */
 
 /** Base type with optional type field */
@@ -747,6 +747,10 @@ export declare namespace AppBskyFeedDefs {
   interface SkeletonReasonRepost extends TypedBase {
     repost: At.Uri;
   }
+  /** Metadata about this post within the context of the thread it is in. */
+  interface ThreadContext extends TypedBase {
+    rootAuthorLike?: At.Uri;
+  }
   interface ThreadgateView extends TypedBase {
     cid?: At.CID;
     lists?: AppBskyGraphDefs.ListViewBasic[];
@@ -757,6 +761,7 @@ export declare namespace AppBskyFeedDefs {
     post: PostView;
     parent?: TypeUnion<BlockedPost | NotFoundPost | ThreadViewPost>;
     replies?: TypeUnion<BlockedPost | NotFoundPost | ThreadViewPost>[];
+    threadContext?: ThreadContext;
   }
   /** Metadata about the requesting account's relationship with the subject content. Only has meaningful content for authed requests. */
   interface ViewerState extends TypedBase {
@@ -872,6 +877,7 @@ export declare namespace AppBskyFeedGetAuthorFeed {
       | "posts_no_replies"
       | "posts_with_media"
       | "posts_with_replies"
+      | "posts_with_video"
       | (string & {});
     /** \@default false */
     includePins?: boolean;
