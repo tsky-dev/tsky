@@ -1,5 +1,5 @@
 import type { AppBskyFeedGetTimeline } from '@tsky/lexicons';
-import { Actor } from '~/bsky/autor';
+import { Actor } from '~/bsky/actor';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 import {

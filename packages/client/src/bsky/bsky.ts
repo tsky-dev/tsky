@@ -1,6 +1,6 @@
 import { Feed } from '~/bsky/feed';
 import type { Client } from '~/tsky/client';
-import { Actor } from './autor';
+import { Actor } from './actor';
 import { List } from './list';
 
 export class Bsky {
