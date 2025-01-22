@@ -2,14 +2,11 @@ import type { AppBskyFeedGetTimeline } from '@tsky/lexicons';
 import { Actor } from '~/bsky/actor';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
-import {
-  MuteUnmuteActor,
-  MuteUnmuteActorList,
-  MuteUnmuteThread,
-} from './mute_unmute';
+import { Mute } from './mute';
 import { Muted } from './muted';
 import { Preferences } from './preferences';
 import { Suggestion } from './suggestion';
+import { Unmute } from './unmute';
 
 export class User extends Actor {
   get preferences() {
@@ -58,26 +55,11 @@ export class User extends Actor {
     return new Suggestion(this.client);
   }
 
-  /** ----- */
-
-  /**
-   * Mute or unmute a thread
-   */
-  thread(thread: string) {
-    return new MuteUnmuteThread(this.client, thread);
+  get mute() {
+    return new Mute(this.client);
   }
 
-  /**
-   * Mute or unmute an actor
-   */
-  actor(identifier: string) {
-    return new MuteUnmuteActor(this.client, identifier);
-  }
-
-  /**
-   * Mute or unmute an actor list
-   */
-  actorList(identifier: string) {
-    return new MuteUnmuteActorList(this.client, identifier);
+  get unmute() {
+    return new Unmute(this.client);
   }
 }
