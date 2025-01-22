@@ -28,6 +28,7 @@
     "dev": "pkgroll --watch",
     "build": "pkgroll --minify",
     "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "test:typescript": "tsc --noEmit"
   },
   "dependencies": {
