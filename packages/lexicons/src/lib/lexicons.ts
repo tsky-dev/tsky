@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-01-19T08:09:58.687Z
+ * Generated on: 2025-01-22T06:49:03.357Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/cbf17066f314fbc7f2e943127ee4a9f589f8bec2/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/c0a75d310aa92c067799a97d1acc5bd0543114c5/lexicons
  */
 
 /** Base type with optional type field */
@@ -747,6 +747,10 @@ export declare namespace AppBskyFeedDefs {
   interface SkeletonReasonRepost extends TypedBase {
     repost: At.Uri;
   }
+  /** Metadata about this post within the context of the thread it is in. */
+  interface ThreadContext extends TypedBase {
+    rootAuthorLike?: At.Uri;
+  }
   interface ThreadgateView extends TypedBase {
     cid?: At.CID;
     lists?: AppBskyGraphDefs.ListViewBasic[];
@@ -757,6 +761,7 @@ export declare namespace AppBskyFeedDefs {
     post: PostView;
     parent?: TypeUnion<BlockedPost | NotFoundPost | ThreadViewPost>;
     replies?: TypeUnion<BlockedPost | NotFoundPost | ThreadViewPost>[];
+    threadContext?: ThreadContext;
   }
   /** Metadata about the requesting account's relationship with the subject content. Only has meaningful content for authed requests. */
   interface ViewerState extends TypedBase {
@@ -872,6 +877,7 @@ export declare namespace AppBskyFeedGetAuthorFeed {
       | "posts_no_replies"
       | "posts_with_media"
       | "posts_with_replies"
+      | "posts_with_video"
       | (string & {});
     /** \@default false */
     includePins?: boolean;
@@ -4279,6 +4285,19 @@ export declare namespace ToolsOzoneModerationDefs {
     reactivatedAt?: string;
     updatedAt?: string;
   }
+  /** Statistics about a particular account subject */
+  interface AccountStats extends TypedBase {
+    /** Total number of appeals against a moderation action on the account */
+    appealCount?: number;
+    /** Number of times the account was escalated */
+    escalateCount?: number;
+    /** Total number of reports on the account */
+    reportCount?: number;
+    /** Number of times the account was suspended */
+    suspendCount?: number;
+    /** Number of times the account was taken down */
+    takedownCount?: number;
+  }
   interface BlobView extends TypedBase {
     cid: At.CID;
     createdAt: string;
@@ -4474,6 +4493,25 @@ export declare namespace ToolsOzoneModerationDefs {
     deletedAt?: string;
     updatedAt?: string;
   }
+  /** Statistics about a set of record subject items */
+  interface RecordsStats extends TypedBase {
+    /** Number of items that were appealed at least once */
+    appealedCount?: number;
+    /** Number of items that were escalated at least once */
+    escalatedCount?: number;
+    /** Number of item currently in "reviewOpen" or "reviewEscalated" state */
+    pendingCount?: number;
+    /** Number of item currently in "reviewNone" or "reviewClosed" state */
+    processedCount?: number;
+    /** Number of items that were reported at least once */
+    reportedCount?: number;
+    /** Total number of item in the set */
+    subjectCount?: number;
+    /** Number of item currently taken down */
+    takendownCount?: number;
+    /** Cumulative sum of the number of reports on the items in the set */
+    totalReports?: number;
+  }
   interface RecordView extends TypedBase {
     blobCids: At.CID[];
     cid: At.CID;
@@ -4548,6 +4586,8 @@ export declare namespace ToolsOzoneModerationDefs {
     >;
     /** Timestamp referencing when the last update was made to the moderation status of the subject */
     updatedAt: string;
+    /** Statistics related to the account subject */
+    accountStats?: AccountStats;
     /** True indicates that the a previously taken moderator action was appealed against, by the author of the content. False indicates last appeal was resolved by moderators. */
     appealed?: boolean;
     /** Sticky comment on the subject. */
@@ -4560,6 +4600,8 @@ export declare namespace ToolsOzoneModerationDefs {
     lastReviewedBy?: At.DID;
     muteReportingUntil?: string;
     muteUntil?: string;
+    /** Statistics related to the record subjects authored by the subject's account */
+    recordsStats?: RecordsStats;
     subjectBlobCids?: At.CID[];
     subjectRepoHandle?: string;
     suspendUntil?: string;
@@ -4767,6 +4809,12 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
      * \@default 50
      */
     limit?: number;
+    /** If specified, only subjects that belong to an account that has at least this many suspensions will be returned. */
+    minAccountSuspendCount?: number;
+    /** If specified, only subjects that belong to an account that has at least this many reported records will be returned. */
+    minReportedRecordsCount?: number;
+    /** If specified, only subjects that belong to an account that has at least this many taken down records will be returned. */
+    minTakendownRecordsCount?: number;
     /** When set to true, only muted subjects and reporters will be returned. */
     onlyMuted?: boolean;
     /** Number of queues being used by moderators. Subjects will be split among all queues. */
@@ -4788,7 +4836,11 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     /** \@default "desc" */
     sortDirection?: "asc" | "desc";
     /** \@default "lastReportedAt" */
-    sortField?: "lastReviewedAt" | "lastReportedAt";
+    sortField?:
+      | "lastReviewedAt"
+      | "lastReportedAt"
+      | "reportedRecordsCount"
+      | "takendownRecordsCount";
     /** The subject to get the status for. */
     subject?: string;
     /** If specified, subjects of the given type (account or record) will be returned. When this is set to 'account' the 'collections' parameter will be ignored. When includeAllUserRecords or subject is set, this will be ignored. */
