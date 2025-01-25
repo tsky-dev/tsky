@@ -37,6 +37,6 @@
     "theme": "default",
     "exclude": "**/+(__tests__|__mocks__)/*",
     "excludePrivate": true,
-    "excludeProtected": true
-  }
+    "excludeProtected": true,
+  },
 }

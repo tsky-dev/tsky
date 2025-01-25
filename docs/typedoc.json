@@ -1,0 +1,29 @@
+{
+  "$schema": "https://typedoc-plugin-markdown.org/schema.json",
+  "entryPoints": ["../packages/client"],
+  "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
+  "name": "Packages Example",
+  "entryPointStrategy": "packages",
+  "packageOptions": {
+    "includeVersion": true,
+    "entryPoints": ["src/*.ts"]
+  },
+  "basePath": "../packages/client/src",
+  "readme": "none",
+  "entryFileName": "index.md",
+  "mergeReadme": true,
+  "indexFormat": "table",
+  "useCodeBlocks": true,
+  "textContentMappings": {
+    "title.indexPage": "API Reference",
+    "title.memberPage": "{name}"
+  },
+  "outputs": [
+    {
+      "name": "markdown",
+      "path": "./api"
+    }
+  ],
+  "hidePageHeader": false,
+  "logLevel": "Verbose"
+}
