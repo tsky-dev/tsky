@@ -15,7 +15,9 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
@@ -28,8 +30,14 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 🧪 Test project
-        run: pnpm -r test
+        run: pnpm -r test:coverage
         timeout-minutes: 10
+
+      - name: 'Report test coverage'
+        uses:  davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: './packages/client/'
+        if: always()
 
       - name: 📝 Lint
         run: pnpm run lint
