@@ -1,8 +1,8 @@
 import { XRPC } from '@atcute/client';
 import type { Queries } from '@tsky/lexicons';
-import { Auth } from '~/auth';
 import { Bsky } from '~/bsky';
 import { StarterPack } from '~/starterpack';
+import { Auth } from '~/tsky';
 import { User } from '~/user';
 import { Video } from '~/video';
 import { Client } from './client';
