@@ -1,5 +1,5 @@
+import type { Client } from '~/agent/client';
 import { Feed } from '~/bsky/feed';
-import type { Client } from '~/tsky/client';
 import { Actor } from './actor';
 import { List } from './list';
 
