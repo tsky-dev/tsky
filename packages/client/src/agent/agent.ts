@@ -1,31 +1,30 @@
-import { XRPC } from '@atcute/client';
+import { type CredentialManager, XRPC } from '@atcute/client';
 import type { Queries } from '@tsky/lexicons';
 import { Bsky } from '~/bsky';
 import { StarterPack } from '~/starterpack';
-import { Auth } from '~/tsky';
 import { User } from '~/user';
 import { Video } from '~/video';
 import { Client } from './client';
 
-export class Tsky {
-  auth: Auth;
+export class Agent {
   private client: Client<Queries>;
 
-  constructor() {
-    // Initialize the auth manager
-    this.auth = new Auth();
-
+  constructor(private handler: CredentialManager) {
     // Initialize the client
-    const xrpc = new XRPC({ handler: this.auth.manager });
+    const xrpc = new XRPC({ handler: this.handler });
     this.client = new Client(xrpc);
   }
 
+  get session() {
+    return this.handler.session;
+  }
+
   get user() {
-    if (!this.auth.currentSession) {
+    if (!this.session) {
       throw new Error('There is no active session');
     }
 
-    return new User(this.client, this.auth.currentSession.handle);
+    return new User(this.client, this.session.handle);
   }
 
   get bsky() {
@@ -33,7 +32,7 @@ export class Tsky {
   }
 
   get video() {
-    if (!this.auth.currentSession) {
+    if (!this.session) {
       throw new Error('There is no active session');
     }
 
