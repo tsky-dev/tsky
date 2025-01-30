@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Tsky } from '~/index';
+import { createAgent } from '~/tsky';
 
 const TEST_CREDENTIALS = {
   alice: {
@@ -14,21 +14,13 @@ const TEST_CREDENTIALS = {
   },
 };
 
-async function getAliceTsky() {
-  const tsky = new Tsky();
-
-  await tsky.auth.login(
-    TEST_CREDENTIALS.alice.handle,
-    TEST_CREDENTIALS.alice.password,
-  );
-
-  return tsky;
-}
-
 describe('feed', () => {
   it('.getFeed()', async () => {
-    const tsky = await getAliceTsky();
-    const paginator = await tsky.bsky.feed.get({
+    const agent = await createAgent({
+      identifier: TEST_CREDENTIALS.alice.handle,
+      password: TEST_CREDENTIALS.alice.password,
+    });
+    const paginator = await agent.feed.get({
       // "Birds! 🦉" custom feed
       // - https://bsky.app/profile/daryllmarie.bsky.social/feed/aaagllxbcbsje
       feed: 'at://did:plc:ffkgesg3jsv2j7aagkzrtcvt/app.bsky.feed.generator/aaagllxbcbsje',
