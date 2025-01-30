@@ -1,6 +1,8 @@
 import { type CredentialManager, XRPC } from '@atcute/client';
 import type { Queries } from '@tsky/lexicons';
-import { Actor, Feed, List } from '~/bsky';
+import { Actor } from '~/actor';
+import { Feed } from '~/feed';
+import { List } from '~/list';
 import { StarterPack } from '~/starterpack';
 import { User } from '~/user';
 import { Video } from '~/video';
