@@ -1,6 +1,6 @@
 import { type CredentialManager, XRPC } from '@atcute/client';
 import type { Queries } from '@tsky/lexicons';
-import { Bsky } from '~/bsky';
+import { Actor, Feed, List } from '~/bsky';
 import { StarterPack } from '~/starterpack';
 import { User } from '~/user';
 import { Video } from '~/video';
@@ -19,16 +19,24 @@ export class Agent {
     return this.handler.session;
   }
 
+  actor(identifier: string) {
+    return new Actor(this.client, identifier);
+  }
+
+  list(uri: string) {
+    return new List(this.client, uri);
+  }
+
+  get feed() {
+    return new Feed(this.client);
+  }
+
   get user() {
     if (!this.session) {
       throw new Error('There is no active session');
     }
 
     return new User(this.client, this.session.handle);
-  }
-
-  get bsky() {
-    return new Bsky(this.client);
   }
 
   get video() {
