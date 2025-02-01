@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-01-22T06:49:03.357Z
+ * Generated on: 2025-02-01T06:30:15.294Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/c0a75d310aa92c067799a97d1acc5bd0543114c5/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/d377d1a9be6bdd4508c090e37f47af15bca81540/lexicons
  */
 
 /** Base type with optional type field */
@@ -4356,6 +4356,8 @@ export declare namespace ToolsOzoneModerationDefs {
     createLabelVals: string[];
     negateLabelVals: string[];
     comment?: string;
+    /** Indicates how long the label will remain on the subject. Only applies on labels that are being added. */
+    durationInHours?: number;
   }
   /** Mute incoming reports on a subject */
   interface ModEventMute extends TypedBase {
