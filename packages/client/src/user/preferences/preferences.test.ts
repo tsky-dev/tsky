@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Tsky } from '~/index';
+import { createAgent } from '~/index';
 
 const TEST_CREDENTIALS = {
   alice: {
@@ -14,36 +14,31 @@ const TEST_CREDENTIALS = {
   },
 };
 
-async function getAliceTsky() {
-  const tsky = new Tsky();
-
-  await tsky.auth.login(
-    TEST_CREDENTIALS.alice.handle,
-    TEST_CREDENTIALS.alice.password,
-  );
-
-  return tsky;
-}
-
 describe('preferences', () => {
   it('.get()', async () => {
-    const tsky = await getAliceTsky();
-    const preferences = await tsky.user.preferences.get();
+    const agent = await createAgent({
+      identifier: TEST_CREDENTIALS.alice.handle,
+      password: TEST_CREDENTIALS.alice.password,
+    });
+    const preferences = await agent.user.preferences.get();
 
     expect(preferences).toBeDefined();
   });
 
   it('.set()', async () => {
-    const tsky = await getAliceTsky();
+    const agent = await createAgent({
+      identifier: TEST_CREDENTIALS.alice.handle,
+      password: TEST_CREDENTIALS.alice.password,
+    });
 
     const payload = {
       $type: 'app.bsky.actor.defs.adultContentPref',
       enabled: false,
     };
 
-    await tsky.user.preferences.set([payload]);
+    await agent.user.preferences.set([payload]);
 
-    const preferences = await tsky.user.preferences.get();
+    const preferences = await agent.user.preferences.get();
 
     expect(preferences).toBeDefined();
 

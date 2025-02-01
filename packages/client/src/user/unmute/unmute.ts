@@ -1,4 +1,4 @@
-import type { Client } from '~/tsky/client';
+import type { Client } from '~/agent/client';
 import type { RPCOptions } from '~/types';
 
 export class Unmute {

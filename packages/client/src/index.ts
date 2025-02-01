@@ -1,2 +1,1 @@
-export * from './bsky';
-export * from './tsky';
+export * from '~/tsky';

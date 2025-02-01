@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Tsky } from '~/index';
+import { createAgent } from '~/index';
 
 const TEST_CREDENTIALS = {
   alice: {
@@ -15,29 +15,25 @@ const TEST_CREDENTIALS = {
 };
 
 describe('profile', async () => {
-  const tsky = new Tsky();
-
-  await tsky.auth.login(
-    TEST_CREDENTIALS.alice.handle,
-    TEST_CREDENTIALS.alice.password,
-  );
-
   it("Getting alice's profile", async () => {
-    const profile = await tsky.user.profile();
+    const agent = await createAgent({
+      identifier: TEST_CREDENTIALS.alice.handle,
+      password: TEST_CREDENTIALS.alice.password,
+    });
+
+    const profile = await agent.user.profile();
 
     expect(profile).toBeDefined();
     expect(profile.handle).toBe(TEST_CREDENTIALS.alice.handle);
   });
 
-  it("Switching to bob's profile", async () => {
-    await tsky.auth.login(
-      TEST_CREDENTIALS.bob.handle,
-      TEST_CREDENTIALS.bob.password,
-    );
-  });
-
   it("Getting bob's profile", async () => {
-    const profile = await tsky.user.profile();
+    const agent = await createAgent({
+      identifier: TEST_CREDENTIALS.bob.handle,
+      password: TEST_CREDENTIALS.bob.password,
+    });
+
+    const profile = await agent.user.profile();
 
     expect(profile).toBeDefined();
     expect(profile.handle).toBe(TEST_CREDENTIALS.bob.handle);
