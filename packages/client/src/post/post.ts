@@ -73,24 +73,6 @@ export class Post {
   }
 
   /**
-   * Find posts matching search criteria, returning views of those posts.
-   */
-  static search(
-    client: Client,
-    params: AppBskyFeedSearchPosts.Params,
-    options: RPCOptions = {},
-  ) {
-    return Paginator.init(async (cursor) => {
-      const res = await client.get('app.bsky.feed.searchPosts', {
-        params: { cursor, ...params },
-        ...options,
-      });
-
-      return res.data;
-    });
-  }
-
-  /**
    * Gets post views for a specified list of posts (by AT-URI). This is sometimes referred to as 'hydrating' a 'feed skeleton'.
    */
   static async getMany(

@@ -3,7 +3,7 @@ import type { Queries } from '@tsky/lexicons';
 import { Actor } from '~/actor';
 import { Feed } from '~/feed';
 import { List } from '~/list';
-import { StarterPack } from '~/starterpack';
+import { Search } from '~/search';
 import { User } from '~/user';
 import { Video } from '~/video';
 import { Client } from './client';
@@ -31,6 +31,10 @@ export class Agent {
 
   get feed() {
     return new Feed(this.client);
+  }
+
+  get search() {
+    return new Search(this.client);
   }
 
   get user() {
