@@ -3,14 +3,16 @@ import type {
   AppBskyFeedGetPostThread,
   AppBskyFeedGetQuotes,
   AppBskyFeedGetRepostedBy,
-  AppBskyFeedSearchPosts,
 } from '@tsky/lexicons';
 import type { Client } from '~/agent/client';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 
 export class Post {
-  constructor(private client: Client) {}
+  constructor(
+    private client: Client,
+    private uri: string,
+  ) {}
 
   /**
    * Get posts in a thread. Does not require auth, but additional metadata and filtering will be applied for authed requests.
