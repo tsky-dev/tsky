@@ -18,11 +18,11 @@ export class Post {
    * Get posts in a thread. Does not require auth, but additional metadata and filtering will be applied for authed requests.
    */
   async threads(
-    params: AppBskyFeedGetPostThread.Params,
+    params: Omit<AppBskyFeedGetPostThread.Params, 'uri'> = {},
     options: RPCOptions = {},
   ) {
     const res = await this.client.get('app.bsky.feed.getPostThread', {
-      params,
+      params: { uri: this.uri, ...params },
       ...options,
     });
 
@@ -32,10 +32,13 @@ export class Post {
   /**
    * Get like records which reference a subject (by AT-URI and CID).
    */
-  likes(params: AppBskyFeedGetLikes.Params, options: RPCOptions = {}) {
+  likes(
+    params: Omit<AppBskyFeedGetLikes.Params, 'uri'> = {},
+    options: RPCOptions = {},
+  ) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getLikes', {
-        params: { cursor, ...params },
+        params: { cursor, uri: this.uri, ...params },
         ...options,
       });
 
@@ -46,10 +49,13 @@ export class Post {
   /**
    * Get a list of quotes for a given post.
    */
-  quotes(params: AppBskyFeedGetQuotes.Params, options: RPCOptions = {}) {
+  quotes(
+    params: Omit<AppBskyFeedGetQuotes.Params, 'uri'> = {},
+    options: RPCOptions = {},
+  ) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getQuotes', {
-        params: { cursor, ...params },
+        params: { cursor, uri: this.uri, ...params },
         ...options,
       });
 
@@ -61,12 +67,12 @@ export class Post {
    * Get a list of reposts for a given post.
    */
   repostedBy(
-    params: AppBskyFeedGetRepostedBy.Params,
+    params: Omit<AppBskyFeedGetRepostedBy.Params, 'uri'> = {},
     options: RPCOptions = {},
   ) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getRepostedBy', {
-        params: { cursor, ...params },
+        params: { cursor, uri: this.uri, ...params },
         ...options,
       });
 

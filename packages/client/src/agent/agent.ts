@@ -14,7 +14,7 @@ import { Video } from '~/video';
 import { Client } from './client';
 
 export class Agent {
-  private client: Client<Queries>;
+  client: Client<Queries>;
 
   constructor(private handler: CredentialManager) {
     // Initialize the client
