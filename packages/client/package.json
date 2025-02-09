@@ -35,6 +35,7 @@
     "@atcute/client": "^2.0.6"
   },
   "devDependencies": {
+    "@atcute/internal-dev-env": "workspace:*",
     "@tsky/lexicons": "workspace:*",
     "@vitest/coverage-istanbul": "2.1.6",
     "globals": "^15.12.0",
