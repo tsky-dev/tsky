@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-01T06:30:15.294Z
+ * Generated on: 2025-02-09T16:30:44.251Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/d377d1a9be6bdd4508c090e37f47af15bca81540/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/709a85b0b633b5483b7161db64b429c746239153/lexicons
  */
 
 /** Base type with optional type field */
@@ -200,6 +200,24 @@ export declare namespace AppBskyActorDefs {
     /** The birth date of account owner. */
     birthDate?: string;
   }
+  /** Default post interaction settings for the account. These values should be applied as default values when creating new posts. These refs should mirror the threadgate and postgate records exactly. */
+  interface PostInteractionSettingsPref extends TypedBase {
+    /**
+     * Matches postgate record. List of rules defining who can embed this users posts. If value is an empty array or is undefined, no particular rules apply and anyone can embed.
+     * Maximum array length: 5
+     */
+    postgateEmbeddingRules?: TypeUnion<AppBskyFeedPostgate.DisableRule>[];
+    /**
+     * Matches threadgate record. List of rules defining who can reply to this users posts. If value is an empty array, no one can reply. If value is undefined, anyone can reply.
+     * Maximum array length: 5
+     */
+    threadgateAllowRules?: TypeUnion<
+      | AppBskyFeedThreadgate.FollowerRule
+      | AppBskyFeedThreadgate.FollowingRule
+      | AppBskyFeedThreadgate.ListRule
+      | AppBskyFeedThreadgate.MentionRule
+    >[];
+  }
   type Preferences = TypeUnion<
     | AdultContentPref
     | BskyAppStatePref
@@ -210,6 +228,7 @@ export declare namespace AppBskyActorDefs {
     | LabelersPref
     | MutedWordsPref
     | PersonalDetailsPref
+    | PostInteractionSettingsPref
     | SavedFeedsPref
     | SavedFeedsPrefV2
     | ThreadViewPref
@@ -1247,7 +1266,10 @@ export declare namespace AppBskyFeedPostgate {
      * Maximum array length: 50
      */
     detachedEmbeddingUris?: At.Uri[];
-    /** Maximum array length: 5 */
+    /**
+     * List of rules defining who can embed this post. If value is an empty array or is undefined, no particular rules apply and anyone can embed.
+     * Maximum array length: 5
+     */
     embeddingRules?: TypeUnion<DisableRule>[];
   }
   /** Disables embedding of this post. */
@@ -1330,14 +1352,19 @@ export declare namespace AppBskyFeedThreadgate {
     createdAt: string;
     /** Reference (AT-URI) to the post record. */
     post: At.Uri;
-    /** Maximum array length: 5 */
-    allow?: TypeUnion<FollowingRule | ListRule | MentionRule>[];
+    /**
+     * List of rules defining who can reply to this post. If value is an empty array, no one can reply. If value is undefined, anyone can reply.
+     * Maximum array length: 5
+     */
+    allow?: TypeUnion<FollowerRule | FollowingRule | ListRule | MentionRule>[];
     /**
      * List of hidden reply URIs.
      * Maximum array length: 50
      */
     hiddenReplies?: At.Uri[];
   }
+  /** Allow replies from actors who follow you. */
+  interface FollowerRule extends TypedBase {}
   /** Allow replies from actors you follow. */
   interface FollowingRule extends TypedBase {}
   /** Allow replies from actors on a list. */
@@ -4371,6 +4398,15 @@ export declare namespace ToolsOzoneModerationDefs {
     /** Indicates how long the account should remain muted. Falsy value here means a permanent mute. */
     durationInHours?: number;
   }
+  /** Set priority score of the subject. Higher score means higher priority. */
+  interface ModEventPriorityScore extends TypedBase {
+    /**
+     * Minimum: 0
+     * Maximum: 100
+     */
+    score: number;
+    comment?: string;
+  }
   /** Report a subject */
   interface ModEventReport extends TypedBase {
     reportType: ComAtprotoModerationDefs.ReasonType;
@@ -4434,6 +4470,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | ModEventLabel
       | ModEventMute
       | ModEventMuteReporter
+      | ModEventPriorityScore
       | ModEventReport
       | ModEventResolveAppeal
       | ModEventReverseTakedown
@@ -4467,6 +4504,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | ModEventLabel
       | ModEventMute
       | ModEventMuteReporter
+      | ModEventPriorityScore
       | ModEventReport
       | ModEventResolveAppeal
       | ModEventReverseTakedown
@@ -4602,6 +4640,12 @@ export declare namespace ToolsOzoneModerationDefs {
     lastReviewedBy?: At.DID;
     muteReportingUntil?: string;
     muteUntil?: string;
+    /**
+     * Numeric value representing the level of priority. Higher score means higher priority.
+     * Minimum: 0
+     * Maximum: 100
+     */
+    priorityScore?: number;
     /** Statistics related to the record subjects authored by the subject's account */
     recordsStats?: RecordsStats;
     subjectBlobCids?: At.CID[];
@@ -4632,6 +4676,7 @@ export declare namespace ToolsOzoneModerationEmitEvent {
       | ToolsOzoneModerationDefs.ModEventLabel
       | ToolsOzoneModerationDefs.ModEventMute
       | ToolsOzoneModerationDefs.ModEventMuteReporter
+      | ToolsOzoneModerationDefs.ModEventPriorityScore
       | ToolsOzoneModerationDefs.ModEventReport
       | ToolsOzoneModerationDefs.ModEventResolveAppeal
       | ToolsOzoneModerationDefs.ModEventReverseTakedown
@@ -4813,6 +4858,12 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     limit?: number;
     /** If specified, only subjects that belong to an account that has at least this many suspensions will be returned. */
     minAccountSuspendCount?: number;
+    /**
+     * If specified, only subjects that have priority score value above the given value will be returned.
+     * Minimum: 0
+     * Maximum: 100
+     */
+    minPriorityScore?: number;
     /** If specified, only subjects that belong to an account that has at least this many reported records will be returned. */
     minReportedRecordsCount?: number;
     /** If specified, only subjects that belong to an account that has at least this many taken down records will be returned. */
@@ -4842,7 +4893,8 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
       | "lastReviewedAt"
       | "lastReportedAt"
       | "reportedRecordsCount"
-      | "takendownRecordsCount";
+      | "takendownRecordsCount"
+      | "priorityScore";
     /** The subject to get the status for. */
     subject?: string;
     /** If specified, subjects of the given type (account or record) will be returned. When this is set to 'account' the 'collections' parameter will be ignored. When includeAllUserRecords or subject is set, this will be ignored. */
