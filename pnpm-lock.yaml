@@ -64,13 +64,13 @@ importers:
   packages/internal/dev-env:
     dependencies:
       '@atproto/crypto':
-        specifier: ^0.4.3
+        specifier: ^0.4.4
         version: 0.4.4
       '@atproto/identity':
-        specifier: ^0.4.5
+        specifier: ^0.4.6
         version: 0.4.6
       '@atproto/pds':
-        specifier: ^0.4.90
+        specifier: ^0.4.94
         version: 0.4.94
       '@did-plc/server':
         specifier: ^0.0.1
