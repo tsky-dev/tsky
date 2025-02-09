@@ -87,13 +87,10 @@ export class TestPdsServer {
   }
 
   adminAuth(): string {
-    return (
-      'Basic ' +
-      ui8.toString(
-        ui8.fromString(`admin:${ADMIN_PASSWORD}`, 'utf8'),
-        'base64pad',
-      )
-    );
+    return `Basic ${ui8.toString(
+      ui8.fromString(`admin:${ADMIN_PASSWORD}`, 'utf8'),
+      'base64pad',
+    )}`;
   }
 
   adminAuthHeaders() {
