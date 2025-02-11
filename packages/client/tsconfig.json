@@ -31,7 +31,7 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["./src/**/*", "vitest.setup.ts"],
+  "include": ["./src/**/*", "globalSetup.ts"],
   "typedocOptions": {
     "out": "./docs",
     "theme": "default",
