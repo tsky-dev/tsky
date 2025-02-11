@@ -28,6 +28,6 @@
     "fast-glob": "^3.3.2",
     "tar": "^7.4.3",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "catalog:"
   }
 }
