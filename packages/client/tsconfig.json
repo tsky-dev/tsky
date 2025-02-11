@@ -10,6 +10,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "~/*": ["src/*"],
+      "~~/*": ["*"],
       "@tsky/lexicons": ["../lexicons/index.ts"],
     },
     "resolveJsonModule": true,
@@ -31,7 +32,7 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["./src/**/*", "globalSetup.ts", "test-utils.ts"],
+  "include": ["./src/**/*", "./globalSetup.ts", "./test-utils.ts"],
   "typedocOptions": {
     "out": "./docs",
     "theme": "default",
