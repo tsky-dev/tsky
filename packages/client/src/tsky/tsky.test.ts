@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, inject, it } from 'vitest';
 
 import type { AtpSessionData } from '@atcute/client';
 
@@ -11,7 +11,7 @@ describe('createAgent', () => {
         identifier: 'alice.test',
         password: 'password',
       },
-      { service: TEST_NETWORK.pds.url },
+      { service: inject('testPdsUrl') },
     );
     expect(agent.session).not.toBe(undefined);
     expect(agent.session?.handle).toBe('alice.test');
@@ -26,7 +26,7 @@ describe('createAgent', () => {
           identifier: 'alice.test',
           password: 'password',
         },
-        { service: TEST_NETWORK.pds.url },
+        { service: inject('testPdsUrl') },
       );
       expect(agent.session).toBeDefined();
       session = agent.session as AtpSessionData;
@@ -35,7 +35,7 @@ describe('createAgent', () => {
     {
       const agent = await createAgent(
         { session },
-        { service: TEST_NETWORK.pds.url },
+        { service: inject('testPdsUrl') },
       );
       expect(agent.session).not.toBe(undefined);
       expect(agent.session?.handle).toBe('alice.test');
