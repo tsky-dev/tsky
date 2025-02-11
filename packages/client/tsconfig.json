@@ -31,7 +31,7 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["./src/**/*", "globalSetup.ts"],
+  "include": ["./src/**/*", "globalSetup.ts", "test-utils.ts"],
   "typedocOptions": {
     "out": "./docs",
     "theme": "default",
