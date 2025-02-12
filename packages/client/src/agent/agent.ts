@@ -2,9 +2,10 @@ import { type CredentialManager, XRPC } from '@atcute/client';
 import type {
   AppBskyGraphGetStarterPack,
   AppBskyGraphGetStarterPacks,
+  At,
   Queries,
 } from '@tsky/lexicons';
-import { Actor } from '~/actor';
+import { DetailedActorProfile } from '~/actor';
 import { Feed } from '~/feed';
 import { List } from '~/list';
 import { Search } from '~/search';
@@ -19,15 +20,22 @@ export class Agent {
   constructor(private handler: CredentialManager) {
     // Initialize the client
     const xrpc = new XRPC({ handler: this.handler });
-    this.client = new Client(xrpc);
+    this.client = new Client(xrpc, this.handler);
   }
 
   get session() {
     return this.handler.session;
   }
 
-  actor(identifier: string) {
-    return new Actor(this.client, identifier);
+  /**
+   * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
+   */
+  async actor(identifier: At.DID | At.Handle): Promise<DetailedActorProfile> {
+    const res = await this.client.get('app.bsky.actor.getProfile', {
+      params: { actor: identifier },
+    });
+
+    return new DetailedActorProfile(this.client, res.data);
   }
 
   list(uri: string) {
@@ -47,7 +55,7 @@ export class Agent {
       throw new Error('There is no active session');
     }
 
-    return new User(this.client, this.session.handle);
+    return new User(this.client, this.session.did);
   }
 
   get video() {

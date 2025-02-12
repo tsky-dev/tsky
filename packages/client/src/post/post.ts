@@ -1,18 +1,61 @@
 import type {
+  AppBskyEmbedExternal,
+  AppBskyEmbedImages,
+  AppBskyEmbedRecord,
+  AppBskyEmbedRecordWithMedia,
+  AppBskyEmbedVideo,
+  AppBskyFeedDefs,
   AppBskyFeedGetLikes,
   AppBskyFeedGetPostThread,
   AppBskyFeedGetQuotes,
   AppBskyFeedGetRepostedBy,
+  ComAtprotoLabelDefs,
+  Typed,
 } from '@tsky/lexicons';
+import { BasicActorProfile } from '~/actor';
 import type { Client } from '~/agent/client';
 import type { RPCOptions } from '~/types';
-import { Paginator } from '~/utils';
+import { Paginator, parseAtUri } from '~/utils';
 
-export class Post {
+export class Post implements AppBskyFeedDefs.PostView {
+  uri: string;
+  author: BasicActorProfile;
+  cid: string;
+  indexedAt: string;
+  record: unknown;
+  embed?:
+    | Typed<AppBskyEmbedExternal.View, string>
+    | Typed<AppBskyEmbedImages.View, string>
+    | Typed<AppBskyEmbedRecord.View, string>
+    | Typed<AppBskyEmbedRecordWithMedia.View, string>
+    | Typed<AppBskyEmbedVideo.View, string>;
+  labels?: ComAtprotoLabelDefs.Label[];
+  likeCount?: number;
+  quoteCount?: number;
+  replyCount?: number;
+  repostCount?: number;
+  threadgate?: AppBskyFeedDefs.ThreadgateView;
+  viewer?: AppBskyFeedDefs.ViewerState;
+  $type?: string;
+
   constructor(
     private client: Client,
-    private uri: string,
-  ) {}
+    payload: AppBskyFeedDefs.PostView,
+  ) {
+    Object.assign(this, payload);
+    this.author = new BasicActorProfile(this.client, payload.author);
+  }
+
+  isOfCurrentUser() {
+    const { host: repo } = parseAtUri(this.uri);
+    return repo !== this.client.crenditials.session?.did;
+  }
+
+  remove(options: RPCOptions = {}) {
+    this.client.deleteRecord(this.uri, options);
+  }
+
+  // TODO: method for liking, unliking, reposting, un-reposting, quoting, etc.
 
   /**
    * Get posts in a thread. Does not require auth, but additional metadata and filtering will be applied for authed requests.

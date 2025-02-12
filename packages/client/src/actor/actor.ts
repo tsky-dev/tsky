@@ -1,29 +1,23 @@
 import type {
   AppBskyActorDefs,
   AppBskyFeedGetAuthorFeed,
+  AppBskyGraphDefs,
+  At,
+  ComAtprotoLabelDefs,
+  ComAtprotoRepoStrongRef,
 } from '@tsky/lexicons';
 import type { Client } from '~/agent/client';
+import { List } from '~/list';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 
 export class Actor {
   client: Client;
-  identifier: string;
+  did: At.DID;
 
-  constructor(client: Client, identifier: string) {
+  constructor(client: Client, did: At.DID) {
     this.client = client;
-    this.identifier = identifier;
-  }
-
-  /**
-   * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
-   */
-  async profile(): Promise<AppBskyActorDefs.ProfileViewDetailed> {
-    const res = await this.client.get('app.bsky.actor.getProfile', {
-      params: { actor: this.identifier },
-    });
-
-    return res.data;
+    this.did = did;
   }
 
   /**
@@ -32,7 +26,7 @@ export class Actor {
   starterPacks(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.graph.getActorStarterPacks', {
-        params: { cursor, actor: this.identifier, limit },
+        params: { cursor, actor: this.did, limit },
         ...options,
       });
 
@@ -48,13 +42,19 @@ export class Actor {
       const res = await this.client.get('app.bsky.graph.getFollowers', {
         params: {
           cursor,
-          actor: this.identifier,
+          actor: this.did,
           limit,
         },
         ...options,
       });
 
-      return res.data;
+      return {
+        ...res.data,
+        subject: new ActorProfile(this.client, res.data.subject),
+        followers: res.data.followers.map(
+          (follower) => new ActorProfile(this.client, follower),
+        ),
+      };
     });
   }
 
@@ -66,13 +66,19 @@ export class Actor {
       const res = await this.client.get('app.bsky.graph.getFollows', {
         params: {
           cursor,
-          actor: this.identifier,
+          actor: this.did,
           limit,
         },
         ...options,
       });
 
-      return res.data;
+      return {
+        ...res.data,
+        subject: new ActorProfile(this.client, res.data.subject),
+        follows: res.data.follows.map(
+          (follow) => new ActorProfile(this.client, follow),
+        ),
+      };
     });
   }
 
@@ -84,13 +90,17 @@ export class Actor {
       const res = await this.client.get('app.bsky.graph.getLists', {
         params: {
           cursor,
-          actor: this.identifier,
+          actor: this.did,
           limit,
         },
         ...options,
       });
 
-      return res.data;
+      return {
+        ...res.data,
+        // TODO: Solve this
+        // lists: res.data.lists.map((list) => new List(this.client, list)),
+      };
     });
   }
 
@@ -100,13 +110,18 @@ export class Actor {
   async relationships(others?: string[], options?: RPCOptions) {
     const res = await this.client.get('app.bsky.graph.getRelationships', {
       params: {
-        actor: this.identifier,
+        actor: this.did,
         others,
       },
       ...options,
     });
 
-    return res.data;
+    return {
+      ...res.data,
+      actor: res.data.actor
+        ? new Actor(this.client, res.data.actor)
+        : undefined,
+    };
   }
 
   /**
@@ -115,7 +130,7 @@ export class Actor {
   feeds(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getActorFeeds', {
-        params: { cursor, actor: this.identifier, limit },
+        params: { cursor, actor: this.did, limit },
         ...options,
       });
 
@@ -132,11 +147,61 @@ export class Actor {
   ) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getAuthorFeed', {
-        params: { cursor, ...params, actor: this.identifier },
+        params: { cursor, ...params, actor: this.did },
         ...options,
       });
 
       return res.data;
     });
+  }
+}
+
+export class BasicActorProfile
+  extends Actor
+  implements AppBskyActorDefs.ProfileViewBasic
+{
+  // @ts-expect-error - We added this property with Object.assign
+  handle: string;
+  associated?: AppBskyActorDefs.ProfileAssociated;
+  avatar?: string;
+  createdAt?: string;
+  displayName?: string;
+  labels?: ComAtprotoLabelDefs.Label[];
+  viewer?: AppBskyActorDefs.ViewerState;
+  $type?: string;
+
+  constructor(client: Client, actor: AppBskyActorDefs.ProfileViewBasic) {
+    super(client, actor.did);
+    Object.assign(this, actor);
+  }
+}
+
+export class ActorProfile
+  extends BasicActorProfile
+  implements AppBskyActorDefs.ProfileView
+{
+  description?: string;
+  indexedAt?: string;
+
+  constructor(client: Client, actor: AppBskyActorDefs.ProfileViewDetailed) {
+    super(client, actor);
+    Object.assign(this, actor);
+  }
+}
+
+export class DetailedActorProfile
+  extends ActorProfile
+  implements AppBskyActorDefs.ProfileViewDetailed
+{
+  banner?: string;
+  followersCount?: number;
+  followsCount?: number;
+  joinedViaStarterPack?: AppBskyGraphDefs.StarterPackViewBasic;
+  pinnedPost?: ComAtprotoRepoStrongRef.Main;
+  postsCount?: number;
+
+  constructor(client: Client, actor: AppBskyActorDefs.ProfileViewDetailed) {
+    super(client, actor);
+    Object.assign(this, actor);
   }
 }

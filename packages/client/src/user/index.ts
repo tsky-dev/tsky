@@ -39,7 +39,7 @@ export class User extends Actor {
   likes(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getActorLikes', {
-        params: { cursor, actor: this.identifier, limit },
+        params: { cursor, actor: this.did, limit },
         ...options,
       });
 

@@ -3,6 +3,8 @@ import type {
   AppBskyGraphSearchStarterPacks,
 } from '@tsky/lexicons';
 import type { Client } from '~/agent/client';
+import { Post } from '~/post';
+import { BasicStarterPack } from '~/starterpack';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 
@@ -19,7 +21,10 @@ export class Search {
         ...options,
       });
 
-      return res.data;
+      return {
+        ...res.data,
+        posts: res.data.posts.map((post) => new Post(this.client, post)),
+      };
     });
   }
 
@@ -39,7 +44,12 @@ export class Search {
         ...options,
       });
 
-      return res.data;
+      return {
+        ...res.data,
+        starterPacks: res.data.starterPacks.map(
+          (starterPack) => new BasicStarterPack(this.client, starterPack),
+        ),
+      };
     });
   }
 }
