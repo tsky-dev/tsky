@@ -13,8 +13,11 @@ export async function createAgent(
     options ?? { service: 'https://bsky.social' },
   );
 
-  if ('session' in credentials) manager.resume(credentials.session);
-  else await manager.login(credentials);
+  if ('session' in credentials) {
+    await manager.resume(credentials.session);
+  } else {
+    await manager.login(credentials);
+  }
 
   return new Agent(manager);
 }
