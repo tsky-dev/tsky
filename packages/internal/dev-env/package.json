@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "@atcute/internal-dev-env",
+  "version": "1.0.1",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@atproto/crypto": "^0.4.4",
+    "@atproto/identity": "^0.4.6",
+    "@atproto/pds": "^0.4.94",
+    "@did-plc/server": "^0.0.1",
+    "axios": "^1.7.9",
+    "get-port": "^7.1.0",
+    "uint8arrays": "^5.1.0"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}
