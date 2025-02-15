@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsx ./scripts/generate-types.ts && tsc",
     "check-version-change": "tsx ./scripts/check-version-change.ts && tsc",
-    "clean": "rm -rf dist && rm -rf lexicons",
+    "clean": "rimraf dist && rimraf lexicons",
     "prepare": "pnpm run clean && pnpm run build"
   },
   "devDependencies": {
