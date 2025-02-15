@@ -1,28 +1,41 @@
 import { type CredentialManager, XRPC } from '@atcute/client';
-import type { Queries } from '@tsky/lexicons';
-import { Actor } from '~/actor';
+import type {
+  AppBskyGraphGetStarterPack,
+  AppBskyGraphGetStarterPacks,
+  At,
+  Queries,
+} from '@tsky/lexicons';
+import { DetailedActorProfile } from '~/actor';
 import { Feed } from '~/feed';
 import { List } from '~/list';
-import { StarterPack } from '~/starterpack';
+import { Search } from '~/search';
+import type { RPCOptions } from '~/types';
 import { User } from '~/user';
 import { Video } from '~/video';
 import { Client } from './client';
 
 export class Agent {
-  private client: Client<Queries>;
+  client: Client<Queries>;
 
   constructor(private handler: CredentialManager) {
     // Initialize the client
     const xrpc = new XRPC({ handler: this.handler });
-    this.client = new Client(xrpc);
+    this.client = new Client(xrpc, this.handler);
   }
 
   get session() {
     return this.handler.session;
   }
 
-  actor(identifier: string) {
-    return new Actor(this.client, identifier);
+  /**
+   * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
+   */
+  async actor(identifier: At.DID | At.Handle): Promise<DetailedActorProfile> {
+    const res = await this.client.get('app.bsky.actor.getProfile', {
+      params: { actor: identifier },
+    });
+
+    return new DetailedActorProfile(this.client, res.data);
   }
 
   list(uri: string) {
@@ -33,12 +46,16 @@ export class Agent {
     return new Feed(this.client);
   }
 
+  get search() {
+    return new Search(this.client);
+  }
+
   get user() {
     if (!this.session) {
       throw new Error('There is no active session');
     }
 
-    return new User(this.client, this.session.handle);
+    return new User(this.client, this.session.did);
   }
 
   get video() {
@@ -49,7 +66,38 @@ export class Agent {
     return new Video(this.client);
   }
 
-  get starterpack() {
-    return new StarterPack(this.client);
+  /**
+   * Gets a view of a starter pack.
+   */
+  startpacks(
+    uri: string,
+    options?: RPCOptions,
+  ): Promise<AppBskyGraphGetStarterPack.Output>;
+  /**
+   * Get views for a list of starter packs.
+   */
+  startpacks(
+    uris: string[],
+    options?: RPCOptions,
+  ): Promise<AppBskyGraphGetStarterPacks.Output['starterPacks']>;
+
+  async startpacks(uris: string | string[], options: RPCOptions = {}) {
+    if (Array.isArray(uris)) {
+      const res = await this.client.get('app.bsky.graph.getStarterPacks', {
+        params: {
+          uris,
+        },
+        ...options,
+      });
+
+      return res.data.starterPacks;
+    }
+
+    const res = await this.client.get('app.bsky.graph.getStarterPack', {
+      params: { starterPack: uris },
+      ...options,
+    });
+
+    return res.data;
   }
 }

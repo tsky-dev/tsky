@@ -1,3 +1,4 @@
+import { ActorProfile } from '~/actor';
 import type { Client } from '~/agent/client';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
@@ -22,7 +23,13 @@ export class List {
         ...options,
       });
 
-      return res.data;
+      return {
+        ...res.data,
+        items: res.data.items.map((item) => ({
+          ...item,
+          subject: new ActorProfile(this.client, item.subject),
+        })),
+      };
     });
   }
 
