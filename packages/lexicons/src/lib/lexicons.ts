@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-09T16:30:44.251Z
+ * Generated on: 2025-02-17T22:14:45.665Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/709a85b0b633b5483b7161db64b429c746239153/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/b41ff4b4e309f5c1594a79d64f4090eaa4587a3c/lexicons
  */
 
 /** Base type with optional type field */
@@ -4574,6 +4574,25 @@ export declare namespace ToolsOzoneModerationDefs {
   interface RecordViewNotFound extends TypedBase {
     uri: At.Uri;
   }
+  interface ReporterStats extends TypedBase {
+    /** The total number of reports made by the user on accounts. */
+    accountReportCount: number;
+    did: At.DID;
+    /** The total number of accounts labeled as a result of the user's reports. */
+    labeledAccountCount: number;
+    /** The total number of records labeled as a result of the user's reports. */
+    labeledRecordCount: number;
+    /** The total number of reports made by the user on records. */
+    recordReportCount: number;
+    /** The total number of accounts reported by the user. */
+    reportedAccountCount: number;
+    /** The total number of records reported by the user. */
+    reportedRecordCount: number;
+    /** The total number of accounts taken down as a result of the user's reports. */
+    takendownAccountCount: number;
+    /** The total number of records taken down as a result of the user's reports. */
+    takendownRecordCount: number;
+  }
   interface RepoView extends TypedBase {
     did: At.DID;
     handle: At.Handle;
@@ -4743,6 +4762,18 @@ export declare namespace ToolsOzoneModerationGetRepo {
   type Output = ToolsOzoneModerationDefs.RepoViewDetail;
   interface Errors extends TypedBase {
     RepoNotFound: {};
+  }
+}
+
+/** Get reporter stats for a list of users. */
+export declare namespace ToolsOzoneModerationGetReporterStats {
+  interface Params extends TypedBase {
+    /** Maximum array length: 100 */
+    dids: At.DID[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    stats: ToolsOzoneModerationDefs.ReporterStats[];
   }
 }
 
@@ -5701,6 +5732,10 @@ export declare interface Queries {
   "tools.ozone.moderation.getRepo": {
     params: ToolsOzoneModerationGetRepo.Params;
     output: ToolsOzoneModerationGetRepo.Output;
+  };
+  "tools.ozone.moderation.getReporterStats": {
+    params: ToolsOzoneModerationGetReporterStats.Params;
+    output: ToolsOzoneModerationGetReporterStats.Output;
   };
   "tools.ozone.moderation.getRepos": {
     params: ToolsOzoneModerationGetRepos.Params;
