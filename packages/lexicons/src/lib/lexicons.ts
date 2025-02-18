@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-17T22:14:45.665Z
+ * Generated on: 2025-02-18T04:46:48.978Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/b41ff4b4e309f5c1594a79d64f4090eaa4587a3c/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/010f10c6f212f699ad42c0349a58bbcf2172e3cc/lexicons
  */
 
 /** Base type with optional type field */
@@ -4018,6 +4018,29 @@ export declare namespace ComAtprotoSyncListRepos {
   }
 }
 
+/** Enumerates all the DIDs which have records with the given collection NSID. */
+export declare namespace ComAtprotoSyncListReposByCollection {
+  interface Params extends TypedBase {
+    collection: string;
+    cursor?: string;
+    /**
+     * Maximum size of response set. Recommend setting a large maximum (1000+) when enumerating large DID lists.
+     * Minimum: 1
+     * Maximum: 2000
+     * \@default 500
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    repos: Repo[];
+    cursor?: string;
+  }
+  interface Repo extends TypedBase {
+    did: At.DID;
+  }
+}
+
 /** Notify a crawling service of a recent update, and that crawling should resume. Intended use is after a gap between repo stream events caused the crawling service to disconnect. Does not require auth; implemented by Relay. */
 export declare namespace ComAtprotoSyncNotifyOfUpdate {
   interface Params extends TypedBase {}
@@ -5706,6 +5729,10 @@ export declare interface Queries {
   "com.atproto.sync.listRepos": {
     params: ComAtprotoSyncListRepos.Params;
     output: ComAtprotoSyncListRepos.Output;
+  };
+  "com.atproto.sync.listReposByCollection": {
+    params: ComAtprotoSyncListReposByCollection.Params;
+    output: ComAtprotoSyncListReposByCollection.Output;
   };
   "com.atproto.temp.checkSignupQueue": {
     output: ComAtprotoTempCheckSignupQueue.Output;
