@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-18T04:46:48.978Z
+ * Generated on: 2025-02-19T09:17:40.945Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/010f10c6f212f699ad42c0349a58bbcf2172e3cc/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/7449f8607c1be948a0b55611c21075757c3d7261/lexicons
  */
 
 /** Base type with optional type field */
@@ -5341,12 +5341,14 @@ export declare namespace ToolsOzoneTeamDeleteMember {
 export declare namespace ToolsOzoneTeamListMembers {
   interface Params extends TypedBase {
     cursor?: string;
+    disabled?: boolean;
     /**
      * Minimum: 1
      * Maximum: 100
      * \@default 50
      */
     limit?: number;
+    roles?: string[];
   }
   type Input = undefined;
   interface Output extends TypedBase {
