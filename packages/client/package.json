@@ -37,11 +37,11 @@
   "devDependencies": {
     "@atcute/internal-dev-env": "workspace:*",
     "@tsky/lexicons": "workspace:*",
-    "@vitest/coverage-istanbul": "2.1.6",
+    "@vitest/coverage-istanbul": "^3.0.6",
     "globals": "^15.12.0",
     "pkgroll": "^2.5.1",
     "tsx": "^4.19.2",
     "typescript": "catalog:",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.6"
   }
 }
