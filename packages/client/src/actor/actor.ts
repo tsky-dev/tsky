@@ -156,6 +156,29 @@ export class Actor {
   }
 }
 
+// TODO: we can give this a better name
+export class ActorWithProfileFunction extends Actor {
+  async profile() {
+    const data = await this.client
+      .get('app.bsky.actor.getProfile', {
+        params: { actor: this.did },
+      })
+      .then((res) => res.data);
+
+    if (
+      data.viewer?.knownFollowers?.followers &&
+      data.viewer?.knownFollowers?.followers.length > 0
+    ) {
+      data.viewer.knownFollowers.followers =
+        data.viewer.knownFollowers.followers.map(
+          (follower) => new BasicActorProfile(this.client, follower),
+        );
+    }
+
+    return data;
+  }
+}
+
 export class BasicActorProfile
   extends Actor
   implements AppBskyActorDefs.ProfileViewBasic

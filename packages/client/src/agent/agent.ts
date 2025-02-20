@@ -5,7 +5,7 @@ import type {
   At,
   Queries,
 } from '@tsky/lexicons';
-import { DetailedActorProfile } from '~/actor';
+import { ActorWithProfileFunction } from '~/actor';
 import { Feed } from '~/feed';
 import { List } from '~/list';
 import { Search } from '~/search';
@@ -30,12 +30,8 @@ export class Agent {
   /**
    * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
    */
-  async actor(identifier: At.DID | At.Handle): Promise<DetailedActorProfile> {
-    const res = await this.client.get('app.bsky.actor.getProfile', {
-      params: { actor: identifier },
-    });
-
-    return new DetailedActorProfile(this.client, res.data);
+  async actor(identifier: At.DID): Promise<ActorWithProfileFunction> {
+    return new ActorWithProfileFunction(this.client, identifier);
   }
 
   list(uri: string) {
