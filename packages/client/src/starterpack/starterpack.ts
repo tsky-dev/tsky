@@ -1,64 +1,44 @@
 import type {
-  AppBskyGraphGetStarterPack,
-  AppBskyGraphGetStarterPacks,
+  AppBskyActorDefs,
+  AppBskyFeedDefs,
+  AppBskyGraphDefs,
+  ComAtprotoLabelDefs,
 } from '@tsky/lexicons';
+import { BasicActorProfile } from '~/actor';
 import type { Client } from '~/agent/client';
-import type { RPCOptions } from '~/types';
-import { Paginator } from '~/utils';
 
-export class StarterPack {
-  constructor(private client: Client) {}
+class Starterpack {
+  cid: string;
+  creator: AppBskyActorDefs.ProfileViewBasic;
+  indexedAt: string;
+  record: unknown;
+  uri: string;
+  joinedAllTimeCount?: number | undefined;
+  joinedWeekCount?: number | undefined;
+  labels?: ComAtprotoLabelDefs.Label[] | undefined;
+  $type?: string | undefined;
 
-  /**
-   * Gets a view of a starter pack.
-   */
-  view(
-    uri: string,
-    options: RPCOptions,
-  ): Promise<AppBskyGraphGetStarterPack.Output>;
-  /**
-   * Get views for a list of starter packs.
-   */
-  view(
-    uris: string[],
-    options: RPCOptions,
-  ): Promise<AppBskyGraphGetStarterPacks.Output['starterPacks']>;
-
-  async view(uris: string | string[], options: RPCOptions) {
-    if (Array.isArray(uris)) {
-      const res = await this.client.get('app.bsky.graph.getStarterPacks', {
-        params: {
-          uris,
-        },
-        ...options,
-      });
-
-      return res.data.starterPacks;
-    }
-
-    const res = await this.client.get('app.bsky.graph.getStarterPack', {
-      params: { starterPack: uris },
-      ...options,
-    });
-
-    return res.data;
+  constructor(
+    private client: Client,
+    payload: AppBskyGraphDefs.StarterPackView,
+  ) {
+    Object.assign(this, payload);
+    this.creator = new BasicActorProfile(this.client, payload.creator);
   }
+}
 
-  /**
-   * Search for starter packs.
-   */
-  search(query: string, limit?: number, options?: RPCOptions) {
-    return Paginator.init(async (cursor) => {
-      const res = await this.client.get('app.bsky.graph.searchStarterPacks', {
-        params: {
-          cursor,
-          q: query,
-          limit,
-        },
-        ...options,
-      });
+export class BasicStarterPack
+  extends Starterpack
+  implements AppBskyGraphDefs.StarterPackViewBasic
+{
+  listItemCount?: number | undefined;
+}
 
-      return res.data;
-    });
-  }
+export class StarterPack
+  extends Starterpack
+  implements AppBskyGraphDefs.StarterPackView
+{
+  feeds?: AppBskyFeedDefs.GeneratorView[];
+  list?: AppBskyGraphDefs.ListViewBasic;
+  listItemsSample?: AppBskyGraphDefs.ListItemView[];
 }
