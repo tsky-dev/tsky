@@ -28,9 +28,7 @@
     }
   },
   "formatter": {
-    "indentStyle": "space",
-    "lineWidth": 80,
-    "lineEnding": "lf"
+    "useEditorconfig": true
   },
   "vcs": {
     "enabled": true,
