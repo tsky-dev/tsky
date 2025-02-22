@@ -1,11 +1,13 @@
-import type { StringSchema } from '../schema.js';
 import { IGNORED_FORMATS, TYPE_FORMATS, sortName } from '../../utils/index.js';
+import type { StringSchema } from '../schema.js';
 
 export function resolveStringFormat(format: string, nsid: string): string {
   if (format === 'did') return TYPE_FORMATS.DID;
   if (format === 'cid') return TYPE_FORMATS.CID;
   if (format === 'handle') return TYPE_FORMATS.HANDLE;
   if (format === 'at-uri') return TYPE_FORMATS.URI;
+  if (format === 'tid') return TYPE_FORMATS.TID;
+  if (format === 'record-key') return TYPE_FORMATS.RKEY;
   if (IGNORED_FORMATS.has(format)) return 'string';
 
   console.warn(`${nsid}: unknown format ${format}`);
