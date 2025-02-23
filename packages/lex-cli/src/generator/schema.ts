@@ -94,7 +94,11 @@ export const stringSchema: t.StrictValidator<
     maxGraphemes?: number;
     minGraphemes?: number;
   } => {
-    if (value.format !== undefined && value.format !== 'uri') {
+    if (
+      value.format !== undefined &&
+      value.format !== 'uri' &&
+      value.format !== 'record-key'
+    ) {
       if (
         value.maxLength !== undefined ||
         value.minLength !== undefined ||

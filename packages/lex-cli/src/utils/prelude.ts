@@ -33,7 +33,13 @@ export declare namespace At {
   type Handle = string;
 
   /** URI string */
-  type Uri = string;
+  type Uri = string;       
+
+  /** TID string */
+  type TID = string;
+
+  /** RKEY string */
+  type RKEY = string;
 
   /** Object containing a CID string */
   interface CIDLink {
