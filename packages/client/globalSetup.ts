@@ -62,7 +62,7 @@ async function createProfileRecord(rpc: XRPC, handle: string) {
     data: buffer,
   });
 
-  const { data: profile } = await rpc.call('com.atproto.repo.createRecord', {
+  await rpc.call('com.atproto.repo.createRecord', {
     data: {
       repo: handle,
       collection: 'app.bsky.actor.profile',
