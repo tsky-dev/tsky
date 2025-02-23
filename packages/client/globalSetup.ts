@@ -56,10 +56,10 @@ const createAccount = async (rpc: XRPC, handle: string) => {
 };
 
 async function createProfileRecord(rpc: XRPC, handle: string) {
-  const { buffer } = await fs.readFile('alice-avatar.jpeg');
+  const imageBuffer = await fs.readFile('alice-avatar.jpeg');
   const { data: blob } = await rpc.call('com.atproto.repo.uploadBlob', {
     headers: { 'content-type': 'image/jpeg' },
-    data: buffer,
+    data: imageBuffer,
   });
 
   await rpc.call('com.atproto.repo.createRecord', {
