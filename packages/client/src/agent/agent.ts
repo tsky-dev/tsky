@@ -3,7 +3,6 @@ import type {
   AppBskyGraphGetStarterPack,
   AppBskyGraphGetStarterPacks,
   At,
-  Queries,
 } from '@tsky/lexicons';
 import { ActorWithProfileFunction } from '~/actor';
 import { Feed } from '~/feed';
@@ -15,7 +14,7 @@ import { Video } from '~/video';
 import { Client } from './client';
 
 export class Agent {
-  client: Client<Queries>;
+  client: Client;
 
   constructor(private handler: CredentialManager) {
     // Initialize the client
