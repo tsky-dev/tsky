@@ -1,7 +1,7 @@
 import type { TestProject } from 'vitest/node';
 
 import { CredentialManager, XRPC } from '@atcute/client';
-import { TestNetwork } from '@atcute/internal-dev-env';
+import { TestNetwork } from '@atproto/dev-env';
 
 let network: TestNetwork;
 
