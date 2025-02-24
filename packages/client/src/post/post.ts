@@ -44,6 +44,9 @@ export class Post implements AppBskyFeedDefs.PostView {
   ) {
     Object.assign(this, payload);
     this.author = new BasicActorProfile(this.client, payload.author);
+    this.cid = ''; // TODO: temporary type fix
+    this.uri = ''; // TODO: temporary type fix
+    this.indexedAt = ''; // TODO: temporary type fix
   }
 
   isOfCurrentUser() {
