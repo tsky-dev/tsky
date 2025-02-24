@@ -36,7 +36,6 @@
   },
   "devDependencies": {
     "@atproto/dev-env": "^0.3.93",
-    "@atcute/internal-dev-env": "workspace:*",
     "@tsky/lexicons": "workspace:*",
     "@vitest/coverage-istanbul": "^3.0.6",
     "globals": "^15.12.0",
