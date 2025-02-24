@@ -27,8 +27,8 @@
   "scripts": {
     "dev": "pkgroll --watch",
     "build": "pkgroll --minify",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage",
+    "test": "../internal/dev-infra/with-test-redis-and-db.sh vitest",
+    "test:coverage": "../internal/dev-infra/with-test-redis-and-db.sh vitest --coverage",
     "test:typescript": "tsc --noEmit"
   },
   "dependencies": {
