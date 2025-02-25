@@ -1,7 +1,16 @@
+import fs from 'node:fs/promises';
+
 import type { TestProject } from 'vitest/node';
 
 import { CredentialManager, XRPC } from '@atcute/client';
 import { TestNetwork } from '@atcute/internal-dev-env';
+
+declare module 'vitest' {
+  export interface ProvidedContext {
+    testPdsUrl: string;
+    testPlcUrl: string;
+  }
+}
 
 let network: TestNetwork;
 
@@ -18,6 +27,14 @@ export async function setup(project: TestProject) {
 
   await createAccount(rpc, 'alice.test');
   await createAccount(rpc, 'bob.test');
+
+  await manager.login({ identifier: 'alice.test', password: 'password' });
+  await createProfileRecord(rpc, 'alice.test');
+  await createSamplePosts(rpc, 'alice.test');
+
+  await manager.login({ identifier: 'bob.test', password: 'password' });
+  await createProfileRecord(rpc, 'bob.test');
+  await createSamplePosts(rpc, 'bob.test');
 
   project.provide('testPdsUrl', network.pds.url);
   project.provide('testPlcUrl', network.plc.url);
@@ -38,9 +55,39 @@ const createAccount = async (rpc: XRPC, handle: string) => {
   console.log(`🙋 Created new account: @${handle}`);
 };
 
-declare module 'vitest' {
-  export interface ProvidedContext {
-    testPdsUrl: string;
-    testPlcUrl: string;
-  }
+async function createProfileRecord(rpc: XRPC, handle: string) {
+  const imageBuffer = await fs.readFile('alice-avatar.jpeg');
+  const { data: blob } = await rpc.call('com.atproto.repo.uploadBlob', {
+    headers: { 'content-type': 'image/jpeg' },
+    data: imageBuffer,
+  });
+
+  await rpc.call('com.atproto.repo.createRecord', {
+    data: {
+      repo: handle,
+      collection: 'app.bsky.actor.profile',
+      record: {
+        $type: 'app.bsky.actor.profile',
+        avatar: blob.blob,
+        createdAt: new Date().toISOString(),
+        description: "I'm Alice!",
+        displayName: 'alice',
+      },
+    },
+  });
+}
+
+async function createSamplePosts(rpc: XRPC, handle: string) {
+  await rpc.call('com.atproto.repo.createRecord', {
+    data: {
+      repo: handle,
+      collection: 'app.bsky.feed.post',
+      record: {
+        $type: 'app.bsky.feed.post',
+        createdAt: new Date().toISOString(),
+        text: `Hi, I'm ${handle}!`,
+        langs: ['en'],
+      },
+    },
+  });
 }
