@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-23T09:41:54.872Z
+ * Generated on: 2025-02-25T03:29:51.134Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/6e382f67aa73532efadfea80ff96a27b526cb178/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/44f81f2eb9229e21aec4472b3a05e855396dbec5/lexicons
  */
 
 /** Base type with optional type field */
@@ -2645,6 +2645,17 @@ export declare namespace ChatBskyConvoUnmuteConvo {
   }
 }
 
+export declare namespace ChatBskyConvoUpdateAllRead {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    status?: "accepted" | "request" | (string & {});
+  }
+  interface Output extends TypedBase {
+    /** The count of updated convos. */
+    updatedCount: number;
+  }
+}
+
 export declare namespace ChatBskyConvoUpdateRead {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4460,9 +4471,9 @@ export declare namespace ToolsOzoneModerationDefs {
     acknowledgeAccountSubjects?: boolean;
     comment?: string;
   }
-  /** Add a comment to a subject */
+  /** Add a comment to a subject. An empty comment will clear any previously set sticky comment. */
   interface ModEventComment extends TypedBase {
-    comment: string;
+    comment?: string;
     /** Make the comment persistent on the subject */
     sticky?: boolean;
   }
@@ -5970,6 +5981,10 @@ export declare interface Procedures {
   "chat.bsky.convo.unmuteConvo": {
     input: ChatBskyConvoUnmuteConvo.Input;
     output: ChatBskyConvoUnmuteConvo.Output;
+  };
+  "chat.bsky.convo.updateAllRead": {
+    input: ChatBskyConvoUpdateAllRead.Input;
+    output: ChatBskyConvoUpdateAllRead.Output;
   };
   "chat.bsky.convo.updateRead": {
     input: ChatBskyConvoUpdateRead.Input;
