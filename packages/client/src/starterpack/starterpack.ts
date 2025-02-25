@@ -24,6 +24,9 @@ class Starterpack {
   ) {
     Object.assign(this, payload);
     this.creator = new BasicActorProfile(this.client, payload.creator);
+    this.cid = ''; // TODO: temporary type fix
+    this.uri = ''; // TODO: temporary type fix
+    this.indexedAt = ''; // TODO: temporary type fix
   }
 }
 

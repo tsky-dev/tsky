@@ -7,7 +7,6 @@ import type {
   ComAtprotoRepoStrongRef,
 } from '@tsky/lexicons';
 import type { Client } from '~/agent/client';
-import { List } from '~/list';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 

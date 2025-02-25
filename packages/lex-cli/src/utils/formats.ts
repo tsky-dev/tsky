@@ -3,6 +3,8 @@ export const TYPE_FORMATS = {
   CID: 'At.CID',
   HANDLE: 'At.Handle',
   URI: 'At.Uri',
+  TID: 'At.TID',
+  RKEY: 'At.RKEY',
 } as const;
 
 export const IGNORED_FORMATS = new Set([
