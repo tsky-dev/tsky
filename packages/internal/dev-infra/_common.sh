@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Exit if any command fails
 set -e
@@ -59,6 +59,16 @@ redis_clear() {
 }
 
 main_native() {
+  # check if Ctrl+C is pressed
+  (
+    while true; do
+      sleep 1
+      kill -0 $$ || break
+    done
+    cleanup ${services}
+  )&
+  pid=$!
+
   local services=${SERVICES}
   local postgres_url_env_var=`[[ $services == *"db_test"* ]] && echo "DB_TEST_POSTGRES_URL" || echo "DB_POSTGRES_URL"`
   local redis_host_env_var=`[[ $services == *"redis_test"* ]] && echo "REDIS_TEST_HOST" || echo "REDIS_HOST"`
@@ -82,6 +92,7 @@ main_native() {
   fi
 
   cleanup() {
+    kill ${pid} &>/dev/null
     local services=$@
 
     if [ -n "${redis_host}" ] && [[ $services == *"redis_test"* ]]; then
@@ -93,13 +104,6 @@ main_native() {
     fi
   }
 
-  # trap SIGINT and performs cleanup
-  trap "on_sigint ${services}" INT
-  on_sigint() {
-    cleanup $@
-    exit $?
-  }
-
   # Run the arguments as a command
   DB_POSTGRES_URL="${postgres_url}" \
   REDIS_HOST="${redis_host}" \
@@ -107,11 +111,21 @@ main_native() {
   code=$?
 
   cleanup ${services}
-
+  sleep 1
   exit ${code}
 }
 
 main_docker() {
+  # check if Ctrl+C is pressed
+  (
+    while true; do
+      sleep 1
+      kill -0 $$ || break
+    done
+    echo "Ctrl+C detected"
+    cleanup ${services}
+  )&
+  pid=$!
   # Expect a SERVICES env var to be set with the docker service names
   local services=${SERVICES}
 
@@ -124,18 +138,12 @@ main_docker() {
   # performs cleanup as necessary, i.e. taking down containers
   # if this script started them
   cleanup() {
+    kill ${pid} &>/dev/null
     local services=$@
     echo # newline
     if $started_container; then
       docker compose --file $compose_file rm --force --stop --volumes ${services}
     fi
-  }
-
-  # trap SIGINT and performs cleanup
-  trap "on_sigint ${services}" INT
-  on_sigint() {
-    cleanup $@
-    exit $?
   }
 
   # check if all services are running already
@@ -167,6 +175,7 @@ main_docker() {
 
   # performs cleanup as necessary
   cleanup ${services}
+  sleep 1
   exit ${code}
 }
 
