@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-25T03:29:51.134Z
+ * Generated on: 2025-02-26T03:31:02.923Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/44f81f2eb9229e21aec4472b3a05e855396dbec5/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/27b0a7be1ed1b6e098114791d84ec9dc844db552/lexicons
  */
 
 /** Base type with optional type field */
@@ -1962,6 +1962,12 @@ export declare namespace AppBskyLabelerService {
     createdAt: string;
     policies: AppBskyLabelerDefs.LabelerPolicies;
     labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
+    /** The set of report reason 'codes' which are in-scope for this service to review and action. These usually align to policy categories. If not defined (distinct from empty array), all reason types are allowed. */
+    reasonTypes?: ComAtprotoModerationDefs.ReasonType[];
+    /** Set of record types (collection NSIDs) which can be reported to this service. If not defined (distinct from empty array), default is any record type. */
+    subjectCollections?: string[];
+    /** The set of subject types (account, record, etc) this service accepts reports on. */
+    subjectTypes?: ComAtprotoModerationDefs.SubjectType[];
   }
 }
 
@@ -3192,6 +3198,8 @@ export declare namespace ComAtprotoModerationDefs {
     | "com.atproto.moderation.defs#reasonViolation"
     | (string & {});
   type ReasonViolation = "com.atproto.moderation.defs#reasonViolation";
+  /** Tag describing a type of subject that might be reported. */
+  type SubjectType = "account" | "chat" | "record" | (string & {});
 }
 
 /** Apply a batch transaction of repository creates, updates, and deletes. Requires auth, implemented by PDS. */
@@ -3390,16 +3398,6 @@ export declare namespace ComAtprotoRepoListRecords {
     limit?: number;
     /** Flag to reverse the order of the returned records. */
     reverse?: boolean;
-    /**
-     * DEPRECATED: The highest sort-ordered rkey to stop at (exclusive)
-     * \@deprecated
-     */
-    rkeyEnd?: string;
-    /**
-     * DEPRECATED: The lowest sort-ordered rkey to start from (exclusive)
-     * \@deprecated
-     */
-    rkeyStart?: string;
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -3966,11 +3964,6 @@ export declare namespace ComAtprotoSyncGetRecord {
     did: At.DID;
     /** Record Key */
     rkey: At.RKEY;
-    /**
-     * DEPRECATED: referenced a repo commit by CID, and retrieved record as of that commit
-     * \@deprecated
-     */
-    commit?: At.CID;
   }
   type Input = undefined;
   type Output = Uint8Array;
@@ -4113,7 +4106,7 @@ export declare namespace ComAtprotoSyncListReposByCollection {
   }
 }
 
-/** Notify a crawling service of a recent update, and that crawling should resume. Intended use is after a gap between repo stream events caused the crawling service to disconnect. Does not require auth; implemented by Relay. */
+/** Notify a crawling service of a recent update, and that crawling should resume. Intended use is after a gap between repo stream events caused the crawling service to disconnect. Does not require auth; implemented by Relay. DEPRECATED: just use com.atproto.sync.requestCrawl */
 export declare namespace ComAtprotoSyncNotifyOfUpdate {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
