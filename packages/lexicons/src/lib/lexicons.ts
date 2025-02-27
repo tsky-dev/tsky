@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-26T03:31:02.923Z
+ * Generated on: 2025-02-27T03:30:33.473Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/27b0a7be1ed1b6e098114791d84ec9dc844db552/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/dc6e4ecb0e09bbf4bc7a79c6ac43fb6da4166200/lexicons
  */
 
 /** Base type with optional type field */
@@ -1933,6 +1933,12 @@ export declare namespace AppBskyLabelerDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     /** Minimum: 0 */
     likeCount?: number;
+    /** The set of report reason 'codes' which are in-scope for this service to review and action. These usually align to policy categories. If not defined (distinct from empty array), all reason types are allowed. */
+    reasonTypes?: ComAtprotoModerationDefs.ReasonType[];
+    /** Set of record types (collection NSIDs) which can be reported to this service. If not defined (distinct from empty array), default is any record type. */
+    subjectCollections?: string[];
+    /** The set of subject types (account, record, etc) this service accepts reports on. */
+    subjectTypes?: ComAtprotoModerationDefs.SubjectType[];
     viewer?: LabelerViewerState;
   }
   interface LabelerViewerState extends TypedBase {
@@ -2940,6 +2946,16 @@ export declare namespace ComAtprotoAdminUpdateSubjectStatus {
   }
 }
 
+export declare namespace ComAtprotoIdentityDefs {
+  interface IdentityInfo extends TypedBase {
+    did: At.DID;
+    /** The complete DID document for the identity. */
+    didDoc: unknown;
+    /** The validated handle of the account; or 'handle.invalid' if the handle did not bi-directionally match the DID document. */
+    handle: At.Handle;
+  }
+}
+
 /** Describe the credentials that should be included in the DID doc of an account that is migrating to this service. */
 export declare namespace ComAtprotoIdentityGetRecommendedDidCredentials {
   interface Params extends TypedBase {}
@@ -2953,6 +2969,20 @@ export declare namespace ComAtprotoIdentityGetRecommendedDidCredentials {
   }
 }
 
+/** Request that the server re-resolve an identity (DID and handle). The server may ignore this request, or require authentication, depending on the role, implementation, and policy of the server. */
+export declare namespace ComAtprotoIdentityRefreshIdentity {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    identifier: string;
+  }
+  type Output = ComAtprotoIdentityDefs.IdentityInfo;
+  interface Errors extends TypedBase {
+    HandleNotFound: {};
+    DidNotFound: {};
+    DidDeactivated: {};
+  }
+}
+
 /** Request an email with a code to in order to request a signed PLC operation. Requires Auth. */
 export declare namespace ComAtprotoIdentityRequestPlcOperationSignature {
   interface Params extends TypedBase {}
@@ -2960,7 +2990,24 @@ export declare namespace ComAtprotoIdentityRequestPlcOperationSignature {
   type Output = undefined;
 }
 
-/** Resolves a handle (domain name) to a DID. */
+/** Resolves DID to DID document. Does not bi-directionally verify handle. */
+export declare namespace ComAtprotoIdentityResolveDid {
+  interface Params extends TypedBase {
+    /** DID to resolve. */
+    did: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** The complete DID document for the identity. */
+    didDoc: unknown;
+  }
+  interface Errors extends TypedBase {
+    DidNotFound: {};
+    DidDeactivated: {};
+  }
+}
+
+/** Resolves an atproto handle (hostname) to a DID. Does not necessarily bi-directionally verify against the the DID document. */
 export declare namespace ComAtprotoIdentityResolveHandle {
   interface Params extends TypedBase {
     /** The handle to resolve. */
@@ -2969,6 +3016,24 @@ export declare namespace ComAtprotoIdentityResolveHandle {
   type Input = undefined;
   interface Output extends TypedBase {
     did: At.DID;
+  }
+  interface Errors extends TypedBase {
+    HandleNotFound: {};
+  }
+}
+
+/** Resolves an identity (DID or Handle) to a full identity (DID document and verified handle). */
+export declare namespace ComAtprotoIdentityResolveIdentity {
+  interface Params extends TypedBase {
+    /** Handle or DID to resolve. */
+    identifier: string;
+  }
+  type Input = undefined;
+  type Output = ComAtprotoIdentityDefs.IdentityInfo;
+  interface Errors extends TypedBase {
+    HandleNotFound: {};
+    DidNotFound: {};
+    DidDeactivated: {};
   }
 }
 
@@ -5738,9 +5803,17 @@ export declare interface Queries {
   "com.atproto.identity.getRecommendedDidCredentials": {
     output: ComAtprotoIdentityGetRecommendedDidCredentials.Output;
   };
+  "com.atproto.identity.resolveDid": {
+    params: ComAtprotoIdentityResolveDid.Params;
+    output: ComAtprotoIdentityResolveDid.Output;
+  };
   "com.atproto.identity.resolveHandle": {
     params: ComAtprotoIdentityResolveHandle.Params;
     output: ComAtprotoIdentityResolveHandle.Output;
+  };
+  "com.atproto.identity.resolveIdentity": {
+    params: ComAtprotoIdentityResolveIdentity.Params;
+    output: ComAtprotoIdentityResolveIdentity.Output;
   };
   "com.atproto.label.queryLabels": {
     params: ComAtprotoLabelQueryLabels.Params;
@@ -6014,6 +6087,10 @@ export declare interface Procedures {
   "com.atproto.admin.updateSubjectStatus": {
     input: ComAtprotoAdminUpdateSubjectStatus.Input;
     output: ComAtprotoAdminUpdateSubjectStatus.Output;
+  };
+  "com.atproto.identity.refreshIdentity": {
+    input: ComAtprotoIdentityRefreshIdentity.Input;
+    output: ComAtprotoIdentityRefreshIdentity.Output;
   };
   "com.atproto.identity.requestPlcOperationSignature": {};
   "com.atproto.identity.signPlcOperation": {
