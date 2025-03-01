@@ -1,5 +1,5 @@
 import type { AppBskyFeedGetTimeline } from '@tsky/lexicons';
-import { Actor } from '~/actor';
+import { ActorWithProfileFunction } from '~/actor';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 import { Mute } from './mute';
@@ -8,7 +8,7 @@ import { Preferences } from './preferences';
 import { Suggestion } from './suggestion';
 import { Unmute } from './unmute';
 
-export class User extends Actor {
+export class User extends ActorWithProfileFunction {
   get preferences() {
     return new Preferences(this.client);
   }
@@ -39,7 +39,7 @@ export class User extends Actor {
   likes(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
       const res = await this.client.get('app.bsky.feed.getActorLikes', {
-        params: { cursor, actor: this.identifier, limit },
+        params: { cursor, actor: this.did, limit },
         ...options,
       });
 
