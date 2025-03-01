@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-27T03:30:33.473Z
+ * Generated on: 2025-03-01T03:33:31.541Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/dc6e4ecb0e09bbf4bc7a79c6ac43fb6da4166200/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/38320191e559f8b928c6e951a9b4a6207240bfc1/lexicons
  */
 
 /** Base type with optional type field */
@@ -4196,9 +4196,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     /** The last known event seq number to backfill from. */
     cursor?: number;
   }
-  type Message = TypeUnion<
-    Account | Commit | Handle | Identity | Info | Migrate | Sync | Tombstone
-  >;
+  type Message = TypeUnion<Account | Commit | Identity | Info | Sync>;
   interface Errors extends TypedBase {
     FutureCursor: {};
     ConsumerTooSlow: {};
@@ -4259,16 +4257,6 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     /** The root CID of the MST tree for the previous commit from this repo (indicated by the 'since' revision field in this message). Corresponds to the 'data' field in the repo commit object. NOTE: this field is effectively required for the 'inductive' version of firehose. */
     prevData?: At.CIDLink;
   }
-  /**
-   * DEPRECATED -- Use #identity event instead
-   * \@deprecated
-   */
-  interface Handle extends TypedBase {
-    did: At.DID;
-    handle: At.Handle;
-    seq: number;
-    time: string;
-  }
   /** Represents a change to an account's identity. Could be an updated handle, signing key, or pds hosting endpoint. Serves as a prod to all downstream services to refresh their identity cache. */
   interface Identity extends TypedBase {
     did: At.DID;
@@ -4280,16 +4268,6 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
   interface Info extends TypedBase {
     name: "OutdatedCursor" | (string & {});
     message?: string;
-  }
-  /**
-   * DEPRECATED -- Use #account event instead
-   * \@deprecated
-   */
-  interface Migrate extends TypedBase {
-    did: At.DID;
-    migrateTo: string | null;
-    seq: number;
-    time: string;
   }
   /** A repo operation, ie a mutation of a single record. */
   interface RepoOp extends TypedBase {
@@ -4311,15 +4289,6 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     /** The stream sequence number of this message. */
     seq: number;
     /** Timestamp of when this message was originally broadcast. */
-    time: string;
-  }
-  /**
-   * DEPRECATED -- Use #account event instead
-   * \@deprecated
-   */
-  interface Tombstone extends TypedBase {
-    did: At.DID;
-    seq: number;
     time: string;
   }
 }
