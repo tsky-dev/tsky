@@ -7,7 +7,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 3 * * *'
   workflow_dispatch: {}
   merge_group: {}
 

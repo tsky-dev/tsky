@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-02-09T16:30:44.251Z
+ * Generated on: 2025-03-01T03:33:31.541Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/709a85b0b633b5483b7161db64b429c746239153/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/38320191e559f8b928c6e951a9b4a6207240bfc1/lexicons
  */
 
 /** Base type with optional type field */
@@ -56,6 +56,12 @@ export declare namespace At {
 
   /** URI string */
   type Uri = string;
+
+  /** TID string */
+  type TID = string;
+
+  /** RKEY string */
+  type RKEY = string;
 
   /** Object containing a CID string */
   interface CIDLink {
@@ -1927,6 +1933,12 @@ export declare namespace AppBskyLabelerDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     /** Minimum: 0 */
     likeCount?: number;
+    /** The set of report reason 'codes' which are in-scope for this service to review and action. These usually align to policy categories. If not defined (distinct from empty array), all reason types are allowed. */
+    reasonTypes?: ComAtprotoModerationDefs.ReasonType[];
+    /** Set of record types (collection NSIDs) which can be reported to this service. If not defined (distinct from empty array), default is any record type. */
+    subjectCollections?: string[];
+    /** The set of subject types (account, record, etc) this service accepts reports on. */
+    subjectTypes?: ComAtprotoModerationDefs.SubjectType[];
     viewer?: LabelerViewerState;
   }
   interface LabelerViewerState extends TypedBase {
@@ -1956,6 +1968,12 @@ export declare namespace AppBskyLabelerService {
     createdAt: string;
     policies: AppBskyLabelerDefs.LabelerPolicies;
     labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
+    /** The set of report reason 'codes' which are in-scope for this service to review and action. These usually align to policy categories. If not defined (distinct from empty array), all reason types are allowed. */
+    reasonTypes?: ComAtprotoModerationDefs.ReasonType[];
+    /** Set of record types (collection NSIDs) which can be reported to this service. If not defined (distinct from empty array), default is any record type. */
+    subjectCollections?: string[];
+    /** The set of subject types (account, record, etc) this service accepts reports on. */
+    subjectTypes?: ComAtprotoModerationDefs.SubjectType[];
   }
 }
 
@@ -2383,6 +2401,17 @@ export declare namespace ChatBskyActorExportAccountData {
   type Output = Uint8Array;
 }
 
+export declare namespace ChatBskyConvoAcceptConvo {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+  }
+  interface Output extends TypedBase {
+    /** Rev when the convo was accepted. If not present, the convo was already accepted. */
+    rev?: string;
+  }
+}
+
 export declare namespace ChatBskyConvoDefs {
   interface ConvoView extends TypedBase {
     id: string;
@@ -2391,13 +2420,17 @@ export declare namespace ChatBskyConvoDefs {
     rev: string;
     unreadCount: number;
     lastMessage?: TypeUnion<DeletedMessageView | MessageView>;
-    opened?: boolean;
+    status?: "accepted" | "request" | (string & {});
   }
   interface DeletedMessageView extends TypedBase {
     id: string;
     rev: string;
     sender: MessageViewSender;
     sentAt: string;
+  }
+  interface LogAcceptConvo extends TypedBase {
+    convoId: string;
+    rev: string;
   }
   interface LogBeginConvo extends TypedBase {
     convoId: string;
@@ -2414,6 +2447,19 @@ export declare namespace ChatBskyConvoDefs {
     rev: string;
   }
   interface LogLeaveConvo extends TypedBase {
+    convoId: string;
+    rev: string;
+  }
+  interface LogMuteConvo extends TypedBase {
+    convoId: string;
+    rev: string;
+  }
+  interface LogReadMessage extends TypedBase {
+    convoId: string;
+    message: TypeUnion<DeletedMessageView | MessageView>;
+    rev: string;
+  }
+  interface LogUnmuteConvo extends TypedBase {
     convoId: string;
     rev: string;
   }
@@ -2470,6 +2516,22 @@ export declare namespace ChatBskyConvoGetConvo {
   }
 }
 
+/** Get whether the requester and the other members can chat. If an existing convo is found for these members, it is returned. */
+export declare namespace ChatBskyConvoGetConvoAvailability {
+  interface Params extends TypedBase {
+    /**
+     * Minimum array length: 1
+     * Maximum array length: 10
+     */
+    members: At.DID[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    canChat: boolean;
+    convo?: ChatBskyConvoDefs.ConvoView;
+  }
+}
+
 export declare namespace ChatBskyConvoGetConvoForMembers {
   interface Params extends TypedBase {
     /**
@@ -2491,6 +2553,7 @@ export declare namespace ChatBskyConvoGetLog {
   type Input = undefined;
   interface Output extends TypedBase {
     logs: TypeUnion<
+      | ChatBskyConvoDefs.LogAcceptConvo
       | ChatBskyConvoDefs.LogBeginConvo
       | ChatBskyConvoDefs.LogCreateMessage
       | ChatBskyConvoDefs.LogDeleteMessage
@@ -2540,6 +2603,8 @@ export declare namespace ChatBskyConvoListConvos {
      * \@default 50
      */
     limit?: number;
+    readState?: "unread" | (string & {});
+    status?: "accepted" | "request" | (string & {});
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -2589,6 +2654,17 @@ export declare namespace ChatBskyConvoUnmuteConvo {
   }
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
+  }
+}
+
+export declare namespace ChatBskyConvoUpdateAllRead {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    status?: "accepted" | "request" | (string & {});
+  }
+  interface Output extends TypedBase {
+    /** The count of updated convos. */
+    updatedCount: number;
   }
 }
 
@@ -2870,6 +2946,16 @@ export declare namespace ComAtprotoAdminUpdateSubjectStatus {
   }
 }
 
+export declare namespace ComAtprotoIdentityDefs {
+  interface IdentityInfo extends TypedBase {
+    did: At.DID;
+    /** The complete DID document for the identity. */
+    didDoc: unknown;
+    /** The validated handle of the account; or 'handle.invalid' if the handle did not bi-directionally match the DID document. */
+    handle: At.Handle;
+  }
+}
+
 /** Describe the credentials that should be included in the DID doc of an account that is migrating to this service. */
 export declare namespace ComAtprotoIdentityGetRecommendedDidCredentials {
   interface Params extends TypedBase {}
@@ -2883,6 +2969,20 @@ export declare namespace ComAtprotoIdentityGetRecommendedDidCredentials {
   }
 }
 
+/** Request that the server re-resolve an identity (DID and handle). The server may ignore this request, or require authentication, depending on the role, implementation, and policy of the server. */
+export declare namespace ComAtprotoIdentityRefreshIdentity {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    identifier: string;
+  }
+  type Output = ComAtprotoIdentityDefs.IdentityInfo;
+  interface Errors extends TypedBase {
+    HandleNotFound: {};
+    DidNotFound: {};
+    DidDeactivated: {};
+  }
+}
+
 /** Request an email with a code to in order to request a signed PLC operation. Requires Auth. */
 export declare namespace ComAtprotoIdentityRequestPlcOperationSignature {
   interface Params extends TypedBase {}
@@ -2890,7 +2990,24 @@ export declare namespace ComAtprotoIdentityRequestPlcOperationSignature {
   type Output = undefined;
 }
 
-/** Resolves a handle (domain name) to a DID. */
+/** Resolves DID to DID document. Does not bi-directionally verify handle. */
+export declare namespace ComAtprotoIdentityResolveDid {
+  interface Params extends TypedBase {
+    /** DID to resolve. */
+    did: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** The complete DID document for the identity. */
+    didDoc: unknown;
+  }
+  interface Errors extends TypedBase {
+    DidNotFound: {};
+    DidDeactivated: {};
+  }
+}
+
+/** Resolves an atproto handle (hostname) to a DID. Does not necessarily bi-directionally verify against the the DID document. */
 export declare namespace ComAtprotoIdentityResolveHandle {
   interface Params extends TypedBase {
     /** The handle to resolve. */
@@ -2899,6 +3016,24 @@ export declare namespace ComAtprotoIdentityResolveHandle {
   type Input = undefined;
   interface Output extends TypedBase {
     did: At.DID;
+  }
+  interface Errors extends TypedBase {
+    HandleNotFound: {};
+  }
+}
+
+/** Resolves an identity (DID or Handle) to a full identity (DID document and verified handle). */
+export declare namespace ComAtprotoIdentityResolveIdentity {
+  interface Params extends TypedBase {
+    /** Handle or DID to resolve. */
+    identifier: string;
+  }
+  type Input = undefined;
+  type Output = ComAtprotoIdentityDefs.IdentityInfo;
+  interface Errors extends TypedBase {
+    HandleNotFound: {};
+    DidNotFound: {};
+    DidDeactivated: {};
   }
 }
 
@@ -3128,6 +3263,8 @@ export declare namespace ComAtprotoModerationDefs {
     | "com.atproto.moderation.defs#reasonViolation"
     | (string & {});
   type ReasonViolation = "com.atproto.moderation.defs#reasonViolation";
+  /** Tag describing a type of subject that might be reported. */
+  type SubjectType = "account" | "chat" | "record" | (string & {});
 }
 
 /** Apply a batch transaction of repository creates, updates, and deletes. Requires auth, implemented by PDS. */
@@ -3153,8 +3290,8 @@ export declare namespace ComAtprotoRepoApplyWrites {
   interface Create extends TypedBase {
     collection: string;
     value: unknown;
-    /** Maximum string length: 512 */
-    rkey?: string;
+    /** NOTE: maxLength is redundant with record-key format. Keeping it temporarily to ensure backwards compatibility. */
+    rkey?: At.RKEY;
   }
   interface CreateResult extends TypedBase {
     cid: At.CID;
@@ -3164,13 +3301,13 @@ export declare namespace ComAtprotoRepoApplyWrites {
   /** Operation which deletes an existing record. */
   interface Delete extends TypedBase {
     collection: string;
-    rkey: string;
+    rkey: At.RKEY;
   }
   interface DeleteResult extends TypedBase {}
   /** Operation which updates an existing record. */
   interface Update extends TypedBase {
     collection: string;
-    rkey: string;
+    rkey: At.RKEY;
     value: unknown;
   }
   interface UpdateResult extends TypedBase {
@@ -3190,11 +3327,8 @@ export declare namespace ComAtprotoRepoCreateRecord {
     record: unknown;
     /** The handle or DID of the repo (aka, current account). */
     repo: string;
-    /**
-     * The Record Key.
-     * Maximum string length: 512
-     */
-    rkey?: string;
+    /** The Record Key. */
+    rkey?: At.RKEY;
     /** Compare and swap with the previous commit by CID. */
     swapCommit?: At.CID;
     /** Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons. */
@@ -3214,7 +3348,7 @@ export declare namespace ComAtprotoRepoCreateRecord {
 export declare namespace ComAtprotoRepoDefs {
   interface CommitMeta extends TypedBase {
     cid: At.CID;
-    rev: string;
+    rev: At.TID;
   }
 }
 
@@ -3227,7 +3361,7 @@ export declare namespace ComAtprotoRepoDeleteRecord {
     /** The handle or DID of the repo (aka, current account). */
     repo: string;
     /** The Record Key. */
-    rkey: string;
+    rkey: At.RKEY;
     /** Compare and swap with the previous commit by CID. */
     swapCommit?: At.CID;
     /** Compare and swap with the previous record by CID. */
@@ -3268,7 +3402,7 @@ export declare namespace ComAtprotoRepoGetRecord {
     /** The handle or DID of the repo. */
     repo: string;
     /** The Record Key. */
-    rkey: string;
+    rkey: At.RKEY;
     /** The CID of the version of the record. If not specified, then return the most recent version. */
     cid?: At.CID;
   }
@@ -3329,16 +3463,6 @@ export declare namespace ComAtprotoRepoListRecords {
     limit?: number;
     /** Flag to reverse the order of the returned records. */
     reverse?: boolean;
-    /**
-     * DEPRECATED: The highest sort-ordered rkey to stop at (exclusive)
-     * \@deprecated
-     */
-    rkeyEnd?: string;
-    /**
-     * DEPRECATED: The lowest sort-ordered rkey to start from (exclusive)
-     * \@deprecated
-     */
-    rkeyStart?: string;
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -3362,11 +3486,8 @@ export declare namespace ComAtprotoRepoPutRecord {
     record: unknown;
     /** The handle or DID of the repo (aka, current account). */
     repo: string;
-    /**
-     * The Record Key.
-     * Maximum string length: 512
-     */
-    rkey: string;
+    /** The Record Key. */
+    rkey: At.RKEY;
     /** Compare and swap with the previous commit by CID. */
     swapCommit?: At.CID;
     /** Compare and swap with the previous record by CID. WARNING: nullable and optional field; may cause problems with golang implementation */
@@ -3890,7 +4011,7 @@ export declare namespace ComAtprotoSyncGetLatestCommit {
   type Input = undefined;
   interface Output extends TypedBase {
     cid: At.CID;
-    rev: string;
+    rev: At.TID;
   }
   interface Errors extends TypedBase {
     RepoNotFound: {};
@@ -3907,12 +4028,7 @@ export declare namespace ComAtprotoSyncGetRecord {
     /** The DID of the repo. */
     did: At.DID;
     /** Record Key */
-    rkey: string;
-    /**
-     * DEPRECATED: referenced a repo commit by CID, and retrieved record as of that commit
-     * \@deprecated
-     */
-    commit?: At.CID;
+    rkey: At.RKEY;
   }
   type Input = undefined;
   type Output = Uint8Array;
@@ -3931,7 +4047,7 @@ export declare namespace ComAtprotoSyncGetRepo {
     /** The DID of the repo. */
     did: At.DID;
     /** The revision ('rev') of the repo to create a diff from. */
-    since?: string;
+    since?: At.TID;
   }
   type Input = undefined;
   type Output = Uint8Array;
@@ -3954,9 +4070,16 @@ export declare namespace ComAtprotoSyncGetRepoStatus {
     active: boolean;
     did: At.DID;
     /** Optional field, the current rev of the repo, if active=true */
-    rev?: string;
+    rev?: At.TID;
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
-    status?: "deactivated" | "suspended" | "takendown" | (string & {});
+    status?:
+      | "deactivated"
+      | "deleted"
+      | "desynchronized"
+      | "suspended"
+      | "takendown"
+      | "throttled"
+      | (string & {});
   }
   interface Errors extends TypedBase {
     RepoNotFound: {};
@@ -3976,7 +4099,7 @@ export declare namespace ComAtprotoSyncListBlobs {
      */
     limit?: number;
     /** Optional revision of the repo to list blobs since. */
-    since?: string;
+    since?: At.TID;
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -4011,14 +4134,44 @@ export declare namespace ComAtprotoSyncListRepos {
     did: At.DID;
     /** Current repo commit CID */
     head: At.CID;
-    rev: string;
+    rev: At.TID;
     active?: boolean;
     /** If active=false, this optional field indicates a possible reason for why the account is not active. If active=false and no status is supplied, then the host makes no claim for why the repository is no longer being hosted. */
-    status?: "deactivated" | "suspended" | "takendown" | (string & {});
+    status?:
+      | "deactivated"
+      | "deleted"
+      | "desynchronized"
+      | "suspended"
+      | "takendown"
+      | "throttled"
+      | (string & {});
   }
 }
 
-/** Notify a crawling service of a recent update, and that crawling should resume. Intended use is after a gap between repo stream events caused the crawling service to disconnect. Does not require auth; implemented by Relay. */
+/** Enumerates all the DIDs which have records with the given collection NSID. */
+export declare namespace ComAtprotoSyncListReposByCollection {
+  interface Params extends TypedBase {
+    collection: string;
+    cursor?: string;
+    /**
+     * Maximum size of response set. Recommend setting a large maximum (1000+) when enumerating large DID lists.
+     * Minimum: 1
+     * Maximum: 2000
+     * \@default 500
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    repos: Repo[];
+    cursor?: string;
+  }
+  interface Repo extends TypedBase {
+    did: At.DID;
+  }
+}
+
+/** Notify a crawling service of a recent update, and that crawling should resume. Intended use is after a gap between repo stream events caused the crawling service to disconnect. Does not require auth; implemented by Relay. DEPRECATED: just use com.atproto.sync.requestCrawl */
 export declare namespace ComAtprotoSyncNotifyOfUpdate {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4043,9 +4196,7 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     /** The last known event seq number to backfill from. */
     cursor?: number;
   }
-  type Message = TypeUnion<
-    Account | Commit | Handle | Identity | Info | Migrate | Tombstone
-  >;
+  type Message = TypeUnion<Account | Commit | Identity | Info | Sync>;
   interface Errors extends TypedBase {
     FutureCursor: {};
     ConsumerTooSlow: {};
@@ -4061,15 +4212,20 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     status?:
       | "deactivated"
       | "deleted"
+      | "desynchronized"
       | "suspended"
       | "takendown"
+      | "throttled"
       | (string & {});
   }
   /** Represents an update of repository state. Note that empty commits are allowed, which include no repo data changes, but an update to rev and signature. */
   interface Commit extends TypedBase {
-    /** List of new blobs (by CID) referenced by records in this commit. */
+    /**
+     * DEPRECATED -- will soon always be empty. List of new blobs (by CID) referenced by records in this commit.
+     * \@deprecated
+     */
     blobs: At.CIDLink[];
-    /** CAR file containing relevant blocks, as a diff since the previous repo state. */
+    /** CAR file containing relevant blocks, as a diff since the previous repo state. The commit must be included as a block, and the commit block CID must be the first entry in the CAR header 'roots' list. */
     blocks: At.Bytes;
     /** Repo commit object CID. */
     commit: At.CIDLink;
@@ -4083,33 +4239,23 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
      * \@deprecated
      */
     rebase: boolean;
-    /** The repo this event comes from. */
+    /** The repo this event comes from. Note that all other message types name this field 'did'. */
     repo: At.DID;
     /** The rev of the emitted commit. Note that this information is also in the commit object included in blocks, unless this is a tooBig event. */
-    rev: string;
+    rev: At.TID;
     /** The stream sequence number of this message. */
     seq: number;
     /** The rev of the last emitted commit from this repo (if any). */
-    since: string | null;
+    since: At.TID | null;
     /** Timestamp of when this message was originally broadcast. */
     time: string;
-    /** Indicates that this commit contained too many ops, or data size was too large. Consumers will need to make a separate request to get missing data. */
-    tooBig: boolean;
     /**
-     * DEPRECATED -- unused. WARNING -- nullable and optional; stick with optional to ensure golang interoperability.
+     * DEPRECATED -- replaced by #sync event and data limits. Indicates that this commit contained too many ops, or data size was too large. Consumers will need to make a separate request to get missing data.
      * \@deprecated
      */
-    prev?: At.CIDLink | null;
-  }
-  /**
-   * DEPRECATED -- Use #identity event instead
-   * \@deprecated
-   */
-  interface Handle extends TypedBase {
-    did: At.DID;
-    handle: At.Handle;
-    seq: number;
-    time: string;
+    tooBig: boolean;
+    /** The root CID of the MST tree for the previous commit from this repo (indicated by the 'since' revision field in this message). Corresponds to the 'data' field in the repo commit object. NOTE: this field is effectively required for the 'inductive' version of firehose. */
+    prevData?: At.CIDLink;
   }
   /** Represents a change to an account's identity. Could be an updated handle, signing key, or pds hosting endpoint. Serves as a prod to all downstream services to refresh their identity cache. */
   interface Identity extends TypedBase {
@@ -4123,30 +4269,26 @@ export declare namespace ComAtprotoSyncSubscribeRepos {
     name: "OutdatedCursor" | (string & {});
     message?: string;
   }
-  /**
-   * DEPRECATED -- Use #account event instead
-   * \@deprecated
-   */
-  interface Migrate extends TypedBase {
-    did: At.DID;
-    migrateTo: string | null;
-    seq: number;
-    time: string;
-  }
   /** A repo operation, ie a mutation of a single record. */
   interface RepoOp extends TypedBase {
     action: "create" | "delete" | "update" | (string & {});
     /** For creates and updates, the new record CID. For deletions, null. */
     cid: At.CIDLink | null;
     path: string;
+    /** For updates and deletes, the previous record CID (required for inductive firehose). For creations, field should not be defined. */
+    prev?: At.CIDLink;
   }
-  /**
-   * DEPRECATED -- Use #account event instead
-   * \@deprecated
-   */
-  interface Tombstone extends TypedBase {
+  /** Updates the repo to a new state, without necessarily including that state on the firehose. Used to recover from broken commit streams, data loss incidents, or in situations where upstream host does not know recent state of the repository. */
+  interface Sync extends TypedBase {
+    /** CAR file containing the commit, as a block. The CAR header must include the commit block CID as the first 'root'. */
+    blocks: At.Bytes;
+    /** The account this repo event corresponds to. Must match that in the commit object. */
     did: At.DID;
+    /** The rev of the commit. This value must match that in the commit object. */
+    rev: string;
+    /** The stream sequence number of this message. */
     seq: number;
+    /** Timestamp of when this message was originally broadcast. */
     time: string;
   }
 }
@@ -4356,9 +4498,9 @@ export declare namespace ToolsOzoneModerationDefs {
     acknowledgeAccountSubjects?: boolean;
     comment?: string;
   }
-  /** Add a comment to a subject */
+  /** Add a comment to a subject. An empty comment will clear any previously set sticky comment. */
   interface ModEventComment extends TypedBase {
-    comment: string;
+    comment?: string;
     /** Make the comment persistent on the subject */
     sticky?: boolean;
   }
@@ -4574,6 +4716,25 @@ export declare namespace ToolsOzoneModerationDefs {
   interface RecordViewNotFound extends TypedBase {
     uri: At.Uri;
   }
+  interface ReporterStats extends TypedBase {
+    /** The total number of reports made by the user on accounts. */
+    accountReportCount: number;
+    did: At.DID;
+    /** The total number of accounts labeled as a result of the user's reports. */
+    labeledAccountCount: number;
+    /** The total number of records labeled as a result of the user's reports. */
+    labeledRecordCount: number;
+    /** The total number of reports made by the user on records. */
+    recordReportCount: number;
+    /** The total number of accounts reported by the user. */
+    reportedAccountCount: number;
+    /** The total number of records reported by the user. */
+    reportedRecordCount: number;
+    /** The total number of accounts taken down as a result of the user's reports. */
+    takendownAccountCount: number;
+    /** The total number of records taken down as a result of the user's reports. */
+    takendownRecordCount: number;
+  }
   interface RepoView extends TypedBase {
     did: At.DID;
     handle: At.Handle;
@@ -4671,6 +4832,7 @@ export declare namespace ToolsOzoneModerationEmitEvent {
       | ToolsOzoneModerationDefs.IdentityEvent
       | ToolsOzoneModerationDefs.ModEventAcknowledge
       | ToolsOzoneModerationDefs.ModEventComment
+      | ToolsOzoneModerationDefs.ModEventDivert
       | ToolsOzoneModerationDefs.ModEventEmail
       | ToolsOzoneModerationDefs.ModEventEscalate
       | ToolsOzoneModerationDefs.ModEventLabel
@@ -4743,6 +4905,18 @@ export declare namespace ToolsOzoneModerationGetRepo {
   type Output = ToolsOzoneModerationDefs.RepoViewDetail;
   interface Errors extends TypedBase {
     RepoNotFound: {};
+  }
+}
+
+/** Get reporter stats for a list of users. */
+export declare namespace ToolsOzoneModerationGetReporterStats {
+  interface Params extends TypedBase {
+    /** Maximum array length: 100 */
+    dids: At.DID[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    stats: ToolsOzoneModerationDefs.ReporterStats[];
   }
 }
 
@@ -5287,12 +5461,14 @@ export declare namespace ToolsOzoneTeamDeleteMember {
 export declare namespace ToolsOzoneTeamListMembers {
   interface Params extends TypedBase {
     cursor?: string;
+    disabled?: boolean;
     /**
      * Minimum: 1
      * Maximum: 100
      * \@default 50
      */
     limit?: number;
+    roles?: string[];
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -5545,6 +5721,10 @@ export declare interface Queries {
     params: ChatBskyConvoGetConvo.Params;
     output: ChatBskyConvoGetConvo.Output;
   };
+  "chat.bsky.convo.getConvoAvailability": {
+    params: ChatBskyConvoGetConvoAvailability.Params;
+    output: ChatBskyConvoGetConvoAvailability.Output;
+  };
   "chat.bsky.convo.getConvoForMembers": {
     params: ChatBskyConvoGetConvoForMembers.Params;
     output: ChatBskyConvoGetConvoForMembers.Output;
@@ -5592,9 +5772,17 @@ export declare interface Queries {
   "com.atproto.identity.getRecommendedDidCredentials": {
     output: ComAtprotoIdentityGetRecommendedDidCredentials.Output;
   };
+  "com.atproto.identity.resolveDid": {
+    params: ComAtprotoIdentityResolveDid.Params;
+    output: ComAtprotoIdentityResolveDid.Output;
+  };
   "com.atproto.identity.resolveHandle": {
     params: ComAtprotoIdentityResolveHandle.Params;
     output: ComAtprotoIdentityResolveHandle.Output;
+  };
+  "com.atproto.identity.resolveIdentity": {
+    params: ComAtprotoIdentityResolveIdentity.Params;
+    output: ComAtprotoIdentityResolveIdentity.Output;
   };
   "com.atproto.label.queryLabels": {
     params: ComAtprotoLabelQueryLabels.Params;
@@ -5676,6 +5864,10 @@ export declare interface Queries {
     params: ComAtprotoSyncListRepos.Params;
     output: ComAtprotoSyncListRepos.Output;
   };
+  "com.atproto.sync.listReposByCollection": {
+    params: ComAtprotoSyncListReposByCollection.Params;
+    output: ComAtprotoSyncListReposByCollection.Output;
+  };
   "com.atproto.temp.checkSignupQueue": {
     output: ComAtprotoTempCheckSignupQueue.Output;
   };
@@ -5701,6 +5893,10 @@ export declare interface Queries {
   "tools.ozone.moderation.getRepo": {
     params: ToolsOzoneModerationGetRepo.Params;
     output: ToolsOzoneModerationGetRepo.Output;
+  };
+  "tools.ozone.moderation.getReporterStats": {
+    params: ToolsOzoneModerationGetReporterStats.Params;
+    output: ToolsOzoneModerationGetReporterStats.Output;
   };
   "tools.ozone.moderation.getRepos": {
     params: ToolsOzoneModerationGetRepos.Params;
@@ -5793,6 +5989,10 @@ export declare interface Procedures {
   "chat.bsky.actor.deleteAccount": {
     output: ChatBskyActorDeleteAccount.Output;
   };
+  "chat.bsky.convo.acceptConvo": {
+    input: ChatBskyConvoAcceptConvo.Input;
+    output: ChatBskyConvoAcceptConvo.Output;
+  };
   "chat.bsky.convo.deleteMessageForSelf": {
     input: ChatBskyConvoDeleteMessageForSelf.Input;
     output: ChatBskyConvoDeleteMessageForSelf.Output;
@@ -5816,6 +6016,10 @@ export declare interface Procedures {
   "chat.bsky.convo.unmuteConvo": {
     input: ChatBskyConvoUnmuteConvo.Input;
     output: ChatBskyConvoUnmuteConvo.Output;
+  };
+  "chat.bsky.convo.updateAllRead": {
+    input: ChatBskyConvoUpdateAllRead.Input;
+    output: ChatBskyConvoUpdateAllRead.Output;
   };
   "chat.bsky.convo.updateRead": {
     input: ChatBskyConvoUpdateRead.Input;
@@ -5852,6 +6056,10 @@ export declare interface Procedures {
   "com.atproto.admin.updateSubjectStatus": {
     input: ComAtprotoAdminUpdateSubjectStatus.Input;
     output: ComAtprotoAdminUpdateSubjectStatus.Output;
+  };
+  "com.atproto.identity.refreshIdentity": {
+    input: ComAtprotoIdentityRefreshIdentity.Input;
+    output: ComAtprotoIdentityRefreshIdentity.Output;
   };
   "com.atproto.identity.requestPlcOperationSignature": {};
   "com.atproto.identity.signPlcOperation": {

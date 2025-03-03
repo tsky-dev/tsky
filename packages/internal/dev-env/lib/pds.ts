@@ -114,6 +114,9 @@ export class TestPdsServer {
       recursive: true,
       force: true,
     });
-    await fs.rm(this.additional.blobstoreLoc, { force: true });
+    await fs.rm(this.additional.blobstoreLoc, {
+      recursive: true,
+      force: true,
+    });
   }
 }
