@@ -72,16 +72,18 @@ class JobStatus {
    * Update status details for a video processing job.
    */
   async refresh(options?: RPCOptions) {
-    const res = await this.client.get('app.bsky.video.getJobStatus', {
-      params: { jobId: this.jobId },
-      ...options,
-    });
+    const res = await this.client
+      .get('app.bsky.video.getJobStatus', {
+        params: { jobId: this.jobId },
+        ...options,
+      })
+      .then((res) => res.data.jobStatus);
 
-    this.state = res.data.jobStatus.state;
+    this.state = res.state;
 
-    this.progress = res.data.jobStatus.progress;
-    this.blob = res.data.jobStatus.blob;
-    this.error = res.data.jobStatus.error;
-    this.message = res.data.jobStatus.message;
+    this.progress = res.progress;
+    this.blob = res.blob;
+    this.error = res.error;
+    this.message = res.message;
   }
 }
