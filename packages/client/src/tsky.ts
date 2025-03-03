@@ -3,7 +3,7 @@ import {
   type CredentialManagerOptions,
 } from '@atcute/client';
 import { Agent } from '~/agent';
-import type { CreateAgentOptions } from './types';
+import type { CreateAgentOptions } from '~/types';
 
 export async function createAgent(
   credentials?: CreateAgentOptions,

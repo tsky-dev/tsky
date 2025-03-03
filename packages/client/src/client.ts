@@ -7,7 +7,7 @@ import type {
 } from '@atcute/client';
 import type { At, Procedures, Queries } from '@tsky/lexicons';
 import { parseAtUri } from '~/utils';
-import type { RPCOptions as GenericReqOptions, StrongRef } from '../types';
+import type { RPCOptions as GenericReqOptions, StrongRef } from './types';
 
 // From @atcute/client
 type OutputOf<T> = T extends {
