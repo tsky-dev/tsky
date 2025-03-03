@@ -7,7 +7,8 @@ import type {
   ComAtprotoRepoStrongRef,
 } from '@tsky/lexicons';
 import type { Client } from '~/agent/client';
-import { List } from '~/list';
+import { FeedGeneratorView } from '~/feed/generator';
+import { ListView } from '~/list';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 
@@ -98,8 +99,7 @@ export class Actor {
 
       return {
         ...res.data,
-        // TODO: Solve this
-        // lists: res.data.lists.map((list) => new List(this.client, list)),
+        lists: res.data.lists.map((list) => new ListView(this.client, list)),
       };
     });
   }
@@ -129,12 +129,19 @@ export class Actor {
    */
   feeds(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const res = await this.client.get('app.bsky.feed.getActorFeeds', {
-        params: { cursor, actor: this.did, limit },
-        ...options,
-      });
+      const res = await this.client
+        .get('app.bsky.feed.getActorFeeds', {
+          params: { cursor, actor: this.did, limit },
+          ...options,
+        })
+        .then((res) => res.data);
 
-      return res.data;
+      return {
+        ...res,
+        feeds: res.feeds.map(
+          (feed) => new FeedGeneratorView(this.client, feed),
+        ),
+      };
     });
   }
 
@@ -183,8 +190,7 @@ export class BasicActorProfile
   extends Actor
   implements AppBskyActorDefs.ProfileViewBasic
 {
-  // @ts-expect-error - We added this property with Object.assign
-  handle: string;
+  handle!: string;
   associated?: AppBskyActorDefs.ProfileAssociated;
   avatar?: string;
   createdAt?: string;

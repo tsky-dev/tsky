@@ -1,16 +1,19 @@
 import { type CredentialManager, XRPC } from '@atcute/client';
 import type {
+  AppBskyFeedGetFeed,
+  AppBskyFeedSendInteractions,
   AppBskyGraphGetStarterPack,
   AppBskyGraphGetStarterPacks,
   At,
   Queries,
 } from '@tsky/lexicons';
 import { ActorWithProfileFunction } from '~/actor';
-import { Feed } from '~/feed';
-import { List } from '~/list';
+import { FeedViewPost } from '~/feed';
+import { Post } from '~/post';
 import { Search } from '~/search';
 import type { RPCOptions } from '~/types';
 import { User } from '~/user';
+import { Paginator } from '~/utils';
 import { Video } from '~/video';
 import { Client } from './client';
 
@@ -34,12 +37,42 @@ export class Agent {
     return new ActorWithProfileFunction(this.client, identifier);
   }
 
-  list(uri: string) {
-    return new List(this.client, uri);
+  /**
+   * Get a hydrated feed from an actor's selected feed generator. Implemented by App View.
+   */
+  async feed(
+    params: AppBskyFeedGetFeed.Params,
+    options?: AppBskyFeedGetFeed.Input,
+  ): Promise<Paginator<AppBskyFeedGetFeed.Output>> {
+    return Paginator.init(async (cursor) => {
+      const res = await this.client.get('app.bsky.feed.getFeed', {
+        ...(options ?? {}),
+        params: {
+          cursor,
+          ...params,
+        },
+      });
+
+      return {
+        ...res.data,
+        feed: res.data.feed.map((item) => new FeedViewPost(this.client, item)),
+      };
+    });
   }
 
-  get feed() {
-    return new Feed(this.client);
+  /**
+   * Send information about interactions with feed items back to the feed generator that served them.
+   */
+  async sendInteractions(
+    interactions: AppBskyFeedSendInteractions.Input['interactions'],
+    options: RPCOptions = {},
+  ) {
+    const res = await this.client.call('app.bsky.feed.sendInteractions', {
+      data: { interactions },
+      ...options,
+    });
+
+    return res.data;
   }
 
   get search() {
@@ -60,6 +93,17 @@ export class Agent {
     }
 
     return new Video(this.client);
+  }
+
+  async posts(uris: string[], options?: RPCOptions) {
+    const data = await this.client
+      .get('app.bsky.feed.getPosts', {
+        params: { uris },
+        ...options,
+      })
+      .then((res) => res.data);
+
+    return data.posts.map((post) => new Post(this.client, post));
   }
 
   /**

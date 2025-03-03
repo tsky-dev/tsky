@@ -18,10 +18,10 @@ import type { RPCOptions } from '~/types';
 import { Paginator, parseAtUri } from '~/utils';
 
 export class Post implements AppBskyFeedDefs.PostView {
-  uri: string;
+  uri!: string;
   author: BasicActorProfile;
-  cid: string;
-  indexedAt: string;
+  cid!: string;
+  indexedAt!: string;
   record: unknown;
   embed?:
     | Typed<AppBskyEmbedExternal.View, string>

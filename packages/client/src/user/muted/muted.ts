@@ -1,4 +1,6 @@
+import { DetailedActorProfile } from '~/actor';
 import type { Client } from '~/agent/client';
+import { ListView } from '~/list';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 
@@ -10,15 +12,20 @@ export class Muted {
    */
   lists(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const res = await this.client.get('app.bsky.graph.getListMutes', {
-        params: {
-          cursor,
-          limit,
-        },
-        ...options,
-      });
+      const res = await this.client
+        .get('app.bsky.graph.getListMutes', {
+          params: {
+            cursor,
+            limit,
+          },
+          ...options,
+        })
+        .then((res) => res.data);
 
-      return res.data;
+      return {
+        ...res,
+        lists: res.lists.map((list) => new ListView(this.client, list)),
+      };
     });
   }
 
@@ -27,15 +34,22 @@ export class Muted {
    */
   profiles(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const res = await this.client.get('app.bsky.graph.getMutes', {
-        params: {
-          cursor,
-          limit,
-        },
-        ...options,
-      });
+      const res = await this.client
+        .get('app.bsky.graph.getMutes', {
+          params: {
+            cursor,
+            limit,
+          },
+          ...options,
+        })
+        .then((res) => res.data);
 
-      return res.data;
+      return {
+        ...res,
+        mutes: res.mutes.map(
+          (mute) => new DetailedActorProfile(this.client, mute),
+        ),
+      };
     });
   }
 }

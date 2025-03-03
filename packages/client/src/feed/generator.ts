@@ -1,8 +1,13 @@
 import type {
+  AppBskyActorDefs,
+  AppBskyFeedDefs,
   AppBskyFeedGetFeedGenerator,
   AppBskyFeedGetFeedGenerators,
   AppBskyFeedGetFeedSkeleton,
+  AppBskyRichtextFacet,
+  ComAtprotoLabelDefs,
 } from '@tsky/lexicons';
+import { BasicActorProfile } from '~/actor';
 import type { Client } from '~/agent/client';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
@@ -72,5 +77,35 @@ export class FeedGenerator {
 
       return res.data;
     });
+  }
+}
+
+export class FeedGeneratorView implements AppBskyFeedDefs.GeneratorView {
+  cid!: string;
+  creator: AppBskyActorDefs.ProfileView;
+  did!: `did:${string}`;
+  displayName!: string;
+  indexedAt!: string;
+  uri!: string;
+  acceptsInteractions?: boolean | undefined;
+  avatar?: string | undefined;
+  contentMode?:
+    | (string & {})
+    | 'app.bsky.feed.defs#contentModeUnspecified'
+    | 'app.bsky.feed.defs#contentModeVideo'
+    | undefined;
+  description?: string | undefined;
+  descriptionFacets?: AppBskyRichtextFacet.Main[] | undefined;
+  labels?: ComAtprotoLabelDefs.Label[] | undefined;
+  likeCount?: number | undefined;
+  viewer?: AppBskyFeedDefs.GeneratorViewerState | undefined;
+  $type?: string | undefined;
+
+  constructor(
+    private client: Client,
+    payload: AppBskyFeedDefs.GeneratorView,
+  ) {
+    Object.assign(this, payload);
+    this.creator = new BasicActorProfile(this.client, payload.creator);
   }
 }

@@ -1,5 +1,6 @@
 import type { AppBskyFeedGetTimeline } from '@tsky/lexicons';
 import { ActorWithProfileFunction } from '~/actor';
+import { FeedViewPost } from '~/feed';
 import type { RPCOptions } from '~/types';
 import { Paginator } from '~/utils';
 import { Mute } from './mute';
@@ -21,15 +22,20 @@ export class User extends ActorWithProfileFunction {
     options?: AppBskyFeedGetTimeline.Input,
   ): Promise<Paginator<AppBskyFeedGetTimeline.Output>> {
     return Paginator.init(async (cursor) => {
-      const res = await this.client.get('app.bsky.feed.getTimeline', {
-        ...(options ?? {}),
-        params: {
-          cursor,
-          ...params,
-        },
-      });
+      const res = await this.client
+        .get('app.bsky.feed.getTimeline', {
+          ...(options ?? {}),
+          params: {
+            cursor,
+            ...params,
+          },
+        })
+        .then((res) => res.data);
 
-      return res.data;
+      return {
+        ...res,
+        feed: res.feed.map((item) => new FeedViewPost(this.client, item)),
+      };
     });
   }
 
@@ -38,12 +44,17 @@ export class User extends ActorWithProfileFunction {
    */
   likes(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
-      const res = await this.client.get('app.bsky.feed.getActorLikes', {
-        params: { cursor, actor: this.did, limit },
-        ...options,
-      });
+      const res = await this.client
+        .get('app.bsky.feed.getActorLikes', {
+          params: { cursor, actor: this.did, limit },
+          ...options,
+        })
+        .then((res) => res.data);
 
-      return res.data;
+      return {
+        ...res,
+        feed: res.feed.map((item) => new FeedViewPost(this.client, item)),
+      };
     });
   }
 
