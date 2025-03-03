@@ -89,7 +89,8 @@ export class Client<Q = Queries, P = Procedures> {
         },
       } as unknown as RPCOptions<P[keyof P]>,
     );
-    return response.data;
+
+    return response.data as StrongRef;
   }
 
   /**
@@ -120,7 +121,7 @@ export class Client<Q = Queries, P = Procedures> {
         },
       } as unknown as RPCOptions<P[keyof P]>,
     );
-    return response.data;
+    return response.data as StrongRef;
   }
 
   /**
