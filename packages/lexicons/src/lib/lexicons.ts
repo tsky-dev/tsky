@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-03-01T03:33:31.541Z
+ * Generated on: 2025-03-04T03:32:05.550Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/38320191e559f8b928c6e951a9b4a6207240bfc1/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/6bcbb6d8cd3696280935ff7892d8e191fd21fa49/lexicons
  */
 
 /** Base type with optional type field */
@@ -612,6 +612,7 @@ export declare namespace AppBskyEmbedRecordWithMedia {
 
 export declare namespace AppBskyEmbedVideo {
   interface Main extends TypedBase {
+    /** The mp4 video file. May be up to 100mb, formerly limited to 50mb. */
     video: At.Blob;
     /**
      * Alt text description of the video, for accessibility.
