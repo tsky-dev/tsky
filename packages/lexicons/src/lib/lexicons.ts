@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-03-04T03:32:05.550Z
+ * Generated on: 2025-03-08T03:21:38.181Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/6bcbb6d8cd3696280935ff7892d8e191fd21fa49/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/18fbfa00057dda9ef4eba77d8b4e87994893c952/lexicons
  */
 
 /** Base type with optional type field */
@@ -5469,6 +5469,7 @@ export declare namespace ToolsOzoneTeamListMembers {
      * \@default 50
      */
     limit?: number;
+    q?: string;
     roles?: string[];
   }
   type Input = undefined;
