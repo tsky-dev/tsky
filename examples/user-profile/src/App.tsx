@@ -1,14 +1,23 @@
 import { type ActorProfile, createAgent } from '@tsky/client';
+import type { At } from '@tsky/lexicons';
 import { useEffect, useState } from 'react';
 
-async function findUser(user: string) {
+async function getUserProfile(identity: string) {
   try {
     const agent = await createAgent({
       options: {
         service: 'https://public.api.bsky.app',
       },
     });
-    const actor = await agent.actor(user);
+
+    let did = identity;
+
+    if (!did.startsWith('did:')) {
+      const _id = await agent.resolveDIDFromHandle(identity);
+      did = _id.did;
+    }
+
+    const actor = await agent.actor(did as At.DID);
 
     return actor.profile();
   } catch (err) {
@@ -16,15 +25,13 @@ async function findUser(user: string) {
   }
 }
 
-// did:plc:xdwatsttsxnl5h65mf3ddxbq
-
 function App() {
   const [search, setSearch] = useState<string>();
   const [user, setUser] = useState<ActorProfile>();
 
   useEffect(() => {
     if (search) {
-      findUser(search).then(setUser);
+      getUserProfile(search).then(setUser);
     }
   }, [search]);
 

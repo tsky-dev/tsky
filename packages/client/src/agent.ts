@@ -1305,4 +1305,13 @@ export class Agent {
 
     return data;
   }
+
+  async resolveDIDFromHandle(handle: string, options: RPCOptions = {}) {
+    return this.client
+      .get('com.atproto.identity.resolveHandle', {
+        params: { handle },
+        ...options,
+      })
+      .then((res) => res.data);
+  }
 }

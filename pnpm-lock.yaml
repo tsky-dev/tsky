@@ -54,6 +54,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.0.12
         version: 4.0.12(vite@6.2.1(@types/node@22.10.1)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.2)(yaml@2.7.0))
+      '@tsky/lexicons':
+        specifier: workspace:*
+        version: link:../../packages/lexicons
       '@types/react':
         specifier: ^19.0.10
         version: 19.0.10
