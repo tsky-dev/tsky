@@ -29,6 +29,7 @@ import type {
   AppBskyVideoUploadVideo,
   At,
   ComAtprotoLabelDefs,
+  ComAtprotoRepoStrongRef,
   Queries,
   Typed,
 } from '@tsky/lexicons';
@@ -199,6 +200,12 @@ export class Actor {
       return data;
     });
   }
+
+  toJSON() {
+    return {
+      did: this.did,
+    };
+  }
 }
 
 export class ActorLazyProfile extends Actor {
@@ -254,19 +261,59 @@ export class ActorBasicProfile
       }
     }
   }
+
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      handle: this.handle,
+      associated: this.associated,
+      avatar: this.avatar,
+      createdAt: this.createdAt,
+      displayName: this.displayName,
+      labels: this.labels,
+      viewer: this.viewer,
+      $type: this.$type,
+    };
+  }
 }
 
 export class ActorProfile
   extends ActorBasicProfile
-  implements AppBskyActorDefs.ProfileView
+  implements AppBskyActorDefs.ProfileViewDetailed
 {
   description?: string;
   indexedAt?: string;
+  followersCount?: number;
+  followsCount?: number;
+  postsCount?: number;
+  banner?: string | undefined;
+  joinedViaStarterPack?: AppBskyGraphDefs.StarterPackViewBasic | undefined;
+  pinnedPost?: ComAtprotoRepoStrongRef.Main | undefined;
 
   constructor(client: Client, actor: AppBskyActorDefs.ProfileViewDetailed) {
     super(client, actor);
     this.description = actor.description;
     this.indexedAt = actor.indexedAt;
+    this.followersCount = actor.followersCount;
+    this.followsCount = actor.followsCount;
+    this.postsCount = actor.postsCount;
+    this.banner = actor.banner;
+    this.joinedViaStarterPack = actor.joinedViaStarterPack;
+    this.pinnedPost = actor.pinnedPost;
+  }
+
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      description: this.description,
+      indexedAt: this.indexedAt,
+      followersCount: this.followersCount,
+      followsCount: this.followsCount,
+      postsCount: this.postsCount,
+      banner: this.banner,
+      joinedViaStarterPack: this.joinedViaStarterPack,
+      pinnedPost: this.pinnedPost,
+    };
   }
 }
 

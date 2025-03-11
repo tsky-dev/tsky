@@ -5,10 +5,12 @@ import {
 import { Agent } from '~/agent';
 import type { CreateAgentOptions } from '~/types';
 
-export async function createAgent(
-  credentials?: CreateAgentOptions,
-  options?: CredentialManagerOptions,
-) {
+export async function createAgent(config: {
+  credentials?: CreateAgentOptions;
+  options?: CredentialManagerOptions;
+}) {
+  const { credentials, options } = config;
+
   const manager = new CredentialManager(
     options ?? { service: 'https://bsky.social' },
   );

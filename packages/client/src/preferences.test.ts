@@ -17,8 +17,10 @@ const TEST_CREDENTIALS = {
 describe('preferences', () => {
   it('.get()', async () => {
     const agent = await createAgent({
-      identifier: TEST_CREDENTIALS.alice.handle,
-      password: TEST_CREDENTIALS.alice.password,
+      credentials: {
+        identifier: TEST_CREDENTIALS.alice.handle,
+        password: TEST_CREDENTIALS.alice.password,
+      },
     });
     const preferences = await agent.user.preferences.get();
 
@@ -27,8 +29,10 @@ describe('preferences', () => {
 
   it('.set()', async () => {
     const agent = await createAgent({
-      identifier: TEST_CREDENTIALS.alice.handle,
-      password: TEST_CREDENTIALS.alice.password,
+      credentials: {
+        identifier: TEST_CREDENTIALS.alice.handle,
+        password: TEST_CREDENTIALS.alice.password,
+      },
     });
 
     const payload = {

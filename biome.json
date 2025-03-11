@@ -4,7 +4,7 @@
     "enabled": true
   },
   "files": {
-    "include": ["docs", "packages/*"],
+    "include": ["docs", "packages/*", "examples/*"],
     "ignore": [
       ".github",
       ".gitignore",

@@ -17,8 +17,10 @@ const TEST_CREDENTIALS = {
 describe('profile', async () => {
   it("Getting alice's profile", async () => {
     const agent = await createAgent({
-      identifier: TEST_CREDENTIALS.alice.handle,
-      password: TEST_CREDENTIALS.alice.password,
+      credentials: {
+        identifier: TEST_CREDENTIALS.alice.handle,
+        password: TEST_CREDENTIALS.alice.password,
+      },
     });
 
     const profile = await agent.user.profile();
@@ -29,8 +31,10 @@ describe('profile', async () => {
 
   it("Getting bob's profile", async () => {
     const agent = await createAgent({
-      identifier: TEST_CREDENTIALS.bob.handle,
-      password: TEST_CREDENTIALS.bob.password,
+      credentials: {
+        identifier: TEST_CREDENTIALS.bob.handle,
+        password: TEST_CREDENTIALS.bob.password,
+      },
     });
 
     const profile = await agent.user.profile();
