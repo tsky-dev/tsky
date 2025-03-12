@@ -12,7 +12,7 @@
   "bin": "./dist/index.js",
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist",
+    "clean": "rimraf dist",
     "prepare": "pnpm run clean && pnpm run build"
   },
   "dependencies": {
