@@ -8,7 +8,7 @@
   A lightweight, fast, universal and typed Bluesky API wrapper for Apps & Bots.
 </p>
 
-## ⚠️ tsky is still in development and is not ready for production use.
+## ⚠️ tsky is still in development and is not ready for production use
 
 tsky is still in active development and is not ready for production use. If you want to contribute to the project, please read the [CONTRIBUTING.md](CONTRIBUTING.md) file or join our [Discord Server](https://discord.gg/KPD7XPUZn3).
 
@@ -34,39 +34,38 @@ bun add tsky
 
 ## Usage
 
-Use an identity & password login:
+Using a Public Agent
 
 ```ts
-import { Tsky } from 'tsky';
-import { CredentialManager } from '@atcute/client';
+import { createAgent } from '@tsky/client';
 
-const manager = new CredentialManager({ service: 'https://bsky.social' });
-await manager.login({
-  identifier: 'alice.tsky.dev',
-  password: 'password',
+const agent = await createAgent({
+  options: {
+    service: 'https://public.api.bsky.app',
+  },
 });
+
+// Getting a user from their handle
+// First, we need to get the user's DID
+const did = await agent.resolveDIDFromHandle(handle);
+// Then, we can get the user's profile
+const profile = await agent.actor(did);
 ```
 
-or the [@atcute/oauth-browser-client](https://github.com/mary-ext/atcute/tree/trunk/packages/oauth/browser-client):
+Using an Authenticated Agent
 
 ```ts
-import { Tsky } from 'tsky';
-import { OAuthUserAgent, finalizeAuthorization } from '@atcute/oauth-browser-client';
+import { createAgent } from '@tsky/client';
 
-// get a session as described at: https://github.com/mary-ext/atcute/tree/trunk/packages/oauth/browser-client
+const agent = await createAgent({
+  credentials: {
+    identifier: "handle",
+      password: "password"
+  }
+});
 
-const manager = new OAuthUserAgent(session);
-```
-
-and then initialize the tsky client:
-
-```ts
-const tsky = new Tsky(manager);
-
-// get the profile of a user
-const profile = await tsky.bsky.profile('did:plc:giohuovwawlijq7jkuysq5dd');
-
-console.log(profile.handle);
+// Getting the profile of the authenticated user
+const user_profile = await agent.user.profile();
 ```
 
 ## Links
