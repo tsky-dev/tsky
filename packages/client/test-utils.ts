@@ -11,13 +11,13 @@ const testAgents: Record<Handle, Agent> = {
 };
 
 function createTestAgent(handle: Handle) {
-  return createAgent(
-    {
+  return createAgent({
+    credentials: {
       identifier: handle,
       password: 'password',
     },
-    { service: inject('testPdsUrl') },
-  );
+    options: { service: inject('testPdsUrl') },
+  });
 }
 
 /**
