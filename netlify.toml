@@ -1,7 +1,7 @@
 [build]
-publish = ".vitepress/dist"
-command = "pnpm build"
-base = "/docs/"
+publish = "docs/.vitepress/dist"
+command = "pnpm docs:build"
+base = "/"
 
 # Allow previewing docs
 [[redirects]]
