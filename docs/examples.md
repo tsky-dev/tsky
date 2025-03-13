@@ -4,4 +4,4 @@ outline: deep
 
 # Examples
 
-TODO: Add examples here
+- [User profile](/examples/user-profile/)

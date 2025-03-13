@@ -5,6 +5,7 @@ import typedocSidebar from '../api/typedoc-sidebar.json';
 export default defineConfig({
   title: 'tsky',
   description: 'A Bluesky API client for nimble apps and tools',
+  ignoreDeadLinks: [/\/examples\//],
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
