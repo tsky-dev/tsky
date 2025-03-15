@@ -3,15 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "predev": "typedoc",
     "dev": "vitepress dev",
     "prebuild": "typedoc",
     "build": "vitepress build",
+    "postbuild": "pnpm build:examples && pnpm copy-example-apps",
+    "build:examples": "pnpm --filter 'examples-*' build",
+    "copy-example-apps": "tsx scripts/copy-example-apps.ts",
     "preview": "vitepress preview",
     "test": "echo \"Error: no test specified\""
   },
   "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.2",
     "typedoc": "^0.27.1",
     "typedoc-plugin-markdown": "^4.3.0",
     "typedoc-vitepress-theme": "^1.1.0",

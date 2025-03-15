@@ -54,7 +54,7 @@ function App() {
             rel="noreferrer"
           >
             <img
-              src="/tsky-logo.png"
+              src="/examples/user-profile/tsky-logo.png"
               alt="tsky logo"
               className="size-9 min-w-9 rounded"
             />
