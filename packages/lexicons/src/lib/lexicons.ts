@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-03-11T19:48:30.798Z
+ * Generated on: 2025-03-27T03:37:21.935Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/18fbfa00057dda9ef4eba77d8b4e87994893c952/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/620b10954af90f53e1692c3fd7451c675f1e9956/lexicons
  */
 
 /** Base type with optional type field */
@@ -2413,6 +2413,29 @@ export declare namespace ChatBskyConvoAcceptConvo {
   }
 }
 
+/** Adds an emoji reaction to a message. Requires authentication. It is idempotent, so multiple calls from the same user with the same emoji result in a single reaction. */
+export declare namespace ChatBskyConvoAddReaction {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    messageId: string;
+    /**
+     * Minimum string length: 1
+     * Maximum string length: 32
+     * Maximum grapheme length: 1
+     */
+    value: string;
+  }
+  interface Output extends TypedBase {
+    message: ChatBskyConvoDefs.MessageView;
+  }
+  interface Errors extends TypedBase {
+    ReactionMessageDeleted: {};
+    ReactionLimitReached: {};
+    ReactionInvalidValue: {};
+  }
+}
+
 export declare namespace ChatBskyConvoDefs {
   interface ConvoView extends TypedBase {
     id: string;
@@ -2420,7 +2443,9 @@ export declare namespace ChatBskyConvoDefs {
     muted: boolean;
     rev: string;
     unreadCount: number;
-    lastMessage?: TypeUnion<DeletedMessageView | MessageView>;
+    lastMessage?: TypeUnion<
+      DeletedMessageView | MessageAndReactionView | MessageView
+    >;
     status?: "accepted" | "request" | (string & {});
   }
   interface DeletedMessageView extends TypedBase {
@@ -2431,6 +2456,12 @@ export declare namespace ChatBskyConvoDefs {
   }
   interface LogAcceptConvo extends TypedBase {
     convoId: string;
+    rev: string;
+  }
+  interface LogAddReaction extends TypedBase {
+    convoId: string;
+    message: TypeUnion<DeletedMessageView | MessageView>;
+    reaction: ReactionView;
     rev: string;
   }
   interface LogBeginConvo extends TypedBase {
@@ -2460,9 +2491,19 @@ export declare namespace ChatBskyConvoDefs {
     message: TypeUnion<DeletedMessageView | MessageView>;
     rev: string;
   }
+  interface LogRemoveReaction extends TypedBase {
+    convoId: string;
+    message: TypeUnion<DeletedMessageView | MessageView>;
+    reaction: ReactionView;
+    rev: string;
+  }
   interface LogUnmuteConvo extends TypedBase {
     convoId: string;
     rev: string;
+  }
+  interface MessageAndReactionView extends TypedBase {
+    message: MessageView;
+    reaction: ReactionView;
   }
   interface MessageInput extends TypedBase {
     /**
@@ -2492,8 +2533,17 @@ export declare namespace ChatBskyConvoDefs {
     embed?: TypeUnion<AppBskyEmbedRecord.View>;
     /** Annotations of text (mentions, URLs, hashtags, etc) */
     facets?: AppBskyRichtextFacet.Main[];
+    reactions?: ReactionView[];
   }
   interface MessageViewSender extends TypedBase {
+    did: At.DID;
+  }
+  interface ReactionView extends TypedBase {
+    createdAt: string;
+    sender: ReactionViewSender;
+    value: string;
+  }
+  interface ReactionViewSender extends TypedBase {
     did: At.DID;
   }
 }
@@ -2555,10 +2605,15 @@ export declare namespace ChatBskyConvoGetLog {
   interface Output extends TypedBase {
     logs: TypeUnion<
       | ChatBskyConvoDefs.LogAcceptConvo
+      | ChatBskyConvoDefs.LogAddReaction
       | ChatBskyConvoDefs.LogBeginConvo
       | ChatBskyConvoDefs.LogCreateMessage
       | ChatBskyConvoDefs.LogDeleteMessage
       | ChatBskyConvoDefs.LogLeaveConvo
+      | ChatBskyConvoDefs.LogMuteConvo
+      | ChatBskyConvoDefs.LogReadMessage
+      | ChatBskyConvoDefs.LogRemoveReaction
+      | ChatBskyConvoDefs.LogUnmuteConvo
     >[];
     cursor?: string;
   }
@@ -2621,6 +2676,28 @@ export declare namespace ChatBskyConvoMuteConvo {
   }
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
+  }
+}
+
+/** Removes an emoji reaction from a message. Requires authentication. It is idempotent, so multiple calls from the same user with the same emoji result in that reaction not being present, even if it already wasn't. */
+export declare namespace ChatBskyConvoRemoveReaction {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    messageId: string;
+    /**
+     * Minimum string length: 1
+     * Maximum string length: 32
+     * Maximum grapheme length: 1
+     */
+    value: string;
+  }
+  interface Output extends TypedBase {
+    message: ChatBskyConvoDefs.MessageView;
+  }
+  interface Errors extends TypedBase {
+    ReactionMessageDeleted: {};
+    ReactionInvalidValue: {};
   }
 }
 
@@ -5995,6 +6072,10 @@ export declare interface Procedures {
     input: ChatBskyConvoAcceptConvo.Input;
     output: ChatBskyConvoAcceptConvo.Output;
   };
+  "chat.bsky.convo.addReaction": {
+    input: ChatBskyConvoAddReaction.Input;
+    output: ChatBskyConvoAddReaction.Output;
+  };
   "chat.bsky.convo.deleteMessageForSelf": {
     input: ChatBskyConvoDeleteMessageForSelf.Input;
     output: ChatBskyConvoDeleteMessageForSelf.Output;
@@ -6006,6 +6087,10 @@ export declare interface Procedures {
   "chat.bsky.convo.muteConvo": {
     input: ChatBskyConvoMuteConvo.Input;
     output: ChatBskyConvoMuteConvo.Output;
+  };
+  "chat.bsky.convo.removeReaction": {
+    input: ChatBskyConvoRemoveReaction.Input;
+    output: ChatBskyConvoRemoveReaction.Output;
   };
   "chat.bsky.convo.sendMessage": {
     input: ChatBskyConvoSendMessage.Input;
