@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-03-11T19:48:30.798Z
+ * Generated on: 2025-04-25T03:38:32.224Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/18fbfa00057dda9ef4eba77d8b4e87994893c952/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/45354c84f898d79f58c14b5c0da3661beb7353f9/lexicons
  */
 
 /** Base type with optional type field */
@@ -238,6 +238,7 @@ export declare namespace AppBskyActorDefs {
     | SavedFeedsPref
     | SavedFeedsPrefV2
     | ThreadViewPref
+    | VerificationPrefs
   >[];
   interface ProfileAssociated extends TypedBase {
     chat?: ProfileAssociatedChat;
@@ -267,6 +268,7 @@ export declare namespace AppBskyActorDefs {
     displayName?: string;
     indexedAt?: string;
     labels?: ComAtprotoLabelDefs.Label[];
+    verification?: VerificationState;
     viewer?: ViewerState;
   }
   interface ProfileViewBasic extends TypedBase {
@@ -281,6 +283,7 @@ export declare namespace AppBskyActorDefs {
      */
     displayName?: string;
     labels?: ComAtprotoLabelDefs.Label[];
+    verification?: VerificationState;
     viewer?: ViewerState;
   }
   interface ProfileViewDetailed extends TypedBase {
@@ -307,6 +310,7 @@ export declare namespace AppBskyActorDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     pinnedPost?: ComAtprotoRepoStrongRef.Main;
     postsCount?: number;
+    verification?: VerificationState;
     viewer?: ViewerState;
   }
   interface SavedFeed extends TypedBase {
@@ -334,6 +338,34 @@ export declare namespace AppBskyActorDefs {
       | "oldest"
       | "random"
       | (string & {});
+  }
+  /** Preferences for how verified accounts appear in the app. */
+  interface VerificationPrefs extends TypedBase {
+    /**
+     * Hide the blue check badges for verified accounts and trusted verifiers.
+     * \@default false
+     */
+    hideBadges?: boolean;
+  }
+  /** Represents the verification information about the user this object is attached to. */
+  interface VerificationState extends TypedBase {
+    /** The user's status as a trusted verifier. */
+    trustedVerifierStatus: "invalid" | "none" | "valid" | (string & {});
+    /** All verifications issued by trusted verifiers on behalf of this user. Verifications by untrusted verifiers are not included. */
+    verifications: VerificationView[];
+    /** The user's status as a verified account. */
+    verifiedStatus: "invalid" | "none" | "valid" | (string & {});
+  }
+  /** An individual verification for an associated subject. */
+  interface VerificationView extends TypedBase {
+    /** Timestamp when the verification was created. */
+    createdAt: string;
+    /** The user who issued this verification. */
+    issuer: At.DID;
+    /** True if the verification passes validation, otherwise false. */
+    isValid: boolean;
+    /** The AT-URI of the verification record. */
+    uri: At.Uri;
   }
   /** Metadata about the requesting account's relationship with the subject account. Only has meaningful content for authed requests. */
   interface ViewerState extends TypedBase {
@@ -1908,6 +1940,21 @@ export declare namespace AppBskyGraphUnmuteThread {
   type Output = undefined;
 }
 
+export declare namespace AppBskyGraphVerification {
+  /** Record declaring a verification relationship between two accounts. Verifications are only considered valid by an app if issued by an account the app considers trusted. */
+  interface Record extends RecordBase {
+    $type: "app.bsky.graph.verification";
+    /** Date of when the verification was created. */
+    createdAt: string;
+    /** Display name of the subject the verification applies to at the moment of verifying, which might not be the same at the time of viewing. The verification is only valid if the current displayName matches the one at the time of verifying. */
+    displayName: string;
+    /** Handle of the subject the verification applies to at the moment of verifying, which might not be the same at the time of viewing. The verification is only valid if the current handle matches the one at the time of verifying. */
+    handle: At.Handle;
+    /** DID of the subject the verification applies to. */
+    subject: At.DID;
+  }
+}
+
 export declare namespace AppBskyLabelerDefs {
   interface LabelerPolicies extends TypedBase {
     /** The label values which this labeler publishes. May include global or custom labels. */
@@ -1978,6 +2025,10 @@ export declare namespace AppBskyLabelerService {
   }
 }
 
+export declare namespace AppBskyNotificationDefs {
+  interface RecordDeleted extends TypedBase {}
+}
+
 /** Count the number of unread notifications for the requesting account. Requires auth. */
 export declare namespace AppBskyNotificationGetUnreadCount {
   interface Params extends TypedBase {
@@ -2020,7 +2071,7 @@ export declare namespace AppBskyNotificationListNotifications {
     cid: At.CID;
     indexedAt: string;
     isRead: boolean;
-    /** Expected values are 'like', 'repost', 'follow', 'mention', 'reply', 'quote', and 'starterpack-joined'. */
+    /** Expected values are 'like', 'repost', 'follow', 'mention', 'reply', 'quote', 'starterpack-joined', 'verified', and 'unverified'. */
     reason:
       | "follow"
       | "like"
@@ -2029,6 +2080,8 @@ export declare namespace AppBskyNotificationListNotifications {
       | "reply"
       | "repost"
       | "starterpack-joined"
+      | "unverified"
+      | "verified"
       | (string & {});
     record: unknown;
     uri: At.Uri;
@@ -2108,11 +2161,31 @@ export declare namespace AppBskyUnspeccedDefs {
   interface SkeletonSearchStarterPack extends TypedBase {
     uri: At.Uri;
   }
+  interface SkeletonTrend extends TypedBase {
+    dids: At.DID[];
+    displayName: string;
+    link: string;
+    postCount: number;
+    startedAt: string;
+    topic: string;
+    category?: string;
+    status?: "hot" | (string & {});
+  }
   interface TrendingTopic extends TypedBase {
     link: string;
     topic: string;
     description?: string;
     displayName?: string;
+  }
+  interface TrendView extends TypedBase {
+    actors: AppBskyActorDefs.ProfileViewBasic[];
+    displayName: string;
+    link: string;
+    postCount: number;
+    startedAt: string;
+    topic: string;
+    category?: string;
+    status?: "hot" | (string & {});
   }
 }
 
@@ -2141,6 +2214,112 @@ export declare namespace AppBskyUnspeccedGetPopularFeedGenerators {
   interface Output extends TypedBase {
     feeds: AppBskyFeedDefs.GeneratorView[];
     cursor?: string;
+  }
+}
+
+/** Get a list of suggested feeds */
+export declare namespace AppBskyUnspeccedGetSuggestedFeeds {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    feeds: AppBskyFeedDefs.GeneratorView[];
+  }
+}
+
+/** Get a skeleton of suggested feeds. Intended to be called and hydrated by app.bsky.unspecced.getSuggestedFeeds */
+export declare namespace AppBskyUnspeccedGetSuggestedFeedsSkeleton {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    feeds: At.Uri[];
+  }
+}
+
+/** Get a list of suggested starterpacks */
+export declare namespace AppBskyUnspeccedGetSuggestedStarterPacks {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    starterPacks: AppBskyGraphDefs.StarterPackView[];
+  }
+}
+
+/** Get a skeleton of suggested starterpacks. Intended to be called and hydrated by app.bsky.unspecced.getSuggestedStarterpacks */
+export declare namespace AppBskyUnspeccedGetSuggestedStarterPacksSkeleton {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    starterPacks: At.Uri[];
+  }
+}
+
+/** Get a list of suggested users */
+export declare namespace AppBskyUnspeccedGetSuggestedUsers {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    actors: AppBskyActorDefs.ProfileView[];
+  }
+}
+
+/** Get a skeleton of suggested users. Intended to be called and hydrated by app.bsky.unspecced.getSuggestedUsers */
+export declare namespace AppBskyUnspeccedGetSuggestedUsersSkeleton {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    dids: At.DID[];
   }
 }
 
@@ -2199,6 +2378,40 @@ export declare namespace AppBskyUnspeccedGetTrendingTopics {
   interface Output extends TypedBase {
     suggested: AppBskyUnspeccedDefs.TrendingTopic[];
     topics: AppBskyUnspeccedDefs.TrendingTopic[];
+  }
+}
+
+/** Get the current trends on the network */
+export declare namespace AppBskyUnspeccedGetTrends {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    trends: AppBskyUnspeccedDefs.TrendView[];
+  }
+}
+
+/** Get the skeleton of trends on the network. Intended to be called and then hydrated through app.bsky.unspecced.getTrends */
+export declare namespace AppBskyUnspeccedGetTrendsSkeleton {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    trends: AppBskyUnspeccedDefs.SkeletonTrend[];
   }
 }
 
@@ -2378,7 +2591,7 @@ export declare namespace ChatBskyActorDefs {
     handle: At.Handle;
     associated?: AppBskyActorDefs.ProfileAssociated;
     avatar?: string;
-    /** Set to true when the actor cannot actively participate in converations */
+    /** Set to true when the actor cannot actively participate in conversations */
     chatDisabled?: boolean;
     /**
      * Maximum string length: 640
@@ -2386,6 +2599,7 @@ export declare namespace ChatBskyActorDefs {
      */
     displayName?: string;
     labels?: ComAtprotoLabelDefs.Label[];
+    verification?: AppBskyActorDefs.VerificationState;
     viewer?: AppBskyActorDefs.ViewerState;
   }
 }
@@ -2413,6 +2627,29 @@ export declare namespace ChatBskyConvoAcceptConvo {
   }
 }
 
+/** Adds an emoji reaction to a message. Requires authentication. It is idempotent, so multiple calls from the same user with the same emoji result in a single reaction. */
+export declare namespace ChatBskyConvoAddReaction {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    messageId: string;
+    /**
+     * Minimum string length: 1
+     * Maximum string length: 64
+     * Maximum grapheme length: 1
+     */
+    value: string;
+  }
+  interface Output extends TypedBase {
+    message: ChatBskyConvoDefs.MessageView;
+  }
+  interface Errors extends TypedBase {
+    ReactionMessageDeleted: {};
+    ReactionLimitReached: {};
+    ReactionInvalidValue: {};
+  }
+}
+
 export declare namespace ChatBskyConvoDefs {
   interface ConvoView extends TypedBase {
     id: string;
@@ -2421,6 +2658,7 @@ export declare namespace ChatBskyConvoDefs {
     rev: string;
     unreadCount: number;
     lastMessage?: TypeUnion<DeletedMessageView | MessageView>;
+    lastReaction?: TypeUnion<MessageAndReactionView>;
     status?: "accepted" | "request" | (string & {});
   }
   interface DeletedMessageView extends TypedBase {
@@ -2431,6 +2669,12 @@ export declare namespace ChatBskyConvoDefs {
   }
   interface LogAcceptConvo extends TypedBase {
     convoId: string;
+    rev: string;
+  }
+  interface LogAddReaction extends TypedBase {
+    convoId: string;
+    message: TypeUnion<DeletedMessageView | MessageView>;
+    reaction: ReactionView;
     rev: string;
   }
   interface LogBeginConvo extends TypedBase {
@@ -2460,9 +2704,19 @@ export declare namespace ChatBskyConvoDefs {
     message: TypeUnion<DeletedMessageView | MessageView>;
     rev: string;
   }
+  interface LogRemoveReaction extends TypedBase {
+    convoId: string;
+    message: TypeUnion<DeletedMessageView | MessageView>;
+    reaction: ReactionView;
+    rev: string;
+  }
   interface LogUnmuteConvo extends TypedBase {
     convoId: string;
     rev: string;
+  }
+  interface MessageAndReactionView extends TypedBase {
+    message: MessageView;
+    reaction: ReactionView;
   }
   interface MessageInput extends TypedBase {
     /**
@@ -2492,8 +2746,18 @@ export declare namespace ChatBskyConvoDefs {
     embed?: TypeUnion<AppBskyEmbedRecord.View>;
     /** Annotations of text (mentions, URLs, hashtags, etc) */
     facets?: AppBskyRichtextFacet.Main[];
+    /** Reactions to this message, in ascending order of creation time. */
+    reactions?: ReactionView[];
   }
   interface MessageViewSender extends TypedBase {
+    did: At.DID;
+  }
+  interface ReactionView extends TypedBase {
+    createdAt: string;
+    sender: ReactionViewSender;
+    value: string;
+  }
+  interface ReactionViewSender extends TypedBase {
     did: At.DID;
   }
 }
@@ -2555,10 +2819,15 @@ export declare namespace ChatBskyConvoGetLog {
   interface Output extends TypedBase {
     logs: TypeUnion<
       | ChatBskyConvoDefs.LogAcceptConvo
+      | ChatBskyConvoDefs.LogAddReaction
       | ChatBskyConvoDefs.LogBeginConvo
       | ChatBskyConvoDefs.LogCreateMessage
       | ChatBskyConvoDefs.LogDeleteMessage
       | ChatBskyConvoDefs.LogLeaveConvo
+      | ChatBskyConvoDefs.LogMuteConvo
+      | ChatBskyConvoDefs.LogReadMessage
+      | ChatBskyConvoDefs.LogRemoveReaction
+      | ChatBskyConvoDefs.LogUnmuteConvo
     >[];
     cursor?: string;
   }
@@ -2621,6 +2890,28 @@ export declare namespace ChatBskyConvoMuteConvo {
   }
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
+  }
+}
+
+/** Removes an emoji reaction from a message. Requires authentication. It is idempotent, so multiple calls from the same user with the same emoji result in that reaction not being present, even if it already wasn't. */
+export declare namespace ChatBskyConvoRemoveReaction {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    messageId: string;
+    /**
+     * Minimum string length: 1
+     * Maximum string length: 64
+     * Maximum grapheme length: 1
+     */
+    value: string;
+  }
+  interface Output extends TypedBase {
+    message: ChatBskyConvoDefs.MessageView;
+  }
+  interface Errors extends TypedBase {
+    ReactionMessageDeleted: {};
+    ReactionInvalidValue: {};
   }
 }
 
@@ -2921,6 +3212,17 @@ export declare namespace ComAtprotoAdminUpdateAccountPassword {
   interface Input extends TypedBase {
     did: At.DID;
     password: string;
+  }
+  type Output = undefined;
+}
+
+/** Administrative action to update an account's signing key in their Did document. */
+export declare namespace ComAtprotoAdminUpdateAccountSigningKey {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    did: At.DID;
+    /** Did-key formatted public key */
+    signingKey: At.DID;
   }
   type Output = undefined;
 }
@@ -3935,6 +4237,16 @@ export declare namespace ComAtprotoServerUpdateEmail {
   }
 }
 
+export declare namespace ComAtprotoSyncDefs {
+  type HostStatus =
+    | "active"
+    | "banned"
+    | "idle"
+    | "offline"
+    | "throttled"
+    | (string & {});
+}
+
 /** Get a blob associated with a given account. Returns the full blob as originally uploaded. Does not require auth; implemented by PDS. */
 export declare namespace ComAtprotoSyncGetBlob {
   interface Params extends TypedBase {
@@ -4000,6 +4312,26 @@ export declare namespace ComAtprotoSyncGetHead {
   }
   interface Errors extends TypedBase {
     HeadNotFound: {};
+  }
+}
+
+/** Returns information about a specified upstream host, as consumed by the server. Implemented by relays. */
+export declare namespace ComAtprotoSyncGetHostStatus {
+  interface Params extends TypedBase {
+    /** Hostname of the host (eg, PDS or relay) being queried. */
+    hostname: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    hostname: string;
+    /** Number of accounts on the server which are associated with the upstream host. Note that the upstream may actually have more accounts. */
+    accountCount?: number;
+    /** Recent repo stream event sequence number. May be delayed from actual stream processing (eg, persisted cursor not in-memory cursor). */
+    seq?: number;
+    status?: ComAtprotoSyncDefs.HostStatus;
+  }
+  interface Errors extends TypedBase {
+    HostNotFound: {};
   }
 }
 
@@ -4115,6 +4447,33 @@ export declare namespace ComAtprotoSyncListBlobs {
   }
 }
 
+/** Enumerates upstream hosts (eg, PDS or relay instances) that this service consumes from. Implemented by relays. */
+export declare namespace ComAtprotoSyncListHosts {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 1000
+     * \@default 200
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** Sort order is not formally specified. Recommended order is by time host was first seen by the server, with oldest first. */
+    hosts: Host[];
+    cursor?: string;
+  }
+  interface Host extends TypedBase {
+    /** hostname of server; not a URL (no scheme) */
+    hostname: string;
+    accountCount?: number;
+    /** Recent repo stream event sequence number. May be delayed from actual stream processing (eg, persisted cursor not in-memory cursor). */
+    seq?: number;
+    status?: ComAtprotoSyncDefs.HostStatus;
+  }
+}
+
 /** Enumerates all the DID, rev, and commit CID for all repos hosted by this service. Does not require auth; implemented by PDS and Relay. */
 export declare namespace ComAtprotoSyncListRepos {
   interface Params extends TypedBase {
@@ -4190,6 +4549,9 @@ export declare namespace ComAtprotoSyncRequestCrawl {
     hostname: string;
   }
   type Output = undefined;
+  interface Errors extends TypedBase {
+    HostBanned: {};
+  }
 }
 
 export declare namespace ComAtprotoSyncSubscribeRepos {
@@ -4423,6 +4785,58 @@ export declare namespace ToolsOzoneCommunicationUpdateTemplate {
   interface Errors extends TypedBase {
     DuplicateTemplateName: {};
   }
+}
+
+/** Get account history, e.g. log of updated email addresses or other identity information. */
+export declare namespace ToolsOzoneHostingGetAccountHistory {
+  interface Params extends TypedBase {
+    did: At.DID;
+    cursor?: string;
+    events?: (
+      | "accountCreated"
+      | "emailConfirmed"
+      | "emailUpdated"
+      | "handleUpdated"
+      | "passwordUpdated"
+      | (string & {})
+    )[];
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    events: Event[];
+    cursor?: string;
+  }
+  interface AccountCreated extends TypedBase {
+    email?: string;
+    handle?: At.Handle;
+  }
+  interface EmailConfirmed extends TypedBase {
+    email: string;
+  }
+  interface EmailUpdated extends TypedBase {
+    email: string;
+  }
+  interface Event extends TypedBase {
+    createdAt: string;
+    createdBy: string;
+    details: TypeUnion<
+      | AccountCreated
+      | EmailConfirmed
+      | EmailUpdated
+      | HandleUpdated
+      | PasswordUpdated
+    >;
+  }
+  interface HandleUpdated extends TypedBase {
+    handle: At.Handle;
+  }
+  interface PasswordUpdated extends TypedBase {}
 }
 
 export declare namespace ToolsOzoneModerationDefs {
@@ -4816,6 +5230,15 @@ export declare namespace ToolsOzoneModerationDefs {
     tags?: string[];
     takendown?: boolean;
   }
+  /** Detailed view of a subject. For record subjects, the author's repo and profile will be returned. */
+  interface SubjectView extends TypedBase {
+    subject: string;
+    type: ComAtprotoModerationDefs.SubjectType;
+    profile?: never;
+    record?: RecordViewDetail;
+    repo?: RepoViewDetail;
+    status?: SubjectStatusView;
+  }
   interface VideoDetails extends TypedBase {
     height: number;
     length: number;
@@ -4933,6 +5356,21 @@ export declare namespace ToolsOzoneModerationGetRepos {
       | ToolsOzoneModerationDefs.RepoViewDetail
       | ToolsOzoneModerationDefs.RepoViewNotFound
     >[];
+  }
+}
+
+/** Get details about subjects. */
+export declare namespace ToolsOzoneModerationGetSubjects {
+  interface Params extends TypedBase {
+    /**
+     * Minimum array length: 1
+     * Maximum array length: 100
+     */
+    subjects: string[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    subjects: ToolsOzoneModerationDefs.SubjectView[];
   }
 }
 
@@ -5122,6 +5560,8 @@ export declare namespace ToolsOzoneServerGetConfig {
     blobDivert?: ServiceConfig;
     chat?: ServiceConfig;
     pds?: ServiceConfig;
+    /** The did of the verifier used for verification. */
+    verifierDid?: At.DID;
     viewer?: ViewerConfig;
   }
   interface ServiceConfig extends TypedBase {
@@ -5132,6 +5572,7 @@ export declare namespace ToolsOzoneServerGetConfig {
       | "tools.ozone.team.defs#roleAdmin"
       | "tools.ozone.team.defs#roleModerator"
       | "tools.ozone.team.defs#roleTriage"
+      | "tools.ozone.team.defs#roleVerifier"
       | (string & {});
   }
 }
@@ -5287,6 +5728,7 @@ export declare namespace ToolsOzoneSettingDefs {
       | "tools.ozone.team.defs#roleAdmin"
       | "tools.ozone.team.defs#roleModerator"
       | "tools.ozone.team.defs#roleTriage"
+      | "tools.ozone.team.defs#roleVerifier"
       | (string & {});
     updatedAt?: string;
   }
@@ -5346,6 +5788,7 @@ export declare namespace ToolsOzoneSettingUpsertOption {
       | "tools.ozone.team.defs#roleAdmin"
       | "tools.ozone.team.defs#roleModerator"
       | "tools.ozone.team.defs#roleTriage"
+      | "tools.ozone.team.defs#roleVerifier"
       | (string & {});
   }
   interface Output extends TypedBase {
@@ -5422,6 +5865,7 @@ export declare namespace ToolsOzoneTeamAddMember {
       | "tools.ozone.team.defs#roleAdmin"
       | "tools.ozone.team.defs#roleModerator"
       | "tools.ozone.team.defs#roleTriage"
+      | "tools.ozone.team.defs#roleVerifier"
       | (string & {});
   }
   type Output = ToolsOzoneTeamDefs.Member;
@@ -5433,7 +5877,12 @@ export declare namespace ToolsOzoneTeamAddMember {
 export declare namespace ToolsOzoneTeamDefs {
   interface Member extends TypedBase {
     did: At.DID;
-    role: "#roleAdmin" | "#roleModerator" | "#roleTriage" | (string & {});
+    role:
+      | "#roleAdmin"
+      | "#roleModerator"
+      | "#roleTriage"
+      | "#roleVerifier"
+      | (string & {});
     createdAt?: string;
     disabled?: boolean;
     lastUpdatedBy?: string;
@@ -5443,6 +5892,7 @@ export declare namespace ToolsOzoneTeamDefs {
   type RoleAdmin = "tools.ozone.team.defs#roleAdmin";
   type RoleModerator = "tools.ozone.team.defs#roleModerator";
   type RoleTriage = "tools.ozone.team.defs#roleTriage";
+  type RoleVerifier = "tools.ozone.team.defs#roleVerifier";
 }
 
 /** Delete a member from ozone team. Requires admin role. */
@@ -5489,11 +5939,151 @@ export declare namespace ToolsOzoneTeamUpdateMember {
       | "tools.ozone.team.defs#roleAdmin"
       | "tools.ozone.team.defs#roleModerator"
       | "tools.ozone.team.defs#roleTriage"
+      | "tools.ozone.team.defs#roleVerifier"
       | (string & {});
   }
   type Output = ToolsOzoneTeamDefs.Member;
   interface Errors extends TypedBase {
     MemberNotFound: {};
+  }
+}
+
+export declare namespace ToolsOzoneVerificationDefs {
+  /** Verification data for the associated subject. */
+  interface VerificationView extends TypedBase {
+    /** Timestamp when the verification was created. */
+    createdAt: string;
+    /** Display name of the subject the verification applies to at the moment of verifying, which might not be the same at the time of viewing. The verification is only valid if the current displayName matches the one at the time of verifying. */
+    displayName: string;
+    /** Handle of the subject the verification applies to at the moment of verifying, which might not be the same at the time of viewing. The verification is only valid if the current handle matches the one at the time of verifying. */
+    handle: At.Handle;
+    /** The user who issued this verification. */
+    issuer: At.DID;
+    /** The subject of the verification. */
+    subject: At.DID;
+    /** The AT-URI of the verification record. */
+    uri: At.Uri;
+    issuerProfile?: never;
+    issuerRepo?: TypeUnion<
+      | ToolsOzoneModerationDefs.RepoViewDetail
+      | ToolsOzoneModerationDefs.RepoViewNotFound
+    >;
+    /** Timestamp when the verification was revoked. */
+    revokedAt?: string;
+    /** The user who revoked this verification. */
+    revokedBy?: At.DID;
+    /** Describes the reason for revocation, also indicating that the verification is no longer valid. */
+    revokeReason?: string;
+    subjectProfile?: never;
+    subjectRepo?: TypeUnion<
+      | ToolsOzoneModerationDefs.RepoViewDetail
+      | ToolsOzoneModerationDefs.RepoViewNotFound
+    >;
+  }
+}
+
+/** Grant verifications to multiple subjects. Allows batch processing of up to 100 verifications at once. */
+export declare namespace ToolsOzoneVerificationGrantVerifications {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /**
+     * Array of verification requests to process
+     * Maximum array length: 100
+     */
+    verifications: VerificationInput[];
+  }
+  interface Output extends TypedBase {
+    failedVerifications: GrantError[];
+    verifications: ToolsOzoneVerificationDefs.VerificationView[];
+  }
+  /** Error object for failed verifications. */
+  interface GrantError extends TypedBase {
+    /** Error message describing the reason for failure. */
+    error: string;
+    /** The did of the subject being verified */
+    subject: At.DID;
+  }
+  interface VerificationInput extends TypedBase {
+    /** Display name of the subject the verification applies to at the moment of verifying. */
+    displayName: string;
+    /** Handle of the subject the verification applies to at the moment of verifying. */
+    handle: At.Handle;
+    /** The did of the subject being verified */
+    subject: At.DID;
+    /** Timestamp for verification record. Defaults to current time when not specified. */
+    createdAt?: string;
+  }
+}
+
+/** List verifications */
+export declare namespace ToolsOzoneVerificationListVerifications {
+  interface Params extends TypedBase {
+    /** Filter to verifications created after this timestamp */
+    createdAfter?: string;
+    /** Filter to verifications created before this timestamp */
+    createdBefore?: string;
+    /** Pagination cursor */
+    cursor?: string;
+    /** Filter to verifications that are revoked or not. By default, includes both. */
+    isRevoked?: boolean;
+    /**
+     * Filter to verifications from specific issuers
+     * Maximum array length: 100
+     */
+    issuers?: At.DID[];
+    /**
+     * Maximum number of results to return
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /**
+     * Sort direction for creation date
+     * \@default "desc"
+     */
+    sortDirection?: "asc" | "desc";
+    /**
+     * Filter to specific verified DIDs
+     * Maximum array length: 100
+     */
+    subjects?: At.DID[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    verifications: ToolsOzoneVerificationDefs.VerificationView[];
+    cursor?: string;
+  }
+}
+
+/** Revoke previously granted verifications in batches of up to 100. */
+export declare namespace ToolsOzoneVerificationRevokeVerifications {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /**
+     * Array of verification record uris to revoke
+     * Maximum array length: 100
+     * The AT-URI of the verification record to revoke.
+     */
+    uris: At.Uri[];
+    /**
+     * Reason for revoking the verification. This is optional and can be omitted if not needed.
+     * Maximum string length: 1000
+     */
+    revokeReason?: string;
+  }
+  interface Output extends TypedBase {
+    /** List of verification uris that couldn't be revoked, including failure reasons */
+    failedRevocations: RevokeError[];
+    /** List of verification uris successfully revoked */
+    revokedVerifications: At.Uri[];
+  }
+  /** Error object for failed revocations */
+  interface RevokeError extends TypedBase {
+    /** Description of the error that occurred during revocation. */
+    error: string;
+    /** The AT-URI of the verification record that failed to revoke. */
+    uri: At.Uri;
   }
 }
 
@@ -5511,6 +6101,7 @@ export declare interface Records extends RecordBase {
   "app.bsky.graph.listblock": AppBskyGraphListblock.Record;
   "app.bsky.graph.listitem": AppBskyGraphListitem.Record;
   "app.bsky.graph.starterpack": AppBskyGraphStarterpack.Record;
+  "app.bsky.graph.verification": AppBskyGraphVerification.Record;
   "app.bsky.labeler.service": AppBskyLabelerService.Record;
   "chat.bsky.actor.declaration": ChatBskyActorDeclaration.Record;
   "com.atproto.lexicon.schema": ComAtprotoLexiconSchema.Record;
@@ -5686,6 +6277,30 @@ export declare interface Queries {
     params: AppBskyUnspeccedGetPopularFeedGenerators.Params;
     output: AppBskyUnspeccedGetPopularFeedGenerators.Output;
   };
+  "app.bsky.unspecced.getSuggestedFeeds": {
+    params: AppBskyUnspeccedGetSuggestedFeeds.Params;
+    output: AppBskyUnspeccedGetSuggestedFeeds.Output;
+  };
+  "app.bsky.unspecced.getSuggestedFeedsSkeleton": {
+    params: AppBskyUnspeccedGetSuggestedFeedsSkeleton.Params;
+    output: AppBskyUnspeccedGetSuggestedFeedsSkeleton.Output;
+  };
+  "app.bsky.unspecced.getSuggestedStarterPacks": {
+    params: AppBskyUnspeccedGetSuggestedStarterPacks.Params;
+    output: AppBskyUnspeccedGetSuggestedStarterPacks.Output;
+  };
+  "app.bsky.unspecced.getSuggestedStarterPacksSkeleton": {
+    params: AppBskyUnspeccedGetSuggestedStarterPacksSkeleton.Params;
+    output: AppBskyUnspeccedGetSuggestedStarterPacksSkeleton.Output;
+  };
+  "app.bsky.unspecced.getSuggestedUsers": {
+    params: AppBskyUnspeccedGetSuggestedUsers.Params;
+    output: AppBskyUnspeccedGetSuggestedUsers.Output;
+  };
+  "app.bsky.unspecced.getSuggestedUsersSkeleton": {
+    params: AppBskyUnspeccedGetSuggestedUsersSkeleton.Params;
+    output: AppBskyUnspeccedGetSuggestedUsersSkeleton.Output;
+  };
   "app.bsky.unspecced.getSuggestionsSkeleton": {
     params: AppBskyUnspeccedGetSuggestionsSkeleton.Params;
     output: AppBskyUnspeccedGetSuggestionsSkeleton.Output;
@@ -5696,6 +6311,14 @@ export declare interface Queries {
   "app.bsky.unspecced.getTrendingTopics": {
     params: AppBskyUnspeccedGetTrendingTopics.Params;
     output: AppBskyUnspeccedGetTrendingTopics.Output;
+  };
+  "app.bsky.unspecced.getTrends": {
+    params: AppBskyUnspeccedGetTrends.Params;
+    output: AppBskyUnspeccedGetTrends.Output;
+  };
+  "app.bsky.unspecced.getTrendsSkeleton": {
+    params: AppBskyUnspeccedGetTrendsSkeleton.Params;
+    output: AppBskyUnspeccedGetTrendsSkeleton.Output;
   };
   "app.bsky.unspecced.searchActorsSkeleton": {
     params: AppBskyUnspeccedSearchActorsSkeleton.Params;
@@ -5842,6 +6465,10 @@ export declare interface Queries {
     params: ComAtprotoSyncGetHead.Params;
     output: ComAtprotoSyncGetHead.Output;
   };
+  "com.atproto.sync.getHostStatus": {
+    params: ComAtprotoSyncGetHostStatus.Params;
+    output: ComAtprotoSyncGetHostStatus.Output;
+  };
   "com.atproto.sync.getLatestCommit": {
     params: ComAtprotoSyncGetLatestCommit.Params;
     output: ComAtprotoSyncGetLatestCommit.Output;
@@ -5862,6 +6489,10 @@ export declare interface Queries {
     params: ComAtprotoSyncListBlobs.Params;
     output: ComAtprotoSyncListBlobs.Output;
   };
+  "com.atproto.sync.listHosts": {
+    params: ComAtprotoSyncListHosts.Params;
+    output: ComAtprotoSyncListHosts.Output;
+  };
   "com.atproto.sync.listRepos": {
     params: ComAtprotoSyncListRepos.Params;
     output: ComAtprotoSyncListRepos.Output;
@@ -5879,6 +6510,10 @@ export declare interface Queries {
   };
   "tools.ozone.communication.listTemplates": {
     output: ToolsOzoneCommunicationListTemplates.Output;
+  };
+  "tools.ozone.hosting.getAccountHistory": {
+    params: ToolsOzoneHostingGetAccountHistory.Params;
+    output: ToolsOzoneHostingGetAccountHistory.Output;
   };
   "tools.ozone.moderation.getEvent": {
     params: ToolsOzoneModerationGetEvent.Params;
@@ -5903,6 +6538,10 @@ export declare interface Queries {
   "tools.ozone.moderation.getRepos": {
     params: ToolsOzoneModerationGetRepos.Params;
     output: ToolsOzoneModerationGetRepos.Output;
+  };
+  "tools.ozone.moderation.getSubjects": {
+    params: ToolsOzoneModerationGetSubjects.Params;
+    output: ToolsOzoneModerationGetSubjects.Output;
   };
   "tools.ozone.moderation.queryEvents": {
     params: ToolsOzoneModerationQueryEvents.Params;
@@ -5946,6 +6585,10 @@ export declare interface Queries {
   "tools.ozone.team.listMembers": {
     params: ToolsOzoneTeamListMembers.Params;
     output: ToolsOzoneTeamListMembers.Output;
+  };
+  "tools.ozone.verification.listVerifications": {
+    params: ToolsOzoneVerificationListVerifications.Params;
+    output: ToolsOzoneVerificationListVerifications.Output;
   };
 }
 
@@ -5995,6 +6638,10 @@ export declare interface Procedures {
     input: ChatBskyConvoAcceptConvo.Input;
     output: ChatBskyConvoAcceptConvo.Output;
   };
+  "chat.bsky.convo.addReaction": {
+    input: ChatBskyConvoAddReaction.Input;
+    output: ChatBskyConvoAddReaction.Output;
+  };
   "chat.bsky.convo.deleteMessageForSelf": {
     input: ChatBskyConvoDeleteMessageForSelf.Input;
     output: ChatBskyConvoDeleteMessageForSelf.Output;
@@ -6006,6 +6653,10 @@ export declare interface Procedures {
   "chat.bsky.convo.muteConvo": {
     input: ChatBskyConvoMuteConvo.Input;
     output: ChatBskyConvoMuteConvo.Output;
+  };
+  "chat.bsky.convo.removeReaction": {
+    input: ChatBskyConvoRemoveReaction.Input;
+    output: ChatBskyConvoRemoveReaction.Output;
   };
   "chat.bsky.convo.sendMessage": {
     input: ChatBskyConvoSendMessage.Input;
@@ -6054,6 +6705,9 @@ export declare interface Procedures {
   };
   "com.atproto.admin.updateAccountPassword": {
     input: ComAtprotoAdminUpdateAccountPassword.Input;
+  };
+  "com.atproto.admin.updateAccountSigningKey": {
+    input: ComAtprotoAdminUpdateAccountSigningKey.Input;
   };
   "com.atproto.admin.updateSubjectStatus": {
     input: ComAtprotoAdminUpdateSubjectStatus.Input;
@@ -6216,6 +6870,14 @@ export declare interface Procedures {
   "tools.ozone.team.updateMember": {
     input: ToolsOzoneTeamUpdateMember.Input;
     output: ToolsOzoneTeamUpdateMember.Output;
+  };
+  "tools.ozone.verification.grantVerifications": {
+    input: ToolsOzoneVerificationGrantVerifications.Input;
+    output: ToolsOzoneVerificationGrantVerifications.Output;
+  };
+  "tools.ozone.verification.revokeVerifications": {
+    input: ToolsOzoneVerificationRevokeVerifications.Input;
+    output: ToolsOzoneVerificationRevokeVerifications.Output;
   };
 }
 
