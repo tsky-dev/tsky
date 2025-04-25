@@ -19,6 +19,11 @@ export function resolveRefType(def: RefSchema): string {
 }
 
 export function resolveUnionType(def: RefUnionSchema): string {
+  // empty refs ([]) never has any type
+  if (def.refs.length === 0) {
+    return 'never';
+  }
+
   const refs = def.refs.toSorted(sortName).map((raw) => {
     const [ns, ref] = raw.split('#');
     return (ns ? `${toNamespace(ns)}.` : '') + (ref ? toUpper(ref) : 'Main');
