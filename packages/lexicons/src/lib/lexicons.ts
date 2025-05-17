@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-05-06T03:41:45.469Z
+ * Generated on: 2025-05-17T03:40:45.178Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/3a65b68f7dc63c8bfbea0ae615f8ae984272f2e4/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/86b3153884099ceeb0cfdb9d2bfdd447c39fb35a/lexicons
  */
 
 /** Base type with optional type field */
@@ -2227,6 +2227,11 @@ export declare namespace AppBskyUnspeccedGetConfig {
   type Input = undefined;
   interface Output extends TypedBase {
     checkEmailConfirmed?: boolean;
+    liveNow?: LiveNowConfig[];
+  }
+  interface LiveNowConfig extends TypedBase {
+    did: At.DID;
+    domains: string[];
   }
 }
 
