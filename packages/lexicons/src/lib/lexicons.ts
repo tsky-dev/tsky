@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-05-21T03:45:42.866Z
+ * Generated on: 2025-05-21T07:58:36.895Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/80f402f3663af08fd048300738d04c67aa2b9cb8/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/24e20b96c6d39100cfe016c549e2f4d9184fa770/lexicons
  */
 
 /** Base type with optional type field */
@@ -1371,7 +1371,7 @@ export declare namespace AppBskyFeedRepost {
   }
 }
 
-/** Find posts matching search criteria, returning views of those posts. */
+/** Find posts matching search criteria, returning views of those posts. Note that this API endpoint may require authentication (eg, not public) for some service providers and implementations. */
 export declare namespace AppBskyFeedSearchPosts {
   interface Params extends TypedBase {
     /** Search query string; syntax, phrase, boolean, and faceting is unspecified, but Lucene query syntax is recommended. */
