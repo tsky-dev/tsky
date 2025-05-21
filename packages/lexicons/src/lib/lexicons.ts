@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-05-17T03:40:45.178Z
+ * Generated on: 2025-05-21T03:45:42.866Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/86b3153884099ceeb0cfdb9d2bfdd447c39fb35a/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/80f402f3663af08fd048300738d04c67aa2b9cb8/lexicons
  */
 
 /** Base type with optional type field */
@@ -730,6 +730,11 @@ export declare namespace AppBskyFeedDefs {
     feedContext?: string;
     reason?: TypeUnion<ReasonPin | ReasonRepost>;
     reply?: ReplyRef;
+    /**
+     * Unique identifier per request that may be passed back alongside interactions.
+     * Maximum string length: 100
+     */
+    reqId?: string;
   }
   interface GeneratorView extends TypedBase {
     cid: At.CID;
@@ -779,6 +784,11 @@ export declare namespace AppBskyFeedDefs {
      */
     feedContext?: string;
     item?: At.Uri;
+    /**
+     * Unique identifier per request that may be passed back alongside interactions.
+     * Maximum string length: 100
+     */
+    reqId?: string;
   }
   type InteractionLike = "app.bsky.feed.defs#interactionLike";
   type InteractionQuote = "app.bsky.feed.defs#interactionQuote";
@@ -1055,6 +1065,11 @@ export declare namespace AppBskyFeedGetFeedSkeleton {
   interface Output extends TypedBase {
     feed: AppBskyFeedDefs.SkeletonFeedPost[];
     cursor?: string;
+    /**
+     * Unique identifier per request that may be passed back alongside interactions.
+     * Maximum string length: 100
+     */
+    reqId?: string;
   }
   interface Errors extends TypedBase {
     UnknownFeed: {};
