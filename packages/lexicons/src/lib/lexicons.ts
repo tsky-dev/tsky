@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-05-21T07:58:36.895Z
+ * Generated on: 2025-05-27T03:47:16.612Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/24e20b96c6d39100cfe016c549e2f4d9184fa770/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/79a75bb1ed8fc14cefa246621fe1faeebf3fc159/lexicons
  */
 
 /** Base type with optional type field */
@@ -825,6 +825,8 @@ export declare namespace AppBskyFeedDefs {
   interface ReasonRepost extends TypedBase {
     by: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
+    cid?: At.CID;
+    uri?: At.Uri;
   }
   interface ReplyRef extends TypedBase {
     parent: TypeUnion<BlockedPost | NotFoundPost | PostView>;
@@ -1269,6 +1271,7 @@ export declare namespace AppBskyFeedLike {
     $type: "app.bsky.feed.like";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
+    via?: ComAtprotoRepoStrongRef.Main;
   }
 }
 
@@ -1368,6 +1371,7 @@ export declare namespace AppBskyFeedRepost {
     $type: "app.bsky.feed.repost";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
+    via?: ComAtprotoRepoStrongRef.Main;
   }
 }
 
@@ -2118,14 +2122,16 @@ export declare namespace AppBskyNotificationListNotifications {
     cid: At.CID;
     indexedAt: string;
     isRead: boolean;
-    /** Expected values are 'like', 'repost', 'follow', 'mention', 'reply', 'quote', 'starterpack-joined', 'verified', and 'unverified'. */
+    /** The reason why this notification was delivered - e.g. your post was liked, or you received a new follower. */
     reason:
       | "follow"
       | "like"
+      | "like-via-repost"
       | "mention"
       | "quote"
       | "reply"
       | "repost"
+      | "repost-via-repost"
       | "starterpack-joined"
       | "unverified"
       | "verified"
