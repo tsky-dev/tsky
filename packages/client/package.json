@@ -1,7 +1,7 @@
 {
   "name": "@tsky/client",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -30,6 +30,15 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "test:typescript": "tsc --noEmit"
+  },
+  "homepage": "https://tsky.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsky-dev/tsky.git",
+    "directory": "packages/client"
+  },
+  "bugs": {
+    "url": "https://github.com/tsky-dev/tsky/issues"
   },
   "dependencies": {
     "@atcute/client": "^2.0.6"
