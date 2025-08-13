@@ -368,9 +368,25 @@ export const userTypeSchema = t.isOneOf([
 
 export type UserTypeSchema = t.InferType<typeof userTypeSchema>;
 
+/**
+ * represents a namespace identifier (NSID)
+ */
+export type Nsid = `${string}.${string}.${string}`;
+
 const NSID_RE =
-  /^[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\.[a-z]{1,63}$/i;
-const nsidType = t.cascade(t.isString(), (value) => NSID_RE.test(value));
+  /^[a-zA-Z](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+\.[a-zA-Z][a-zA-Z0-9]{0,62}?$/;
+
+// #__NO_SIDE_EFFECTS__
+export const isNsid = (input: unknown): input is Nsid => {
+  return (
+    typeof input === 'string' &&
+    input.length >= 5 &&
+    input.length <= 317 &&
+    NSID_RE.test(input)
+  );
+};
+
+const nsidType = t.cascade(t.isString(), (value) => isNsid(value));
 
 export const documentSchema = t.cascade(
   t.isObject({

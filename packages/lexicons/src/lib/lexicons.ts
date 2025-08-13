@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-04-25T03:38:32.224Z
+ * Generated on: 2025-05-21T07:58:36.895Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/45354c84f898d79f58c14b5c0da3661beb7353f9/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/24e20b96c6d39100cfe016c549e2f4d9184fa770/lexicons
  */
 
 /** Base type with optional type field */
@@ -268,6 +268,7 @@ export declare namespace AppBskyActorDefs {
     displayName?: string;
     indexedAt?: string;
     labels?: ComAtprotoLabelDefs.Label[];
+    status?: StatusView;
     verification?: VerificationState;
     viewer?: ViewerState;
   }
@@ -283,6 +284,7 @@ export declare namespace AppBskyActorDefs {
      */
     displayName?: string;
     labels?: ComAtprotoLabelDefs.Label[];
+    status?: StatusView;
     verification?: VerificationState;
     viewer?: ViewerState;
   }
@@ -310,6 +312,7 @@ export declare namespace AppBskyActorDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     pinnedPost?: ComAtprotoRepoStrongRef.Main;
     postsCount?: number;
+    status?: StatusView;
     verification?: VerificationState;
     viewer?: ViewerState;
   }
@@ -326,6 +329,17 @@ export declare namespace AppBskyActorDefs {
   }
   interface SavedFeedsPrefV2 extends TypedBase {
     items: AppBskyActorDefs.SavedFeed[];
+  }
+  interface StatusView extends TypedBase {
+    record: unknown;
+    /** The status for the account. */
+    status: "app.bsky.actor.status#live" | (string & {});
+    /** An optional embed associated with the status. */
+    embed?: TypeUnion<AppBskyEmbedExternal.View>;
+    /** The date when this status will expire. The application might choose to no longer return the status after expiration. */
+    expiresAt?: string;
+    /** True if the status is not expired, false if it is expired. Only present if expiration was set. */
+    isActive?: boolean;
   }
   interface ThreadViewPref extends TypedBase {
     /** Show followed users at the top of all replies. */
@@ -514,6 +528,24 @@ export declare namespace AppBskyActorSearchActorsTypeahead {
   }
 }
 
+export declare namespace AppBskyActorStatus {
+  /** A declaration of a Bluesky account status. */
+  interface Record extends RecordBase {
+    $type: "app.bsky.actor.status";
+    createdAt: string;
+    /** The status for the account. */
+    status: "app.bsky.actor.status#live" | (string & {});
+    /**
+     * The duration of the status in minutes. Applications can choose to impose minimum and maximum limits.
+     * Minimum: 1
+     */
+    durationMinutes?: number;
+    /** An optional embed associated with the status. */
+    embed?: TypeUnion<AppBskyEmbedExternal.Main>;
+  }
+  type Live = "app.bsky.actor.status#live";
+}
+
 export declare namespace AppBskyEmbedDefs {
   /** width:height represents an aspect ratio. It may be approximate, and may not correspond to absolute dimensions in any given unit. */
   interface AspectRatio extends TypedBase {
@@ -698,6 +730,11 @@ export declare namespace AppBskyFeedDefs {
     feedContext?: string;
     reason?: TypeUnion<ReasonPin | ReasonRepost>;
     reply?: ReplyRef;
+    /**
+     * Unique identifier per request that may be passed back alongside interactions.
+     * Maximum string length: 100
+     */
+    reqId?: string;
   }
   interface GeneratorView extends TypedBase {
     cid: At.CID;
@@ -747,6 +784,11 @@ export declare namespace AppBskyFeedDefs {
      */
     feedContext?: string;
     item?: At.Uri;
+    /**
+     * Unique identifier per request that may be passed back alongside interactions.
+     * Maximum string length: 100
+     */
+    reqId?: string;
   }
   type InteractionLike = "app.bsky.feed.defs#interactionLike";
   type InteractionQuote = "app.bsky.feed.defs#interactionQuote";
@@ -1023,6 +1065,11 @@ export declare namespace AppBskyFeedGetFeedSkeleton {
   interface Output extends TypedBase {
     feed: AppBskyFeedDefs.SkeletonFeedPost[];
     cursor?: string;
+    /**
+     * Unique identifier per request that may be passed back alongside interactions.
+     * Maximum string length: 100
+     */
+    reqId?: string;
   }
   interface Errors extends TypedBase {
     UnknownFeed: {};
@@ -1324,7 +1371,7 @@ export declare namespace AppBskyFeedRepost {
   }
 }
 
-/** Find posts matching search criteria, returning views of those posts. */
+/** Find posts matching search criteria, returning views of those posts. Note that this API endpoint may require authentication (eg, not public) for some service providers and implementations. */
 export declare namespace AppBskyFeedSearchPosts {
   interface Params extends TypedBase {
     /** Search query string; syntax, phrase, boolean, and faceting is unspecified, but Lucene query syntax is recommended. */
@@ -2195,6 +2242,11 @@ export declare namespace AppBskyUnspeccedGetConfig {
   type Input = undefined;
   interface Output extends TypedBase {
     checkEmailConfirmed?: boolean;
+    liveNow?: LiveNowConfig[];
+  }
+  interface LiveNowConfig extends TypedBase {
+    did: At.DID;
+    domains: string[];
   }
 }
 
@@ -6089,6 +6141,7 @@ export declare namespace ToolsOzoneVerificationRevokeVerifications {
 
 export declare interface Records extends RecordBase {
   "app.bsky.actor.profile": AppBskyActorProfile.Record;
+  "app.bsky.actor.status": AppBskyActorStatus.Record;
   "app.bsky.feed.generator": AppBskyFeedGenerator.Record;
   "app.bsky.feed.like": AppBskyFeedLike.Record;
   "app.bsky.feed.post": AppBskyFeedPost.Record;
