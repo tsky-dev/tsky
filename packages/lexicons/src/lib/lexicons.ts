@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-05-21T07:58:36.895Z
+ * Generated on: 2025-08-13T03:54:02.686Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/24e20b96c6d39100cfe016c549e2f4d9184fa770/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/c370d933b76b4e15b83a82b40d1b6a32bd54add6/lexicons
  */
 
 /** Base type with optional type field */
@@ -241,11 +241,15 @@ export declare namespace AppBskyActorDefs {
     | VerificationPrefs
   >[];
   interface ProfileAssociated extends TypedBase {
+    activitySubscription?: ProfileAssociatedActivitySubscription;
     chat?: ProfileAssociatedChat;
     feedgens?: number;
     labeler?: boolean;
     lists?: number;
     starterPacks?: number;
+  }
+  interface ProfileAssociatedActivitySubscription extends TypedBase {
+    allowSubscriptions: "followers" | "mutuals" | "none" | (string & {});
   }
   interface ProfileAssociatedChat extends TypedBase {
     allowIncoming: "all" | "following" | "none" | (string & {});
@@ -383,11 +387,14 @@ export declare namespace AppBskyActorDefs {
   }
   /** Metadata about the requesting account's relationship with the subject account. Only has meaningful content for authed requests. */
   interface ViewerState extends TypedBase {
+    /** This property is present only in selected cases, as an optimization. */
+    activitySubscription?: AppBskyNotificationDefs.ActivitySubscription;
     blockedBy?: boolean;
     blocking?: At.Uri;
     blockingByList?: AppBskyGraphDefs.ListViewBasic;
     followedBy?: At.Uri;
     following?: At.Uri;
+    /** This property is present only in selected cases, as an optimization. */
     knownFollowers?: KnownFollowers;
     muted?: boolean;
     mutedByList?: AppBskyGraphDefs.ListViewBasic;
@@ -825,6 +832,8 @@ export declare namespace AppBskyFeedDefs {
   interface ReasonRepost extends TypedBase {
     by: AppBskyActorDefs.ProfileViewBasic;
     indexedAt: string;
+    cid?: At.CID;
+    uri?: At.Uri;
   }
   interface ReplyRef extends TypedBase {
     parent: TypeUnion<BlockedPost | NotFoundPost | PostView>;
@@ -1269,6 +1278,7 @@ export declare namespace AppBskyFeedLike {
     $type: "app.bsky.feed.like";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
+    via?: ComAtprotoRepoStrongRef.Main;
   }
 }
 
@@ -1368,6 +1378,7 @@ export declare namespace AppBskyFeedRepost {
     $type: "app.bsky.feed.repost";
     createdAt: string;
     subject: ComAtprotoRepoStrongRef.Main;
+    via?: ComAtprotoRepoStrongRef.Main;
   }
 }
 
@@ -1748,11 +1759,40 @@ export declare namespace AppBskyGraphGetLists {
      * \@default 50
      */
     limit?: number;
+    /** Optional filter by list purpose. If not specified, all supported types are returned. */
+    purposes?: ("curatelist" | "modlist" | (string & {}))[];
   }
   type Input = undefined;
   interface Output extends TypedBase {
     lists: AppBskyGraphDefs.ListView[];
     cursor?: string;
+  }
+}
+
+/** Enumerates the lists created by the session user, and includes membership information about `actor` in those lists. Only supports curation and moderation lists (no reference lists, used in starter packs). Requires auth. */
+export declare namespace AppBskyGraphGetListsWithMembership {
+  interface Params extends TypedBase {
+    /** The account (actor) to check for membership. */
+    actor: string;
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /** Optional filter by list purpose. If not specified, all supported types are returned. */
+    purposes?: ("curatelist" | "modlist" | (string & {}))[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    listsWithMembership: ListWithMembership[];
+    cursor?: string;
+  }
+  /** A list and an optional list item indicating membership of a target user to that list. */
+  interface ListWithMembership extends TypedBase {
+    list: AppBskyGraphDefs.ListView;
+    listItem?: AppBskyGraphDefs.ListItemView;
   }
 }
 
@@ -1818,6 +1858,31 @@ export declare namespace AppBskyGraphGetStarterPacks {
   type Input = undefined;
   interface Output extends TypedBase {
     starterPacks: AppBskyGraphDefs.StarterPackViewBasic[];
+  }
+}
+
+/** Enumerates the starter packs created by the session user, and includes membership information about `actor` in those starter packs. Requires auth. */
+export declare namespace AppBskyGraphGetStarterPacksWithMembership {
+  interface Params extends TypedBase {
+    /** The account (actor) to check for membership. */
+    actor: string;
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    starterPacksWithMembership: StarterPackWithMembership[];
+    cursor?: string;
+  }
+  /** A starter pack and an optional list item indicating membership of a target user to that starter pack. */
+  interface StarterPackWithMembership extends TypedBase {
+    starterPack: AppBskyGraphDefs.StarterPackView;
+    listItem?: AppBskyGraphDefs.ListItemView;
   }
 }
 
@@ -2072,8 +2137,62 @@ export declare namespace AppBskyLabelerService {
   }
 }
 
+export declare namespace AppBskyNotificationDeclaration {
+  /** A declaration of the user's choices related to notifications that can be produced by them. */
+  interface Record extends RecordBase {
+    $type: "app.bsky.notification.declaration";
+    /** A declaration of the user's preference for allowing activity subscriptions from other users. Absence of a record implies 'followers'. */
+    allowSubscriptions: "followers" | "mutuals" | "none" | (string & {});
+  }
+}
+
 export declare namespace AppBskyNotificationDefs {
+  interface ActivitySubscription extends TypedBase {
+    post: boolean;
+    reply: boolean;
+  }
+  interface ChatPreference extends TypedBase {
+    include: "accepted" | "all" | (string & {});
+    push: boolean;
+  }
+  interface FilterablePreference extends TypedBase {
+    include: "all" | "follows" | (string & {});
+    list: boolean;
+    push: boolean;
+  }
+  interface Preference extends TypedBase {
+    list: boolean;
+    push: boolean;
+  }
+  interface Preferences extends TypedBase {
+    chat: ChatPreference;
+    follow: FilterablePreference;
+    like: FilterablePreference;
+    likeViaRepost: FilterablePreference;
+    mention: FilterablePreference;
+    quote: FilterablePreference;
+    reply: FilterablePreference;
+    repost: FilterablePreference;
+    repostViaRepost: FilterablePreference;
+    starterpackJoined: Preference;
+    subscribedPost: Preference;
+    unverified: Preference;
+    verified: Preference;
+  }
   interface RecordDeleted extends TypedBase {}
+  /** Object used to store activity subscription data in stash. */
+  interface SubjectActivitySubscription extends TypedBase {
+    activitySubscription: ActivitySubscription;
+    subject: At.DID;
+  }
+}
+
+/** Get notification-related preferences for an account. Requires auth. */
+export declare namespace AppBskyNotificationGetPreferences {
+  type Input = undefined;
+  interface Output extends TypedBase {
+    preferences: AppBskyNotificationDefs.Preferences;
+  }
 }
 
 /** Count the number of unread notifications for the requesting account. Requires auth. */
@@ -2085,6 +2204,24 @@ export declare namespace AppBskyNotificationGetUnreadCount {
   type Input = undefined;
   interface Output extends TypedBase {
     count: number;
+  }
+}
+
+/** Enumerate all accounts to which the requesting account is subscribed to receive notifications for. Requires auth. */
+export declare namespace AppBskyNotificationListActivitySubscriptions {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    subscriptions: AppBskyActorDefs.ProfileView[];
+    cursor?: string;
   }
 }
 
@@ -2118,15 +2255,18 @@ export declare namespace AppBskyNotificationListNotifications {
     cid: At.CID;
     indexedAt: string;
     isRead: boolean;
-    /** Expected values are 'like', 'repost', 'follow', 'mention', 'reply', 'quote', 'starterpack-joined', 'verified', and 'unverified'. */
+    /** The reason why this notification was delivered - e.g. your post was liked, or you received a new follower. */
     reason:
       | "follow"
       | "like"
+      | "like-via-repost"
       | "mention"
       | "quote"
       | "reply"
       | "repost"
+      | "repost-via-repost"
       | "starterpack-joined"
+      | "subscribed-post"
       | "unverified"
       | "verified"
       | (string & {});
@@ -2134,6 +2274,19 @@ export declare namespace AppBskyNotificationListNotifications {
     uri: At.Uri;
     labels?: ComAtprotoLabelDefs.Label[];
     reasonSubject?: At.Uri;
+  }
+}
+
+/** Puts an activity subscription entry. The key should be omitted for creation and provided for updates. Requires auth. */
+export declare namespace AppBskyNotificationPutActivitySubscription {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    activitySubscription: AppBskyNotificationDefs.ActivitySubscription;
+    subject: At.DID;
+  }
+  interface Output extends TypedBase {
+    subject: At.DID;
+    activitySubscription?: AppBskyNotificationDefs.ActivitySubscription;
   }
 }
 
@@ -2146,8 +2299,45 @@ export declare namespace AppBskyNotificationPutPreferences {
   type Output = undefined;
 }
 
+/** Set notification-related preferences for an account. Requires auth. */
+export declare namespace AppBskyNotificationPutPreferencesV2 {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    chat?: AppBskyNotificationDefs.ChatPreference;
+    follow?: AppBskyNotificationDefs.FilterablePreference;
+    like?: AppBskyNotificationDefs.FilterablePreference;
+    likeViaRepost?: AppBskyNotificationDefs.FilterablePreference;
+    mention?: AppBskyNotificationDefs.FilterablePreference;
+    quote?: AppBskyNotificationDefs.FilterablePreference;
+    reply?: AppBskyNotificationDefs.FilterablePreference;
+    repost?: AppBskyNotificationDefs.FilterablePreference;
+    repostViaRepost?: AppBskyNotificationDefs.FilterablePreference;
+    starterpackJoined?: AppBskyNotificationDefs.Preference;
+    subscribedPost?: AppBskyNotificationDefs.Preference;
+    unverified?: AppBskyNotificationDefs.Preference;
+    verified?: AppBskyNotificationDefs.Preference;
+  }
+  interface Output extends TypedBase {
+    preferences: AppBskyNotificationDefs.Preferences;
+  }
+}
+
 /** Register to receive push notifications, via a specified service, for the requesting account. Requires auth. */
 export declare namespace AppBskyNotificationRegisterPush {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    appId: string;
+    platform: "android" | "ios" | "web" | (string & {});
+    serviceDid: At.DID;
+    token: string;
+    /** Set to true when the actor is age restricted */
+    ageRestricted?: boolean;
+  }
+  type Output = undefined;
+}
+
+/** The inverse of registerPush - inform a specified service that push notifications should no longer be sent to the given token for the requesting account. Requires auth. */
+export declare namespace AppBskyNotificationUnregisterPush {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
     appId: string;
@@ -2199,6 +2389,32 @@ export declare namespace AppBskyRichtextFacet {
 }
 
 export declare namespace AppBskyUnspeccedDefs {
+  /** Object used to store age assurance data in stash. */
+  interface AgeAssuranceEvent extends TypedBase {
+    /** The unique identifier for this instance of the age assurance flow, in UUID format. */
+    attemptId: string;
+    /** The date and time of this write operation. */
+    createdAt: string;
+    /** The status of the age assurance process. */
+    status: "assured" | "pending" | "unknown" | (string & {});
+    /** The IP address used when completing the AA flow. */
+    completeIp?: string;
+    /** The user agent used when completing the AA flow. */
+    completeUa?: string;
+    /** The email used for AA. */
+    email?: string;
+    /** The IP address used when initiating the AA flow. */
+    initIp?: string;
+    /** The user agent used when initiating the AA flow. */
+    initUa?: string;
+  }
+  /** The computed state of the age assurance process, returned to the user in question on certain authenticated requests. */
+  interface AgeAssuranceState extends TypedBase {
+    /** The status of the age assurance process. */
+    status: "assured" | "blocked" | "pending" | "unknown" | (string & {});
+    /** The timestamp when this state was last updated. */
+    lastInitiatedAt?: string;
+  }
   interface SkeletonSearchActor extends TypedBase {
     did: At.DID;
   }
@@ -2218,6 +2434,24 @@ export declare namespace AppBskyUnspeccedDefs {
     category?: string;
     status?: "hot" | (string & {});
   }
+  interface ThreadItemBlocked extends TypedBase {
+    author: AppBskyFeedDefs.BlockedAuthor;
+  }
+  interface ThreadItemNotFound extends TypedBase {}
+  interface ThreadItemNoUnauthenticated extends TypedBase {}
+  interface ThreadItemPost extends TypedBase {
+    /** The threadgate created by the author indicates this post as a reply to be hidden for everyone consuming the thread. */
+    hiddenByThreadgate: boolean;
+    /** This post has more parents that were not present in the response. This is just a boolean, without the number of parents. */
+    moreParents: boolean;
+    /** This post has more replies that were not present in the response. This is a numeric value, which is best-effort and might not be accurate. */
+    moreReplies: number;
+    /** This is by an account muted by the viewer requesting it. */
+    mutedByViewer: boolean;
+    /** This post is part of a contiguous thread by the OP from the thread root. Many different OP threads can happen in the same thread. */
+    opThread: boolean;
+    post: AppBskyFeedDefs.PostView;
+  }
   interface TrendingTopic extends TypedBase {
     link: string;
     topic: string;
@@ -2234,6 +2468,13 @@ export declare namespace AppBskyUnspeccedDefs {
     category?: string;
     status?: "hot" | (string & {});
   }
+}
+
+/** Returns the current state of the age assurance process for an account. This is used to check if the user has completed age assurance or if further action is required. */
+export declare namespace AppBskyUnspeccedGetAgeAssuranceState {
+  interface Params extends TypedBase {}
+  type Input = undefined;
+  type Output = AppBskyUnspeccedDefs.AgeAssuranceState;
 }
 
 /** Get miscellaneous runtime configuration. */
@@ -2266,6 +2507,86 @@ export declare namespace AppBskyUnspeccedGetPopularFeedGenerators {
   interface Output extends TypedBase {
     feeds: AppBskyFeedDefs.GeneratorView[];
     cursor?: string;
+  }
+}
+
+/** (NOTE: this endpoint is under development and WILL change without notice. Don't use it until it is moved out of `unspecced` or your application WILL break) Get additional posts under a thread e.g. replies hidden by threadgate. Based on an anchor post at any depth of the tree, returns top-level replies below that anchor. It does not include ancestors nor the anchor itself. This should be called after exhausting `app.bsky.unspecced.getPostThreadV2`. Does not require auth, but additional metadata and filtering will be applied for authed requests. */
+export declare namespace AppBskyUnspeccedGetPostThreadOtherV2 {
+  interface Params extends TypedBase {
+    /** Reference (AT-URI) to post record. This is the anchor post. */
+    anchor: At.Uri;
+    /**
+     * Whether to prioritize posts from followed users. It only has effect when the user is authenticated.
+     * \@default false
+     */
+    prioritizeFollowedUsers?: boolean;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** A flat list of other thread items. The depth of each item is indicated by the depth property inside the item. */
+    thread: ThreadItem[];
+  }
+  interface ThreadItem extends TypedBase {
+    /** The nesting level of this item in the thread. Depth 0 means the anchor item. Items above have negative depths, items below have positive depths. */
+    depth: number;
+    uri: At.Uri;
+    value: TypeUnion<AppBskyUnspeccedDefs.ThreadItemPost>;
+  }
+}
+
+/** (NOTE: this endpoint is under development and WILL change without notice. Don't use it until it is moved out of `unspecced` or your application WILL break) Get posts in a thread. It is based in an anchor post at any depth of the tree, and returns posts above it (recursively resolving the parent, without further branching to their replies) and below it (recursive replies, with branching to their replies). Does not require auth, but additional metadata and filtering will be applied for authed requests. */
+export declare namespace AppBskyUnspeccedGetPostThreadV2 {
+  interface Params extends TypedBase {
+    /** Reference (AT-URI) to post record. This is the anchor post, and the thread will be built around it. It can be any post in the tree, not necessarily a root post. */
+    anchor: At.Uri;
+    /**
+     * Whether to include parents above the anchor.
+     * \@default true
+     */
+    above?: boolean;
+    /**
+     * How many levels of replies to include below the anchor.
+     * Minimum: 0
+     * Maximum: 20
+     * \@default 6
+     */
+    below?: number;
+    /**
+     * Maximum of replies to include at each level of the thread, except for the direct replies to the anchor, which are (NOTE: currently, during unspecced phase) all returned (NOTE: later they might be paginated).
+     * Minimum: 0
+     * Maximum: 100
+     * \@default 10
+     */
+    branchingFactor?: number;
+    /**
+     * Whether to prioritize posts from followed users. It only has effect when the user is authenticated.
+     * \@default false
+     */
+    prioritizeFollowedUsers?: boolean;
+    /**
+     * Sorting for the thread replies.
+     * \@default "oldest"
+     */
+    sort?: "newest" | "oldest" | "top" | (string & {});
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** Whether this thread has additional replies. If true, a call can be made to the `getPostThreadOtherV2` endpoint to retrieve them. */
+    hasOtherReplies: boolean;
+    /** A flat list of thread items. The depth of each item is indicated by the depth property inside the item. */
+    thread: ThreadItem[];
+    threadgate?: AppBskyFeedDefs.ThreadgateView;
+  }
+  interface ThreadItem extends TypedBase {
+    /** The nesting level of this item in the thread. Depth 0 means the anchor item. Items above have negative depths, items below have positive depths. */
+    depth: number;
+    uri: At.Uri;
+    value: TypeUnion<
+      | AppBskyUnspeccedDefs.ThreadItemBlocked
+      | AppBskyUnspeccedDefs.ThreadItemNotFound
+      | AppBskyUnspeccedDefs.ThreadItemNoUnauthenticated
+      | AppBskyUnspeccedDefs.ThreadItemPost
+    >;
   }
 }
 
@@ -2464,6 +2785,25 @@ export declare namespace AppBskyUnspeccedGetTrendsSkeleton {
   type Input = undefined;
   interface Output extends TypedBase {
     trends: AppBskyUnspeccedDefs.SkeletonTrend[];
+  }
+}
+
+/** Initiate age assurance for an account. This is a one-time action that will start the process of verifying the user's age. */
+export declare namespace AppBskyUnspeccedInitAgeAssurance {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** An ISO 3166-1 alpha-2 code of the user's location. */
+    countryCode: string;
+    /** The user's email address to receive assurance instructions. */
+    email: string;
+    /** The user's preferred language for communication during the assurance process. */
+    language: string;
+  }
+  type Output = AppBskyUnspeccedDefs.AgeAssuranceState;
+  interface Errors extends TypedBase {
+    InvalidEmail: {};
+    DidTooLong: {};
+    InvalidInitiation: {};
   }
 }
 
@@ -3578,6 +3918,7 @@ export declare namespace ComAtprotoModerationCreateReport {
     subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
     >;
+    modTool?: ModTool;
     /**
      * Additional context about the content and violation.
      * Maximum string length: 20000
@@ -3598,6 +3939,13 @@ export declare namespace ComAtprotoModerationCreateReport {
      * Maximum grapheme length: 2000
      */
     reason?: string;
+  }
+  /** Moderation tool information for tracing the source of the action */
+  interface ModTool extends TypedBase {
+    /** Name/identifier of the source (e.g., 'bsky-app/android', 'bsky-web/chrome') */
+    name: string;
+    /** Additional arbitrary metadata about the source */
+    meta?: unknown;
   }
 }
 
@@ -4717,6 +5065,39 @@ export declare namespace ComAtprotoTempAddReservedHandle {
   interface Output extends TypedBase {}
 }
 
+/** Checks whether the provided handle is available. If the handle is not available, available suggestions will be returned. Optional inputs will be used to generate suggestions. */
+export declare namespace ComAtprotoTempCheckHandleAvailability {
+  interface Params extends TypedBase {
+    /** Tentative handle. Will be checked for availability or used to build handle suggestions. */
+    handle: At.Handle;
+    /** User-provided birth date. Might be used to build handle suggestions. */
+    birthDate?: string;
+    /** User-provided email. Might be used to build handle suggestions. */
+    email?: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** Echo of the input handle. */
+    handle: At.Handle;
+    result: TypeUnion<ResultAvailable | ResultUnavailable>;
+  }
+  interface Errors extends TypedBase {
+    InvalidEmail: {};
+  }
+  /** Indicates the provided handle is available. */
+  interface ResultAvailable extends TypedBase {}
+  /** Indicates the provided handle is unavailable and gives suggestions of available handles. */
+  interface ResultUnavailable extends TypedBase {
+    /** List of suggested handles based on the provided inputs. */
+    suggestions: Suggestion[];
+  }
+  interface Suggestion extends TypedBase {
+    handle: At.Handle;
+    /** Method used to build this suggestion. Should be considered opaque to clients. Can be used for metrics. */
+    method: string;
+  }
+}
+
 /** Check accounts location in signup queue. */
 export declare namespace ComAtprotoTempCheckSignupQueue {
   interface Params extends TypedBase {}
@@ -4934,6 +5315,30 @@ export declare namespace ToolsOzoneModerationDefs {
     /** Number of times the account was taken down */
     takedownCount?: number;
   }
+  /** Age assurance info coming directly from users. Only works on DID subjects. */
+  interface AgeAssuranceEvent extends TypedBase {
+    /** The unique identifier for this instance of the age assurance flow, in UUID format. */
+    attemptId: string;
+    /** The date and time of this write operation. */
+    createdAt: string;
+    /** The status of the age assurance process. */
+    status: "assured" | "pending" | "unknown" | (string & {});
+    /** The IP address used when completing the AA flow. */
+    completeIp?: string;
+    /** The user agent used when completing the AA flow. */
+    completeUa?: string;
+    /** The IP address used when initiating the AA flow. */
+    initIp?: string;
+    /** The user agent used when initiating the AA flow. */
+    initUa?: string;
+  }
+  /** Age assurance status override by moderators. Only works on DID subjects. */
+  interface AgeAssuranceOverrideEvent extends TypedBase {
+    /** Comment describing the reason for the override. */
+    comment: string;
+    /** The status to be set for the user decided by a moderator, overriding whatever value the user had previously. Use reset to default to original state. */
+    status: "assured" | "blocked" | "reset" | (string & {});
+  }
   interface BlobView extends TypedBase {
     cid: At.CID;
     createdAt: string;
@@ -5070,6 +5475,8 @@ export declare namespace ToolsOzoneModerationDefs {
     createdBy: At.DID;
     event: TypeUnion<
       | AccountEvent
+      | AgeAssuranceEvent
+      | AgeAssuranceOverrideEvent
       | IdentityEvent
       | ModEventAcknowledge
       | ModEventComment
@@ -5097,6 +5504,7 @@ export declare namespace ToolsOzoneModerationDefs {
     >;
     subjectBlobCids: string[];
     creatorHandle?: string;
+    modTool?: ModTool;
     subjectHandle?: string;
   }
   interface ModEventViewDetail extends TypedBase {
@@ -5104,6 +5512,8 @@ export declare namespace ToolsOzoneModerationDefs {
     createdBy: At.DID;
     event: TypeUnion<
       | AccountEvent
+      | AgeAssuranceEvent
+      | AgeAssuranceOverrideEvent
       | IdentityEvent
       | ModEventAcknowledge
       | ModEventComment
@@ -5128,6 +5538,14 @@ export declare namespace ToolsOzoneModerationDefs {
       RecordView | RecordViewNotFound | RepoView | RepoViewNotFound
     >;
     subjectBlobs: BlobView[];
+    modTool?: ModTool;
+  }
+  /** Moderation tool information for tracing the source of the action */
+  interface ModTool extends TypedBase {
+    /** Name/identifier of the source (e.g., 'automod', 'ozone/workspace') */
+    name: string;
+    /** Additional arbitrary metadata about the source */
+    meta?: unknown;
   }
   /** Logs lifecycle event on a record subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
   interface RecordEvent extends TypedBase {
@@ -5250,12 +5668,24 @@ export declare namespace ToolsOzoneModerationDefs {
     id: number;
     reviewState: SubjectReviewState;
     subject: TypeUnion<
-      ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
+      | ChatBskyConvoDefs.MessageRef
+      | ComAtprotoAdminDefs.RepoRef
+      | ComAtprotoRepoStrongRef.Main
     >;
     /** Timestamp referencing when the last update was made to the moderation status of the subject */
     updatedAt: string;
     /** Statistics related to the account subject */
     accountStats?: AccountStats;
+    /** Current age assurance state of the subject. */
+    ageAssuranceState?:
+      | "assured"
+      | "blocked"
+      | "pending"
+      | "reset"
+      | "unknown"
+      | (string & {});
+    /** Whether or not the last successful update to age assurance was made by the user or admin. */
+    ageAssuranceUpdatedBy?: "admin" | "user" | (string & {});
     /** True indicates that the a previously taken moderator action was appealed against, by the author of the content. False indicates last appeal was resolved by moderators. */
     appealed?: boolean;
     /** Sticky comment on the subject. */
@@ -5291,6 +5721,12 @@ export declare namespace ToolsOzoneModerationDefs {
     repo?: RepoViewDetail;
     status?: SubjectStatusView;
   }
+  type TimelineEventPlcCreate =
+    "tools.ozone.moderation.defs#timelineEventPlcCreate";
+  type TimelineEventPlcOperation =
+    "tools.ozone.moderation.defs#timelineEventPlcOperation";
+  type TimelineEventPlcTombstone =
+    "tools.ozone.moderation.defs#timelineEventPlcTombstone";
   interface VideoDetails extends TypedBase {
     height: number;
     length: number;
@@ -5305,6 +5741,8 @@ export declare namespace ToolsOzoneModerationEmitEvent {
     createdBy: At.DID;
     event: TypeUnion<
       | ToolsOzoneModerationDefs.AccountEvent
+      | ToolsOzoneModerationDefs.AgeAssuranceEvent
+      | ToolsOzoneModerationDefs.AgeAssuranceOverrideEvent
       | ToolsOzoneModerationDefs.IdentityEvent
       | ToolsOzoneModerationDefs.ModEventAcknowledge
       | ToolsOzoneModerationDefs.ModEventComment
@@ -5327,11 +5765,67 @@ export declare namespace ToolsOzoneModerationEmitEvent {
     subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
     >;
+    /** An optional external ID for the event, used to deduplicate events from external systems. Fails when an event of same type with the same external ID exists for the same subject. */
+    externalId?: string;
+    modTool?: ToolsOzoneModerationDefs.ModTool;
     subjectBlobCids?: At.CID[];
   }
   type Output = ToolsOzoneModerationDefs.ModEventView;
   interface Errors extends TypedBase {
     SubjectHasAction: {};
+    DuplicateExternalId: {};
+  }
+}
+
+/** Get timeline of all available events of an account. This includes moderation events, account history and did history. */
+export declare namespace ToolsOzoneModerationGetAccountTimeline {
+  interface Params extends TypedBase {
+    did: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    timeline: TimelineItem[];
+  }
+  interface Errors extends TypedBase {
+    RepoNotFound: {};
+  }
+  interface TimelineItem extends TypedBase {
+    day: string;
+    summary: TimelineItemSummary[];
+  }
+  interface TimelineItemSummary extends TypedBase {
+    count: number;
+    eventSubjectType: "account" | "chat" | "record" | (string & {});
+    eventType:
+      | "tools.ozone.hosting.getAccountHistory#accountCreated"
+      | "tools.ozone.hosting.getAccountHistory#emailConfirmed"
+      | "tools.ozone.hosting.getAccountHistory#handleUpdated"
+      | "tools.ozone.hosting.getAccountHistory#passwordUpdated"
+      | "tools.ozone.moderation.defs#accountEvent"
+      | "tools.ozone.moderation.defs#ageAssuranceEvent"
+      | "tools.ozone.moderation.defs#ageAssuranceOverrideEvent"
+      | "tools.ozone.moderation.defs#identityEvent"
+      | "tools.ozone.moderation.defs#modEventAcknowledge"
+      | "tools.ozone.moderation.defs#modEventComment"
+      | "tools.ozone.moderation.defs#modEventDivert"
+      | "tools.ozone.moderation.defs#modEventEmail"
+      | "tools.ozone.moderation.defs#modEventEscalate"
+      | "tools.ozone.moderation.defs#modEventLabel"
+      | "tools.ozone.moderation.defs#modEventMute"
+      | "tools.ozone.moderation.defs#modEventMuteReporter"
+      | "tools.ozone.moderation.defs#modEventPriorityScore"
+      | "tools.ozone.moderation.defs#modEventReport"
+      | "tools.ozone.moderation.defs#modEventResolveAppeal"
+      | "tools.ozone.moderation.defs#modEventReverseTakedown"
+      | "tools.ozone.moderation.defs#modEventTag"
+      | "tools.ozone.moderation.defs#modEventTakedown"
+      | "tools.ozone.moderation.defs#modEventUnmute"
+      | "tools.ozone.moderation.defs#modEventUnmuteReporter"
+      | "tools.ozone.moderation.defs#recordEvent"
+      | "tools.ozone.moderation.defs#timelineEventPlcCreate"
+      | "tools.ozone.moderation.defs#timelineEventPlcOperation"
+      | "tools.ozone.moderation.defs#timelineEventPlcTombstone"
+      | (string & {});
   }
 }
 
@@ -5433,6 +5927,14 @@ export declare namespace ToolsOzoneModerationQueryEvents {
     addedLabels?: string[];
     /** If specified, only events where all of these tags were added are returned */
     addedTags?: string[];
+    /** If specified, only events where the age assurance state matches the given value are returned */
+    ageAssuranceState?:
+      | "assured"
+      | "blocked"
+      | "pending"
+      | "reset"
+      | "unknown"
+      | (string & {});
     /**
      * If specified, only events where the subject belongs to the given collections will be returned. When subjectType is set to 'account', this will be ignored.
      * Maximum array length: 20
@@ -5459,6 +5961,8 @@ export declare namespace ToolsOzoneModerationQueryEvents {
      * \@default 50
      */
     limit?: number;
+    /** If specified, only events where the modTool name matches any of the given values are returned */
+    modTool?: string[];
     /** If specified, only events where the action policies match any of the given policies are returned */
     policies?: string[];
     /** If specified, only events where all of these labels were removed are returned */
@@ -5487,6 +5991,14 @@ export declare namespace ToolsOzoneModerationQueryEvents {
 /** View moderation statuses of subjects (record or repo). */
 export declare namespace ToolsOzoneModerationQueryStatuses {
   interface Params extends TypedBase {
+    /** If specified, only subjects with the given age assurance state will be returned. */
+    ageAssuranceState?:
+      | "assured"
+      | "blocked"
+      | "pending"
+      | "reset"
+      | "unknown"
+      | (string & {});
     /** Get subjects in unresolved appealed status */
     appealed?: boolean;
     /**
@@ -5600,6 +6112,170 @@ export declare namespace ToolsOzoneModerationSearchRepos {
   interface Output extends TypedBase {
     repos: ToolsOzoneModerationDefs.RepoView[];
     cursor?: string;
+  }
+}
+
+/** Add a new URL safety rule */
+export declare namespace ToolsOzoneSafelinkAddRule {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    action: ToolsOzoneSafelinkDefs.ActionType;
+    pattern: ToolsOzoneSafelinkDefs.PatternType;
+    reason: ToolsOzoneSafelinkDefs.ReasonType;
+    /** The URL or domain to apply the rule to */
+    url: string;
+    /** Optional comment about the decision */
+    comment?: string;
+    /** Author DID. Only respected when using admin auth */
+    createdBy?: At.DID;
+  }
+  type Output = ToolsOzoneSafelinkDefs.Event;
+  interface Errors extends TypedBase {
+    InvalidUrl: {};
+    RuleAlreadyExists: {};
+  }
+}
+
+export declare namespace ToolsOzoneSafelinkDefs {
+  type ActionType = "block" | "warn" | "whitelist" | (string & {});
+  /** An event for URL safety decisions */
+  interface Event extends TypedBase {
+    action: ActionType;
+    createdAt: string;
+    /** DID of the user who created this rule */
+    createdBy: At.DID;
+    eventType: EventType;
+    /** Auto-incrementing row ID */
+    id: number;
+    pattern: PatternType;
+    reason: ReasonType;
+    /** The URL that this rule applies to */
+    url: string;
+    /** Optional comment about the decision */
+    comment?: string;
+  }
+  type EventType = "addRule" | "removeRule" | "updateRule" | (string & {});
+  type PatternType = "domain" | "url" | (string & {});
+  type ReasonType = "csam" | "none" | "phishing" | "spam" | (string & {});
+  /** Input for creating a URL safety rule */
+  interface UrlRule extends TypedBase {
+    action: ActionType;
+    /** Timestamp when the rule was created */
+    createdAt: string;
+    /** DID of the user added the rule. */
+    createdBy: At.DID;
+    pattern: PatternType;
+    reason: ReasonType;
+    /** Timestamp when the rule was last updated */
+    updatedAt: string;
+    /** The URL or domain to apply the rule to */
+    url: string;
+    /** Optional comment about the decision */
+    comment?: string;
+  }
+}
+
+/** Query URL safety audit events */
+export declare namespace ToolsOzoneSafelinkQueryEvents {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** Cursor for pagination */
+    cursor?: string;
+    /**
+     * Maximum number of results to return
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /** Filter by pattern type */
+    patternType?: string;
+    /**
+     * Sort direction
+     * \@default "desc"
+     */
+    sortDirection?: "asc" | "desc" | (string & {});
+    /** Filter by specific URLs or domains */
+    urls?: string[];
+  }
+  interface Output extends TypedBase {
+    events: ToolsOzoneSafelinkDefs.Event[];
+    /** Next cursor for pagination. Only present if there are more results. */
+    cursor?: string;
+  }
+}
+
+/** Query URL safety rules */
+export declare namespace ToolsOzoneSafelinkQueryRules {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** Filter by action types */
+    actions?: string[];
+    /** Filter by rule creator */
+    createdBy?: At.DID;
+    /** Cursor for pagination */
+    cursor?: string;
+    /**
+     * Maximum number of results to return
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /** Filter by pattern type */
+    patternType?: string;
+    /** Filter by reason type */
+    reason?: string;
+    /**
+     * Sort direction
+     * \@default "desc"
+     */
+    sortDirection?: "asc" | "desc" | (string & {});
+    /** Filter by specific URLs or domains */
+    urls?: string[];
+  }
+  interface Output extends TypedBase {
+    rules: ToolsOzoneSafelinkDefs.UrlRule[];
+    /** Next cursor for pagination. Only present if there are more results. */
+    cursor?: string;
+  }
+}
+
+/** Remove an existing URL safety rule */
+export declare namespace ToolsOzoneSafelinkRemoveRule {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    pattern: ToolsOzoneSafelinkDefs.PatternType;
+    /** The URL or domain to remove the rule for */
+    url: string;
+    /** Optional comment about why the rule is being removed */
+    comment?: string;
+    /** Optional DID of the user. Only respected when using admin auth. */
+    createdBy?: At.DID;
+  }
+  type Output = ToolsOzoneSafelinkDefs.Event;
+  interface Errors extends TypedBase {
+    RuleNotFound: {};
+  }
+}
+
+/** Update an existing URL safety rule */
+export declare namespace ToolsOzoneSafelinkUpdateRule {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    action: ToolsOzoneSafelinkDefs.ActionType;
+    pattern: ToolsOzoneSafelinkDefs.PatternType;
+    reason: ToolsOzoneSafelinkDefs.ReasonType;
+    /** The URL or domain to update the rule for */
+    url: string;
+    /** Optional comment about the update */
+    comment?: string;
+    /** Optional DID to credit as the creator. Only respected for admin_token authentication. */
+    createdBy?: At.DID;
+  }
+  type Output = ToolsOzoneSafelinkDefs.Event;
+  interface Errors extends TypedBase {
+    RuleNotFound: {};
   }
 }
 
@@ -6156,6 +6832,7 @@ export declare interface Records extends RecordBase {
   "app.bsky.graph.starterpack": AppBskyGraphStarterpack.Record;
   "app.bsky.graph.verification": AppBskyGraphVerification.Record;
   "app.bsky.labeler.service": AppBskyLabelerService.Record;
+  "app.bsky.notification.declaration": AppBskyNotificationDeclaration.Record;
   "chat.bsky.actor.declaration": ChatBskyActorDeclaration.Record;
   "com.atproto.lexicon.schema": ComAtprotoLexiconSchema.Record;
 }
@@ -6287,6 +6964,10 @@ export declare interface Queries {
     params: AppBskyGraphGetLists.Params;
     output: AppBskyGraphGetLists.Output;
   };
+  "app.bsky.graph.getListsWithMembership": {
+    params: AppBskyGraphGetListsWithMembership.Params;
+    output: AppBskyGraphGetListsWithMembership.Output;
+  };
   "app.bsky.graph.getMutes": {
     params: AppBskyGraphGetMutes.Params;
     output: AppBskyGraphGetMutes.Output;
@@ -6303,6 +6984,10 @@ export declare interface Queries {
     params: AppBskyGraphGetStarterPacks.Params;
     output: AppBskyGraphGetStarterPacks.Output;
   };
+  "app.bsky.graph.getStarterPacksWithMembership": {
+    params: AppBskyGraphGetStarterPacksWithMembership.Params;
+    output: AppBskyGraphGetStarterPacksWithMembership.Output;
+  };
   "app.bsky.graph.getSuggestedFollowsByActor": {
     params: AppBskyGraphGetSuggestedFollowsByActor.Params;
     output: AppBskyGraphGetSuggestedFollowsByActor.Output;
@@ -6315,13 +7000,23 @@ export declare interface Queries {
     params: AppBskyLabelerGetServices.Params;
     output: AppBskyLabelerGetServices.Output;
   };
+  "app.bsky.notification.getPreferences": {
+    output: AppBskyNotificationGetPreferences.Output;
+  };
   "app.bsky.notification.getUnreadCount": {
     params: AppBskyNotificationGetUnreadCount.Params;
     output: AppBskyNotificationGetUnreadCount.Output;
   };
+  "app.bsky.notification.listActivitySubscriptions": {
+    params: AppBskyNotificationListActivitySubscriptions.Params;
+    output: AppBskyNotificationListActivitySubscriptions.Output;
+  };
   "app.bsky.notification.listNotifications": {
     params: AppBskyNotificationListNotifications.Params;
     output: AppBskyNotificationListNotifications.Output;
+  };
+  "app.bsky.unspecced.getAgeAssuranceState": {
+    output: AppBskyUnspeccedGetAgeAssuranceState.Output;
   };
   "app.bsky.unspecced.getConfig": {
     output: AppBskyUnspeccedGetConfig.Output;
@@ -6329,6 +7024,14 @@ export declare interface Queries {
   "app.bsky.unspecced.getPopularFeedGenerators": {
     params: AppBskyUnspeccedGetPopularFeedGenerators.Params;
     output: AppBskyUnspeccedGetPopularFeedGenerators.Output;
+  };
+  "app.bsky.unspecced.getPostThreadOtherV2": {
+    params: AppBskyUnspeccedGetPostThreadOtherV2.Params;
+    output: AppBskyUnspeccedGetPostThreadOtherV2.Output;
+  };
+  "app.bsky.unspecced.getPostThreadV2": {
+    params: AppBskyUnspeccedGetPostThreadV2.Params;
+    output: AppBskyUnspeccedGetPostThreadV2.Output;
   };
   "app.bsky.unspecced.getSuggestedFeeds": {
     params: AppBskyUnspeccedGetSuggestedFeeds.Params;
@@ -6554,6 +7257,10 @@ export declare interface Queries {
     params: ComAtprotoSyncListReposByCollection.Params;
     output: ComAtprotoSyncListReposByCollection.Output;
   };
+  "com.atproto.temp.checkHandleAvailability": {
+    params: ComAtprotoTempCheckHandleAvailability.Params;
+    output: ComAtprotoTempCheckHandleAvailability.Output;
+  };
   "com.atproto.temp.checkSignupQueue": {
     output: ComAtprotoTempCheckSignupQueue.Output;
   };
@@ -6567,6 +7274,10 @@ export declare interface Queries {
   "tools.ozone.hosting.getAccountHistory": {
     params: ToolsOzoneHostingGetAccountHistory.Params;
     output: ToolsOzoneHostingGetAccountHistory.Output;
+  };
+  "tools.ozone.moderation.getAccountTimeline": {
+    params: ToolsOzoneModerationGetAccountTimeline.Params;
+    output: ToolsOzoneModerationGetAccountTimeline.Output;
   };
   "tools.ozone.moderation.getEvent": {
     params: ToolsOzoneModerationGetEvent.Params;
@@ -6671,14 +7382,29 @@ export declare interface Procedures {
   "app.bsky.graph.unmuteThread": {
     input: AppBskyGraphUnmuteThread.Input;
   };
+  "app.bsky.notification.putActivitySubscription": {
+    input: AppBskyNotificationPutActivitySubscription.Input;
+    output: AppBskyNotificationPutActivitySubscription.Output;
+  };
   "app.bsky.notification.putPreferences": {
     input: AppBskyNotificationPutPreferences.Input;
+  };
+  "app.bsky.notification.putPreferencesV2": {
+    input: AppBskyNotificationPutPreferencesV2.Input;
+    output: AppBskyNotificationPutPreferencesV2.Output;
   };
   "app.bsky.notification.registerPush": {
     input: AppBskyNotificationRegisterPush.Input;
   };
+  "app.bsky.notification.unregisterPush": {
+    input: AppBskyNotificationUnregisterPush.Input;
+  };
   "app.bsky.notification.updateSeen": {
     input: AppBskyNotificationUpdateSeen.Input;
+  };
+  "app.bsky.unspecced.initAgeAssurance": {
+    input: AppBskyUnspeccedInitAgeAssurance.Input;
+    output: AppBskyUnspeccedInitAgeAssurance.Output;
   };
   "app.bsky.video.uploadVideo": {
     input: AppBskyVideoUploadVideo.Input;
@@ -6890,6 +7616,26 @@ export declare interface Procedures {
   "tools.ozone.moderation.emitEvent": {
     input: ToolsOzoneModerationEmitEvent.Input;
     output: ToolsOzoneModerationEmitEvent.Output;
+  };
+  "tools.ozone.safelink.addRule": {
+    input: ToolsOzoneSafelinkAddRule.Input;
+    output: ToolsOzoneSafelinkAddRule.Output;
+  };
+  "tools.ozone.safelink.queryEvents": {
+    input: ToolsOzoneSafelinkQueryEvents.Input;
+    output: ToolsOzoneSafelinkQueryEvents.Output;
+  };
+  "tools.ozone.safelink.queryRules": {
+    input: ToolsOzoneSafelinkQueryRules.Input;
+    output: ToolsOzoneSafelinkQueryRules.Output;
+  };
+  "tools.ozone.safelink.removeRule": {
+    input: ToolsOzoneSafelinkRemoveRule.Input;
+    output: ToolsOzoneSafelinkRemoveRule.Output;
+  };
+  "tools.ozone.safelink.updateRule": {
+    input: ToolsOzoneSafelinkUpdateRule.Input;
+    output: ToolsOzoneSafelinkUpdateRule.Output;
   };
   "tools.ozone.set.addValues": {
     input: ToolsOzoneSetAddValues.Input;
