@@ -10,7 +10,7 @@
 
 ## ⚠️ tsky is still in development and is not ready for production use
 
-tsky is still in active development and is not ready for production use. If you want to contribute to the project, please read the [CONTRIBUTING.md](CONTRIBUTING.md) file or join our [Discord Server](https://discord.gg/KPD7XPUZn3).
+tsky is still in active development and is not ready for production use. If you want to contribute to the project, please read the [CONTRIBUTING.md](../../CONTRIBUTING.md) file or join our [Discord Server](https://discord.gg/KPD7XPUZn3).
 
 tsky is a lightweight, fast, universal and typed Bluesky API wrapper for Apps & Bots. It's designed to be easy to use, lightweight and straightforward to use. It's built with TypeScript and has full type support.
 
@@ -77,7 +77,7 @@ const user_profile = await agent.user.profile();
 
 ## Contributing
 
-If you want to contribute to this project, please read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+If you want to contribute to this project, please read the [CONTRIBUTING.md](../../CONTRIBUTING.md) file.
 
 ## License
 
