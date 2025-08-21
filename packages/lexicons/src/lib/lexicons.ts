@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-08-13T03:54:02.686Z
+ * Generated on: 2025-08-21T03:42:39.018Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/c370d933b76b4e15b83a82b40d1b6a32bd54add6/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/3156ddf61519fede9ed148478f082184a1e3242e/lexicons
  */
 
 /** Base type with optional type field */
@@ -5935,6 +5935,8 @@ export declare namespace ToolsOzoneModerationQueryEvents {
       | "reset"
       | "unknown"
       | (string & {});
+    /** If specified, only events where the batchId matches the given value are returned */
+    batchId?: string;
     /**
      * If specified, only events where the subject belongs to the given collections will be returned. When subjectType is set to 'account', this will be ignored.
      * Maximum array length: 20
