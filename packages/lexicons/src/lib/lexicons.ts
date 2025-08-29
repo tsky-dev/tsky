@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-08-21T03:42:39.018Z
+ * Generated on: 2025-08-29T03:37:42.316Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/3156ddf61519fede9ed148478f082184a1e3242e/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/66dbf8db6dd9defeee140accd2e7b25d13feb8b6/lexicons
  */
 
 /** Base type with optional type field */
@@ -5138,6 +5138,15 @@ export declare namespace ComAtprotoTempRequestPhoneVerification {
   type Output = undefined;
 }
 
+/** Revoke sessions, password, and app passwords associated with account. May be resolved by a password reset. */
+export declare namespace ComAtprotoTempRevokeAccountCredentials {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    account: string;
+  }
+  type Output = undefined;
+}
+
 /** Administrative action to create a new, re-usable communication (email for now) template. */
 export declare namespace ToolsOzoneCommunicationCreateTemplate {
   interface Params extends TypedBase {}
@@ -7603,6 +7612,9 @@ export declare interface Procedures {
   };
   "com.atproto.temp.requestPhoneVerification": {
     input: ComAtprotoTempRequestPhoneVerification.Input;
+  };
+  "com.atproto.temp.revokeAccountCredentials": {
+    input: ComAtprotoTempRevokeAccountCredentials.Input;
   };
   "tools.ozone.communication.createTemplate": {
     input: ToolsOzoneCommunicationCreateTemplate.Input;
