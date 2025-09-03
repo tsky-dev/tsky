@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-08-29T03:37:42.316Z
+ * Generated on: 2025-09-03T03:31:06.699Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/66dbf8db6dd9defeee140accd2e7b25d13feb8b6/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/a5b20f0218bd13e3c5d7681de2263dcc850b7523/lexicons
  */
 
 /** Base type with optional type field */
@@ -553,6 +553,67 @@ export declare namespace AppBskyActorStatus {
   type Live = "app.bsky.actor.status#live";
 }
 
+/** Creates a private bookmark for the specified record. Currently, only `app.bsky.feed.post` records are supported. Requires authentication. */
+export declare namespace AppBskyBookmarkCreateBookmark {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    cid: At.CID;
+    uri: At.Uri;
+  }
+  type Output = undefined;
+  interface Errors extends TypedBase {
+    UnsupportedCollection: {};
+  }
+}
+
+export declare namespace AppBskyBookmarkDefs {
+  /** Object used to store bookmark data in stash. */
+  interface Bookmark extends TypedBase {
+    /** A strong ref to the record to be bookmarked. Currently, only `app.bsky.feed.post` records are supported. */
+    subject: ComAtprotoRepoStrongRef.Main;
+  }
+  interface BookmarkView extends TypedBase {
+    item: TypeUnion<
+      | AppBskyFeedDefs.BlockedPost
+      | AppBskyFeedDefs.NotFoundPost
+      | AppBskyFeedDefs.PostView
+    >;
+    /** A strong ref to the bookmarked record. */
+    subject: ComAtprotoRepoStrongRef.Main;
+    createdAt?: string;
+  }
+}
+
+/** Deletes a private bookmark for the specified record. Currently, only `app.bsky.feed.post` records are supported. Requires authentication. */
+export declare namespace AppBskyBookmarkDeleteBookmark {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    uri: At.Uri;
+  }
+  type Output = undefined;
+  interface Errors extends TypedBase {
+    UnsupportedCollection: {};
+  }
+}
+
+/** Gets views of records bookmarked by the authenticated user. Requires authentication. */
+export declare namespace AppBskyBookmarkGetBookmarks {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    bookmarks: AppBskyBookmarkDefs.BookmarkView[];
+    cursor?: string;
+  }
+}
+
 export declare namespace AppBskyEmbedDefs {
   /** width:height represents an aspect ratio. It may be approximate, and may not correspond to absolute dimensions in any given unit. */
   interface AspectRatio extends TypedBase {
@@ -813,6 +874,7 @@ export declare namespace AppBskyFeedDefs {
     indexedAt: string;
     record: unknown;
     uri: At.Uri;
+    bookmarkCount?: number;
     embed?: TypeUnion<
       | AppBskyEmbedExternal.View
       | AppBskyEmbedImages.View
@@ -874,6 +936,7 @@ export declare namespace AppBskyFeedDefs {
   }
   /** Metadata about the requesting account's relationship with the subject content. Only has meaningful content for authed requests. */
   interface ViewerState extends TypedBase {
+    bookmarked?: boolean;
     embeddingDisabled?: boolean;
     like?: At.Uri;
     pinned?: boolean;
@@ -3964,6 +4027,51 @@ export declare namespace ComAtprotoModerationDefs {
     | "com.atproto.moderation.defs#reasonSexual"
     | "com.atproto.moderation.defs#reasonSpam"
     | "com.atproto.moderation.defs#reasonViolation"
+    | "tools.ozone.report.defs#reasonAppeal"
+    | "tools.ozone.report.defs#reasonChildSafetyCSAM"
+    | "tools.ozone.report.defs#reasonChildSafetyEndangerment"
+    | "tools.ozone.report.defs#reasonChildSafetyGroom"
+    | "tools.ozone.report.defs#reasonChildSafetyHarassment"
+    | "tools.ozone.report.defs#reasonChildSafetyMinorPrivacy"
+    | "tools.ozone.report.defs#reasonChildSafetyOther"
+    | "tools.ozone.report.defs#reasonChildSafetyPromotion"
+    | "tools.ozone.report.defs#reasonCivicDisclosure"
+    | "tools.ozone.report.defs#reasonCivicElectoralProcess"
+    | "tools.ozone.report.defs#reasonCivicImpersonation"
+    | "tools.ozone.report.defs#reasonCivicInterference"
+    | "tools.ozone.report.defs#reasonCivicMisinformation"
+    | "tools.ozone.report.defs#reasonHarassmentDoxxing"
+    | "tools.ozone.report.defs#reasonHarassmentHateSpeech"
+    | "tools.ozone.report.defs#reasonHarassmentOther"
+    | "tools.ozone.report.defs#reasonHarassmentTargeted"
+    | "tools.ozone.report.defs#reasonHarassmentTroll"
+    | "tools.ozone.report.defs#reasonMisleadingBot"
+    | "tools.ozone.report.defs#reasonMisleadingImpersonation"
+    | "tools.ozone.report.defs#reasonMisleadingMisinformation"
+    | "tools.ozone.report.defs#reasonMisleadingOther"
+    | "tools.ozone.report.defs#reasonMisleadingScam"
+    | "tools.ozone.report.defs#reasonMisleadingSpam"
+    | "tools.ozone.report.defs#reasonMisleadingSyntheticContent"
+    | "tools.ozone.report.defs#reasonRuleBanEvasion"
+    | "tools.ozone.report.defs#reasonRuleOther"
+    | "tools.ozone.report.defs#reasonRuleProhibitedSales"
+    | "tools.ozone.report.defs#reasonRuleSiteSecurity"
+    | "tools.ozone.report.defs#reasonRuleStolenContent"
+    | "tools.ozone.report.defs#reasonSexualAbuseContent"
+    | "tools.ozone.report.defs#reasonSexualAnimal"
+    | "tools.ozone.report.defs#reasonSexualDeepfake"
+    | "tools.ozone.report.defs#reasonSexualNCII"
+    | "tools.ozone.report.defs#reasonSexualOther"
+    | "tools.ozone.report.defs#reasonSexualSextortion"
+    | "tools.ozone.report.defs#reasonSexualUnlabeled"
+    | "tools.ozone.report.defs#reasonViolenceAnimalWelfare"
+    | "tools.ozone.report.defs#reasonViolenceExtremistContent"
+    | "tools.ozone.report.defs#reasonViolenceGlorification"
+    | "tools.ozone.report.defs#reasonViolenceGraphicContent"
+    | "tools.ozone.report.defs#reasonViolenceOther"
+    | "tools.ozone.report.defs#reasonViolenceSelfHarm"
+    | "tools.ozone.report.defs#reasonViolenceThreats"
+    | "tools.ozone.report.defs#reasonViolenceTrafficking"
     | (string & {});
   type ReasonViolation = "com.atproto.moderation.defs#reasonViolation";
   /** Tag describing a type of subject that might be reported. */
@@ -6126,6 +6234,128 @@ export declare namespace ToolsOzoneModerationSearchRepos {
   }
 }
 
+export declare namespace ToolsOzoneReportDefs {
+  type ReasonAppeal = "tools.ozone.report.defs#reasonAppeal";
+  type ReasonChildSafetyCSAM = "tools.ozone.report.defs#reasonChildSafetyCSAM";
+  type ReasonChildSafetyEndangerment =
+    "tools.ozone.report.defs#reasonChildSafetyEndangerment";
+  type ReasonChildSafetyGroom =
+    "tools.ozone.report.defs#reasonChildSafetyGroom";
+  type ReasonChildSafetyHarassment =
+    "tools.ozone.report.defs#reasonChildSafetyHarassment";
+  type ReasonChildSafetyMinorPrivacy =
+    "tools.ozone.report.defs#reasonChildSafetyMinorPrivacy";
+  type ReasonChildSafetyOther =
+    "tools.ozone.report.defs#reasonChildSafetyOther";
+  type ReasonChildSafetyPromotion =
+    "tools.ozone.report.defs#reasonChildSafetyPromotion";
+  type ReasonCivicDisclosure = "tools.ozone.report.defs#reasonCivicDisclosure";
+  type ReasonCivicElectoralProcess =
+    "tools.ozone.report.defs#reasonCivicElectoralProcess";
+  type ReasonCivicImpersonation =
+    "tools.ozone.report.defs#reasonCivicImpersonation";
+  type ReasonCivicInterference =
+    "tools.ozone.report.defs#reasonCivicInterference";
+  type ReasonCivicMisinformation =
+    "tools.ozone.report.defs#reasonCivicMisinformation";
+  type ReasonHarassmentDoxxing =
+    "tools.ozone.report.defs#reasonHarassmentDoxxing";
+  type ReasonHarassmentHateSpeech =
+    "tools.ozone.report.defs#reasonHarassmentHateSpeech";
+  type ReasonHarassmentOther = "tools.ozone.report.defs#reasonHarassmentOther";
+  type ReasonHarassmentTargeted =
+    "tools.ozone.report.defs#reasonHarassmentTargeted";
+  type ReasonHarassmentTroll = "tools.ozone.report.defs#reasonHarassmentTroll";
+  type ReasonMisleadingBot = "tools.ozone.report.defs#reasonMisleadingBot";
+  type ReasonMisleadingImpersonation =
+    "tools.ozone.report.defs#reasonMisleadingImpersonation";
+  type ReasonMisleadingMisinformation =
+    "tools.ozone.report.defs#reasonMisleadingMisinformation";
+  type ReasonMisleadingOther = "tools.ozone.report.defs#reasonMisleadingOther";
+  type ReasonMisleadingScam = "tools.ozone.report.defs#reasonMisleadingScam";
+  type ReasonMisleadingSpam = "tools.ozone.report.defs#reasonMisleadingSpam";
+  type ReasonMisleadingSyntheticContent =
+    "tools.ozone.report.defs#reasonMisleadingSyntheticContent";
+  type ReasonRuleBanEvasion = "tools.ozone.report.defs#reasonRuleBanEvasion";
+  type ReasonRuleOther = "tools.ozone.report.defs#reasonRuleOther";
+  type ReasonRuleProhibitedSales =
+    "tools.ozone.report.defs#reasonRuleProhibitedSales";
+  type ReasonRuleSiteSecurity =
+    "tools.ozone.report.defs#reasonRuleSiteSecurity";
+  type ReasonRuleStolenContent =
+    "tools.ozone.report.defs#reasonRuleStolenContent";
+  type ReasonSexualAbuseContent =
+    "tools.ozone.report.defs#reasonSexualAbuseContent";
+  type ReasonSexualAnimal = "tools.ozone.report.defs#reasonSexualAnimal";
+  type ReasonSexualDeepfake = "tools.ozone.report.defs#reasonSexualDeepfake";
+  type ReasonSexualNCII = "tools.ozone.report.defs#reasonSexualNCII";
+  type ReasonSexualOther = "tools.ozone.report.defs#reasonSexualOther";
+  type ReasonSexualSextortion =
+    "tools.ozone.report.defs#reasonSexualSextortion";
+  type ReasonSexualUnlabeled = "tools.ozone.report.defs#reasonSexualUnlabeled";
+  type ReasonType =
+    | "tools.ozone.report.defs#reasonAppeal"
+    | "tools.ozone.report.defs#reasonChildSafetyCSAM"
+    | "tools.ozone.report.defs#reasonChildSafetyEndangerment"
+    | "tools.ozone.report.defs#reasonChildSafetyGroom"
+    | "tools.ozone.report.defs#reasonChildSafetyHarassment"
+    | "tools.ozone.report.defs#reasonChildSafetyMinorPrivacy"
+    | "tools.ozone.report.defs#reasonChildSafetyOther"
+    | "tools.ozone.report.defs#reasonChildSafetyPromotion"
+    | "tools.ozone.report.defs#reasonCivicDisclosure"
+    | "tools.ozone.report.defs#reasonCivicElectoralProcess"
+    | "tools.ozone.report.defs#reasonCivicImpersonation"
+    | "tools.ozone.report.defs#reasonCivicInterference"
+    | "tools.ozone.report.defs#reasonCivicMisinformation"
+    | "tools.ozone.report.defs#reasonHarassmentDoxxing"
+    | "tools.ozone.report.defs#reasonHarassmentHateSpeech"
+    | "tools.ozone.report.defs#reasonHarassmentOther"
+    | "tools.ozone.report.defs#reasonHarassmentTargeted"
+    | "tools.ozone.report.defs#reasonHarassmentTroll"
+    | "tools.ozone.report.defs#reasonMisleadingBot"
+    | "tools.ozone.report.defs#reasonMisleadingImpersonation"
+    | "tools.ozone.report.defs#reasonMisleadingMisinformation"
+    | "tools.ozone.report.defs#reasonMisleadingOther"
+    | "tools.ozone.report.defs#reasonMisleadingScam"
+    | "tools.ozone.report.defs#reasonMisleadingSpam"
+    | "tools.ozone.report.defs#reasonMisleadingSyntheticContent"
+    | "tools.ozone.report.defs#reasonRuleBanEvasion"
+    | "tools.ozone.report.defs#reasonRuleOther"
+    | "tools.ozone.report.defs#reasonRuleProhibitedSales"
+    | "tools.ozone.report.defs#reasonRuleSiteSecurity"
+    | "tools.ozone.report.defs#reasonRuleStolenContent"
+    | "tools.ozone.report.defs#reasonSexualAbuseContent"
+    | "tools.ozone.report.defs#reasonSexualAnimal"
+    | "tools.ozone.report.defs#reasonSexualDeepfake"
+    | "tools.ozone.report.defs#reasonSexualNCII"
+    | "tools.ozone.report.defs#reasonSexualOther"
+    | "tools.ozone.report.defs#reasonSexualSextortion"
+    | "tools.ozone.report.defs#reasonSexualUnlabeled"
+    | "tools.ozone.report.defs#reasonViolenceAnimalWelfare"
+    | "tools.ozone.report.defs#reasonViolenceExtremistContent"
+    | "tools.ozone.report.defs#reasonViolenceGlorification"
+    | "tools.ozone.report.defs#reasonViolenceGraphicContent"
+    | "tools.ozone.report.defs#reasonViolenceOther"
+    | "tools.ozone.report.defs#reasonViolenceSelfHarm"
+    | "tools.ozone.report.defs#reasonViolenceThreats"
+    | "tools.ozone.report.defs#reasonViolenceTrafficking"
+    | (string & {});
+  type ReasonViolenceAnimalWelfare =
+    "tools.ozone.report.defs#reasonViolenceAnimalWelfare";
+  type ReasonViolenceExtremistContent =
+    "tools.ozone.report.defs#reasonViolenceExtremistContent";
+  type ReasonViolenceGlorification =
+    "tools.ozone.report.defs#reasonViolenceGlorification";
+  type ReasonViolenceGraphicContent =
+    "tools.ozone.report.defs#reasonViolenceGraphicContent";
+  type ReasonViolenceOther = "tools.ozone.report.defs#reasonViolenceOther";
+  type ReasonViolenceSelfHarm =
+    "tools.ozone.report.defs#reasonViolenceSelfHarm";
+  type ReasonViolenceThreats = "tools.ozone.report.defs#reasonViolenceThreats";
+  type ReasonViolenceTrafficking =
+    "tools.ozone.report.defs#reasonViolenceTrafficking";
+}
+
 /** Add a new URL safety rule */
 export declare namespace ToolsOzoneSafelinkAddRule {
   interface Params extends TypedBase {}
@@ -6872,6 +7102,10 @@ export declare interface Queries {
     params: AppBskyActorSearchActorsTypeahead.Params;
     output: AppBskyActorSearchActorsTypeahead.Output;
   };
+  "app.bsky.bookmark.getBookmarks": {
+    params: AppBskyBookmarkGetBookmarks.Params;
+    output: AppBskyBookmarkGetBookmarks.Output;
+  };
   "app.bsky.feed.describeFeedGenerator": {
     output: AppBskyFeedDescribeFeedGenerator.Output;
   };
@@ -7370,6 +7604,12 @@ export declare interface Queries {
 export declare interface Procedures {
   "app.bsky.actor.putPreferences": {
     input: AppBskyActorPutPreferences.Input;
+  };
+  "app.bsky.bookmark.createBookmark": {
+    input: AppBskyBookmarkCreateBookmark.Input;
+  };
+  "app.bsky.bookmark.deleteBookmark": {
+    input: AppBskyBookmarkDeleteBookmark.Input;
   };
   "app.bsky.feed.sendInteractions": {
     input: AppBskyFeedSendInteractions.Input;
