@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-09-03T03:31:06.699Z
+ * Generated on: 2025-09-10T03:31:30.265Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/a5b20f0218bd13e3c5d7681de2263dcc850b7523/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/55cc15cdd664865d53f027e63708226012dc39ef/lexicons
  */
 
 /** Base type with optional type field */
@@ -5217,6 +5217,22 @@ export declare namespace ComAtprotoTempCheckSignupQueue {
   }
 }
 
+/** Allows finding the oauth permission scope from a reference */
+export declare namespace ComAtprotoTempDereferenceScope {
+  interface Params extends TypedBase {
+    /** The scope reference (starts with 'ref:') */
+    scope: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** The full oauth permission scope */
+    scope: string;
+  }
+  interface Errors extends TypedBase {
+    InvalidScopeReference: {};
+  }
+}
+
 /**
  * DEPRECATED: use queryLabels or subscribeLabels instead -- Fetch all labels from a labeler created after a certain date.
  * \@deprecated
@@ -5612,6 +5628,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | ModEventUnmute
       | ModEventUnmuteReporter
       | RecordEvent
+      | RevokeAccountCredentialsEvent
     >;
     id: number;
     subject: TypeUnion<
@@ -5649,6 +5666,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | ModEventUnmute
       | ModEventUnmuteReporter
       | RecordEvent
+      | RevokeAccountCredentialsEvent
     >;
     id: number;
     subject: TypeUnion<
@@ -5773,6 +5791,11 @@ export declare namespace ToolsOzoneModerationDefs {
   type ReviewEscalated = "tools.ozone.moderation.defs#reviewEscalated";
   type ReviewNone = "tools.ozone.moderation.defs#reviewNone";
   type ReviewOpen = "tools.ozone.moderation.defs#reviewOpen";
+  /** Account credentials revocation by moderators. Only works on DID subjects. */
+  interface RevokeAccountCredentialsEvent extends TypedBase {
+    /** Comment describing the reason for the revocation. */
+    comment: string;
+  }
   type SubjectReviewState =
     | "#reviewClosed"
     | "#reviewEscalated"
@@ -5878,6 +5901,7 @@ export declare namespace ToolsOzoneModerationEmitEvent {
       | ToolsOzoneModerationDefs.ModEventUnmute
       | ToolsOzoneModerationDefs.ModEventUnmuteReporter
       | ToolsOzoneModerationDefs.RecordEvent
+      | ToolsOzoneModerationDefs.RevokeAccountCredentialsEvent
     >;
     subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
@@ -5939,6 +5963,7 @@ export declare namespace ToolsOzoneModerationGetAccountTimeline {
       | "tools.ozone.moderation.defs#modEventUnmute"
       | "tools.ozone.moderation.defs#modEventUnmuteReporter"
       | "tools.ozone.moderation.defs#recordEvent"
+      | "tools.ozone.moderation.defs#revokeAccountCredentialsEvent"
       | "tools.ozone.moderation.defs#timelineEventPlcCreate"
       | "tools.ozone.moderation.defs#timelineEventPlcOperation"
       | "tools.ozone.moderation.defs#timelineEventPlcTombstone"
@@ -7508,6 +7533,10 @@ export declare interface Queries {
   };
   "com.atproto.temp.checkSignupQueue": {
     output: ComAtprotoTempCheckSignupQueue.Output;
+  };
+  "com.atproto.temp.dereferenceScope": {
+    params: ComAtprotoTempDereferenceScope.Params;
+    output: ComAtprotoTempDereferenceScope.Output;
   };
   "com.atproto.temp.fetchLabels": {
     params: ComAtprotoTempFetchLabels.Params;
