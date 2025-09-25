@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-09-10T03:31:30.265Z
+ * Generated on: 2025-09-25T03:36:53.660Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/55cc15cdd664865d53f027e63708226012dc39ef/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/8dc4caf55840578c835b4c851d4a599c15627a78/lexicons
  */
 
 /** Base type with optional type field */
@@ -316,9 +316,11 @@ export declare namespace AppBskyActorDefs {
     labels?: ComAtprotoLabelDefs.Label[];
     pinnedPost?: ComAtprotoRepoStrongRef.Main;
     postsCount?: number;
+    pronouns?: string;
     status?: StatusView;
     verification?: VerificationState;
     viewer?: ViewerState;
+    website?: string;
   }
   interface SavedFeed extends TypedBase {
     id: string;
@@ -475,6 +477,13 @@ export declare namespace AppBskyActorProfile {
     /** Self-label values, specific to the Bluesky application, on the overall account. */
     labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
     pinnedPost?: ComAtprotoRepoStrongRef.Main;
+    /**
+     * Free-form pronouns text.
+     * Maximum string length: 200
+     * Maximum grapheme length: 20
+     */
+    pronouns?: string;
+    website?: string;
   }
 }
 
