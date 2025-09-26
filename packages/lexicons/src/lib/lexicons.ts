@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-09-25T03:36:53.660Z
+ * Generated on: 2025-09-26T03:34:40.912Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/8dc4caf55840578c835b4c851d4a599c15627a78/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/1a5d7427bf5811a019e7b50c7c2af711b8f2dd33/lexicons
  */
 
 /** Base type with optional type field */
@@ -2560,6 +2560,40 @@ export declare namespace AppBskyUnspeccedGetConfig {
   interface LiveNowConfig extends TypedBase {
     did: At.DID;
     domains: string[];
+  }
+}
+
+/** Get a list of suggested starterpacks for onboarding */
+export declare namespace AppBskyUnspeccedGetOnboardingSuggestedStarterPacks {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    starterPacks: AppBskyGraphDefs.StarterPackView[];
+  }
+}
+
+/** Get a skeleton of suggested starterpacks for onboarding. Intended to be called and hydrated by app.bsky.unspecced.getOnboardingSuggestedStarterPacks */
+export declare namespace AppBskyUnspeccedGetOnboardingSuggestedStarterPacksSkeleton {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 25
+     * \@default 10
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    starterPacks: At.Uri[];
   }
 }
 
@@ -7299,6 +7333,14 @@ export declare interface Queries {
   };
   "app.bsky.unspecced.getConfig": {
     output: AppBskyUnspeccedGetConfig.Output;
+  };
+  "app.bsky.unspecced.getOnboardingSuggestedStarterPacks": {
+    params: AppBskyUnspeccedGetOnboardingSuggestedStarterPacks.Params;
+    output: AppBskyUnspeccedGetOnboardingSuggestedStarterPacks.Output;
+  };
+  "app.bsky.unspecced.getOnboardingSuggestedStarterPacksSkeleton": {
+    params: AppBskyUnspeccedGetOnboardingSuggestedStarterPacksSkeleton.Params;
+    output: AppBskyUnspeccedGetOnboardingSuggestedStarterPacksSkeleton.Output;
   };
   "app.bsky.unspecced.getPopularFeedGenerators": {
     params: AppBskyUnspeccedGetPopularFeedGenerators.Params;
