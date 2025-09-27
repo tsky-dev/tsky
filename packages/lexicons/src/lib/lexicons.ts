@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-09-26T03:34:40.912Z
+ * Generated on: 2025-09-27T03:31:13.456Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/1a5d7427bf5811a019e7b50c7c2af711b8f2dd33/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/7f38ee03c01357686a4ce54cdf8eed4e37074a58/lexicons
  */
 
 /** Base type with optional type field */
@@ -272,6 +272,7 @@ export declare namespace AppBskyActorDefs {
     displayName?: string;
     indexedAt?: string;
     labels?: ComAtprotoLabelDefs.Label[];
+    pronouns?: string;
     status?: StatusView;
     verification?: VerificationState;
     viewer?: ViewerState;
@@ -288,6 +289,7 @@ export declare namespace AppBskyActorDefs {
      */
     displayName?: string;
     labels?: ComAtprotoLabelDefs.Label[];
+    pronouns?: string;
     status?: StatusView;
     verification?: VerificationState;
     viewer?: ViewerState;
