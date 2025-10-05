@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-09-27T03:31:13.456Z
+ * Generated on: 2025-10-05T03:37:55.867Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/7f38ee03c01357686a4ce54cdf8eed4e37074a58/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/591de19524639341a7dd64ee75c482c645c186fd/lexicons
  */
 
 /** Base type with optional type field */
@@ -5450,6 +5450,32 @@ export declare namespace ToolsOzoneHostingGetAccountHistory {
   interface PasswordUpdated extends TypedBase {}
 }
 
+/** Cancel all pending scheduled moderation actions for specified subjects */
+export declare namespace ToolsOzoneModerationCancelScheduledActions {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /**
+     * Array of DID subjects to cancel scheduled actions for
+     * Maximum array length: 100
+     */
+    subjects: At.DID[];
+    /** Optional comment describing the reason for cancellation */
+    comment?: string;
+  }
+  type Output = CancellationResults;
+  interface CancellationResults extends TypedBase {
+    /** DIDs for which cancellation failed with error details */
+    failed: FailedCancellation[];
+    /** DIDs for which all pending scheduled actions were successfully cancelled */
+    succeeded: At.DID[];
+  }
+  interface FailedCancellation extends TypedBase {
+    did: At.DID;
+    error: string;
+    errorCode?: string;
+  }
+}
+
 export declare namespace ToolsOzoneModerationDefs {
   /** Logs account status related events on a repo subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
   interface AccountEvent extends TypedBase {
@@ -5524,6 +5550,10 @@ export declare namespace ToolsOzoneModerationDefs {
     size: number;
     details?: TypeUnion<ImageDetails | VideoDetails>;
     moderation?: Moderation;
+  }
+  /** Logs cancellation of a scheduled takedown action for an account. */
+  interface CancelScheduledTakedownEvent extends TypedBase {
+    comment?: string;
   }
   /** Logs identity related events on a repo subject. Normally captured by automod from the firehose and emitted to ozone for historical tracking. */
   interface IdentityEvent extends TypedBase {
@@ -5655,6 +5685,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | AccountEvent
       | AgeAssuranceEvent
       | AgeAssuranceOverrideEvent
+      | CancelScheduledTakedownEvent
       | IdentityEvent
       | ModEventAcknowledge
       | ModEventComment
@@ -5674,6 +5705,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | ModEventUnmuteReporter
       | RecordEvent
       | RevokeAccountCredentialsEvent
+      | ScheduleTakedownEvent
     >;
     id: number;
     subject: TypeUnion<
@@ -5693,6 +5725,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | AccountEvent
       | AgeAssuranceEvent
       | AgeAssuranceOverrideEvent
+      | CancelScheduledTakedownEvent
       | IdentityEvent
       | ModEventAcknowledge
       | ModEventComment
@@ -5712,6 +5745,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | ModEventUnmuteReporter
       | RecordEvent
       | RevokeAccountCredentialsEvent
+      | ScheduleTakedownEvent
     >;
     id: number;
     subject: TypeUnion<
@@ -5841,6 +5875,46 @@ export declare namespace ToolsOzoneModerationDefs {
     /** Comment describing the reason for the revocation. */
     comment: string;
   }
+  /** View of a scheduled moderation action */
+  interface ScheduledActionView extends TypedBase {
+    /** Type of action to be executed */
+    action: "takedown" | (string & {});
+    /** When the scheduled action was created */
+    createdAt: string;
+    /** DID of the user who created this scheduled action */
+    createdBy: At.DID;
+    /** Subject DID for the action */
+    did: At.DID;
+    /** Auto-incrementing row ID */
+    id: number;
+    /** Current status of the scheduled action */
+    status: "cancelled" | "executed" | "failed" | "pending" | (string & {});
+    /** Serialized event object that will be propagated to the event when performed */
+    eventData?: unknown;
+    /** Earliest time to execute the action (for randomized scheduling) */
+    executeAfter?: string;
+    /** Exact time to execute the action */
+    executeAt?: string;
+    /** Latest time to execute the action (for randomized scheduling) */
+    executeUntil?: string;
+    /** ID of the moderation event created when action was successfully executed */
+    executionEventId?: number;
+    /** When the action was last attempted to be executed */
+    lastExecutedAt?: string;
+    /** Reason for the last execution failure */
+    lastFailureReason?: string;
+    /** Whether execution time should be randomized within the specified range */
+    randomizeExecution?: boolean;
+    /** When the scheduled action was last updated */
+    updatedAt?: string;
+  }
+  /** Logs a scheduled takedown action for an account. */
+  interface ScheduleTakedownEvent extends TypedBase {
+    comment?: string;
+    executeAfter?: string;
+    executeAt?: string;
+    executeUntil?: string;
+  }
   type SubjectReviewState =
     | "#reviewClosed"
     | "#reviewEscalated"
@@ -5928,6 +6002,7 @@ export declare namespace ToolsOzoneModerationEmitEvent {
       | ToolsOzoneModerationDefs.AccountEvent
       | ToolsOzoneModerationDefs.AgeAssuranceEvent
       | ToolsOzoneModerationDefs.AgeAssuranceOverrideEvent
+      | ToolsOzoneModerationDefs.CancelScheduledTakedownEvent
       | ToolsOzoneModerationDefs.IdentityEvent
       | ToolsOzoneModerationDefs.ModEventAcknowledge
       | ToolsOzoneModerationDefs.ModEventComment
@@ -5947,6 +6022,7 @@ export declare namespace ToolsOzoneModerationEmitEvent {
       | ToolsOzoneModerationDefs.ModEventUnmuteReporter
       | ToolsOzoneModerationDefs.RecordEvent
       | ToolsOzoneModerationDefs.RevokeAccountCredentialsEvent
+      | ToolsOzoneModerationDefs.ScheduleTakedownEvent
     >;
     subject: TypeUnion<
       ComAtprotoAdminDefs.RepoRef | ComAtprotoRepoStrongRef.Main
@@ -5990,6 +6066,7 @@ export declare namespace ToolsOzoneModerationGetAccountTimeline {
       | "tools.ozone.moderation.defs#accountEvent"
       | "tools.ozone.moderation.defs#ageAssuranceEvent"
       | "tools.ozone.moderation.defs#ageAssuranceOverrideEvent"
+      | "tools.ozone.moderation.defs#cancelScheduledTakedownEvent"
       | "tools.ozone.moderation.defs#identityEvent"
       | "tools.ozone.moderation.defs#modEventAcknowledge"
       | "tools.ozone.moderation.defs#modEventComment"
@@ -6009,6 +6086,7 @@ export declare namespace ToolsOzoneModerationGetAccountTimeline {
       | "tools.ozone.moderation.defs#modEventUnmuteReporter"
       | "tools.ozone.moderation.defs#recordEvent"
       | "tools.ozone.moderation.defs#revokeAccountCredentialsEvent"
+      | "tools.ozone.moderation.defs#scheduleTakedownEvent"
       | "tools.ozone.moderation.defs#timelineEventPlcCreate"
       | "tools.ozone.moderation.defs#timelineEventPlcOperation"
       | "tools.ozone.moderation.defs#timelineEventPlcTombstone"
@@ -6104,6 +6182,47 @@ export declare namespace ToolsOzoneModerationGetSubjects {
   type Input = undefined;
   interface Output extends TypedBase {
     subjects: ToolsOzoneModerationDefs.SubjectView[];
+  }
+}
+
+/** List scheduled moderation actions with optional filtering */
+export declare namespace ToolsOzoneModerationListScheduledActions {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /**
+     * Filter actions by status
+     * Minimum array length: 1
+     */
+    statuses: (
+      | "cancelled"
+      | "executed"
+      | "failed"
+      | "pending"
+      | (string & {})
+    )[];
+    /** Cursor for pagination */
+    cursor?: string;
+    /** Filter actions scheduled to execute before this time */
+    endsBefore?: string;
+    /**
+     * Maximum number of results to return
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /** Filter actions scheduled to execute after this time */
+    startsAfter?: string;
+    /**
+     * Filter actions for specific DID subjects
+     * Maximum array length: 100
+     */
+    subjects?: At.DID[];
+  }
+  interface Output extends TypedBase {
+    actions: ToolsOzoneModerationDefs.ScheduledActionView[];
+    /** Cursor for next page of results */
+    cursor?: string;
   }
 }
 
@@ -6277,6 +6396,55 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
   interface Output extends TypedBase {
     subjectStatuses: ToolsOzoneModerationDefs.SubjectStatusView[];
     cursor?: string;
+  }
+}
+
+/** Schedule a moderation action to be executed at a future time */
+export declare namespace ToolsOzoneModerationScheduleAction {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    action: TypeUnion<Takedown>;
+    createdBy: At.DID;
+    scheduling: SchedulingConfig;
+    /**
+     * Array of DID subjects to schedule the action for
+     * Maximum array length: 100
+     */
+    subjects: At.DID[];
+    /** This will be propagated to the moderation event when it is applied */
+    modTool?: ToolsOzoneModerationDefs.ModTool;
+  }
+  type Output = ScheduledActionResults;
+  interface FailedScheduling extends TypedBase {
+    error: string;
+    subject: At.DID;
+    errorCode?: string;
+  }
+  interface ScheduledActionResults extends TypedBase {
+    failed: FailedScheduling[];
+    succeeded: At.DID[];
+  }
+  /** Configuration for when the action should be executed */
+  interface SchedulingConfig extends TypedBase {
+    /** Earliest time to execute the action (for randomized scheduling) */
+    executeAfter?: string;
+    /** Exact time to execute the action */
+    executeAt?: string;
+    /** Latest time to execute the action (for randomized scheduling) */
+    executeUntil?: string;
+  }
+  /** Schedule a takedown action */
+  interface Takedown extends TypedBase {
+    /** If true, all other reports on content authored by this account will be resolved (acknowledged). */
+    acknowledgeAccountSubjects?: boolean;
+    comment?: string;
+    /** Indicates how long the takedown should be in effect before automatically expiring. */
+    durationInHours?: number;
+    /**
+     * Names/Keywords of the policies that drove the decision.
+     * Maximum array length: 5
+     */
+    policies?: string[];
   }
 }
 
@@ -7949,9 +8117,21 @@ export declare interface Procedures {
     input: ToolsOzoneCommunicationUpdateTemplate.Input;
     output: ToolsOzoneCommunicationUpdateTemplate.Output;
   };
+  "tools.ozone.moderation.cancelScheduledActions": {
+    input: ToolsOzoneModerationCancelScheduledActions.Input;
+    output: ToolsOzoneModerationCancelScheduledActions.Output;
+  };
   "tools.ozone.moderation.emitEvent": {
     input: ToolsOzoneModerationEmitEvent.Input;
     output: ToolsOzoneModerationEmitEvent.Output;
+  };
+  "tools.ozone.moderation.listScheduledActions": {
+    input: ToolsOzoneModerationListScheduledActions.Input;
+    output: ToolsOzoneModerationListScheduledActions.Output;
+  };
+  "tools.ozone.moderation.scheduleAction": {
+    input: ToolsOzoneModerationScheduleAction.Input;
+    output: ToolsOzoneModerationScheduleAction.Output;
   };
   "tools.ozone.safelink.addRule": {
     input: ToolsOzoneSafelinkAddRule.Input;
