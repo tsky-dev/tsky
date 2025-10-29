@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-10-09T03:35:44.509Z
+ * Generated on: 2025-10-29T04:10:36.941Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/1cb5b9b80c20a054f7fbacd89d0d440dc2241d81/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/cdb6b27fc6be1e858476d8c55fd0c37561b972b4/lexicons
  */
 
 /** Base type with optional type field */
@@ -260,6 +260,8 @@ export declare namespace AppBskyActorDefs {
     associated?: ProfileAssociated;
     avatar?: string;
     createdAt?: string;
+    /** Debug information for internal development */
+    debug?: unknown;
     /**
      * Maximum string length: 2560
      * Maximum grapheme length: 256
@@ -283,6 +285,8 @@ export declare namespace AppBskyActorDefs {
     associated?: ProfileAssociated;
     avatar?: string;
     createdAt?: string;
+    /** Debug information for internal development */
+    debug?: unknown;
     /**
      * Maximum string length: 640
      * Maximum grapheme length: 64
@@ -301,6 +305,8 @@ export declare namespace AppBskyActorDefs {
     avatar?: string;
     banner?: string;
     createdAt?: string;
+    /** Debug information for internal development */
+    debug?: unknown;
     /**
      * Maximum string length: 2560
      * Maximum grapheme length: 256
@@ -886,6 +892,8 @@ export declare namespace AppBskyFeedDefs {
     record: unknown;
     uri: At.Uri;
     bookmarkCount?: number;
+    /** Debug information for internal development */
+    debug?: unknown;
     embed?: TypeUnion<
       | AppBskyEmbedExternal.View
       | AppBskyEmbedImages.View
@@ -1530,7 +1538,7 @@ export declare namespace AppBskyFeedThreadgate {
     allow?: TypeUnion<FollowerRule | FollowingRule | ListRule | MentionRule>[];
     /**
      * List of hidden reply URIs.
-     * Maximum array length: 50
+     * Maximum array length: 300
      */
     hiddenReplies?: At.Uri[];
   }
@@ -5514,6 +5522,17 @@ export declare namespace ToolsOzoneModerationDefs {
     /** Number of times the account was taken down */
     takedownCount?: number;
   }
+  /** Strike information for an account */
+  interface AccountStrike extends TypedBase {
+    /** Current number of active strikes (excluding expired strikes) */
+    activeStrikeCount?: number;
+    /** Timestamp of the first strike received */
+    firstStrikeAt?: string;
+    /** Timestamp of the most recent strike received */
+    lastStrikeAt?: string;
+    /** Total number of strikes ever received (including expired strikes) */
+    totalStrikeCount?: number;
+  }
   /** Age assurance info coming directly from users. Only works on DID subjects. */
   interface AgeAssuranceEvent extends TypedBase {
     /** The unique identifier for this instance of the age assurance flow, in UUID format. */
@@ -5591,6 +5610,17 @@ export declare namespace ToolsOzoneModerationDefs {
     comment?: string;
     /** The content of the email sent to the user. */
     content?: string;
+    /**
+     * Names/Keywords of the policies that necessitated the email.
+     * Maximum array length: 5
+     */
+    policies?: string[];
+    /** Severity level of the violation. Normally 'sev-1' that adds strike on repeat offense */
+    severityLevel?: string;
+    /** Number of strikes to assign to the user for this violation. Normally 0 as an indicator of a warning and only added as a strike on a repeat offense. */
+    strikeCount?: number;
+    /** When the strike should expire. If not provided, the strike never expires. */
+    strikeExpiresAt?: string;
   }
   interface ModEventEscalate extends TypedBase {
     comment?: string;
@@ -5640,6 +5670,15 @@ export declare namespace ToolsOzoneModerationDefs {
   interface ModEventReverseTakedown extends TypedBase {
     /** Describe reasoning behind the reversal. */
     comment?: string;
+    /**
+     * Names/Keywords of the policy infraction for which takedown is being reversed.
+     * Maximum array length: 5
+     */
+    policies?: string[];
+    /** Severity level of the violation. Usually set from the last policy infraction's severity. */
+    severityLevel?: string;
+    /** Number of strikes to subtract from the user's strike count. Usually set from the last policy infraction's severity. */
+    strikeCount?: number;
   }
   /** Add/Remove a tag on a subject */
   interface ModEventTag extends TypedBase {
@@ -5662,6 +5701,12 @@ export declare namespace ToolsOzoneModerationDefs {
      * Maximum array length: 5
      */
     policies?: string[];
+    /** Severity level of the violation (e.g., 'sev-0', 'sev-1', 'sev-2', etc.). */
+    severityLevel?: string;
+    /** Number of strikes to assign to the user for this violation. */
+    strikeCount?: number;
+    /** When the strike should expire. If not provided, the strike never expires. */
+    strikeExpiresAt?: string;
   }
   /** Unmute action on a subject */
   interface ModEventUnmute extends TypedBase {
@@ -5930,6 +5975,8 @@ export declare namespace ToolsOzoneModerationDefs {
     updatedAt: string;
     /** Statistics related to the account subject */
     accountStats?: AccountStats;
+    /** Strike information for the account (account-level only) */
+    accountStrike?: AccountStrike;
     /** Current age assurance state of the subject. */
     ageAssuranceState?:
       | "assured"
@@ -6283,6 +6330,8 @@ export declare namespace ToolsOzoneModerationQueryEvents {
     subjectType?: "account" | "record" | (string & {});
     /** The types of events (fully qualified string in the format of tools.ozone.moderation.defs#modEvent<name>) to filter by. If not specified, all events are returned. */
     types?: string[];
+    /** If specified, only events where strikeCount value is set are returned. */
+    withStrike?: boolean;
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -6346,6 +6395,11 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     minPriorityScore?: number;
     /** If specified, only subjects that belong to an account that has at least this many reported records will be returned. */
     minReportedRecordsCount?: number;
+    /**
+     * If specified, only subjects that belong to an account that has at least this many active strikes will be returned.
+     * Minimum: 1
+     */
+    minStrikeCount?: number;
     /** If specified, only subjects that belong to an account that has at least this many taken down records will be returned. */
     minTakendownRecordsCount?: number;
     /** When set to true, only muted subjects and reporters will be returned. */
