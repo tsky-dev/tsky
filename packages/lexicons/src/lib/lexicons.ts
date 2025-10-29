@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-10-05T03:37:55.867Z
+ * Generated on: 2025-10-09T03:35:44.509Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/591de19524639341a7dd64ee75c482c645c186fd/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/1cb5b9b80c20a054f7fbacd89d0d440dc2241d81/lexicons
  */
 
 /** Base type with optional type field */
@@ -4074,47 +4074,42 @@ export declare namespace ComAtprotoModerationDefs {
     | "com.atproto.moderation.defs#reasonViolation"
     | "tools.ozone.report.defs#reasonAppeal"
     | "tools.ozone.report.defs#reasonChildSafetyCSAM"
-    | "tools.ozone.report.defs#reasonChildSafetyEndangerment"
     | "tools.ozone.report.defs#reasonChildSafetyGroom"
     | "tools.ozone.report.defs#reasonChildSafetyHarassment"
-    | "tools.ozone.report.defs#reasonChildSafetyMinorPrivacy"
     | "tools.ozone.report.defs#reasonChildSafetyOther"
-    | "tools.ozone.report.defs#reasonChildSafetyPromotion"
-    | "tools.ozone.report.defs#reasonCivicDisclosure"
-    | "tools.ozone.report.defs#reasonCivicElectoralProcess"
-    | "tools.ozone.report.defs#reasonCivicImpersonation"
-    | "tools.ozone.report.defs#reasonCivicInterference"
-    | "tools.ozone.report.defs#reasonCivicMisinformation"
+    | "tools.ozone.report.defs#reasonChildSafetyPrivacy"
     | "tools.ozone.report.defs#reasonHarassmentDoxxing"
     | "tools.ozone.report.defs#reasonHarassmentHateSpeech"
     | "tools.ozone.report.defs#reasonHarassmentOther"
     | "tools.ozone.report.defs#reasonHarassmentTargeted"
     | "tools.ozone.report.defs#reasonHarassmentTroll"
     | "tools.ozone.report.defs#reasonMisleadingBot"
+    | "tools.ozone.report.defs#reasonMisleadingElections"
     | "tools.ozone.report.defs#reasonMisleadingImpersonation"
-    | "tools.ozone.report.defs#reasonMisleadingMisinformation"
     | "tools.ozone.report.defs#reasonMisleadingOther"
     | "tools.ozone.report.defs#reasonMisleadingScam"
     | "tools.ozone.report.defs#reasonMisleadingSpam"
-    | "tools.ozone.report.defs#reasonMisleadingSyntheticContent"
+    | "tools.ozone.report.defs#reasonOther"
     | "tools.ozone.report.defs#reasonRuleBanEvasion"
     | "tools.ozone.report.defs#reasonRuleOther"
     | "tools.ozone.report.defs#reasonRuleProhibitedSales"
     | "tools.ozone.report.defs#reasonRuleSiteSecurity"
-    | "tools.ozone.report.defs#reasonRuleStolenContent"
+    | "tools.ozone.report.defs#reasonSelfHarmContent"
+    | "tools.ozone.report.defs#reasonSelfHarmED"
+    | "tools.ozone.report.defs#reasonSelfHarmOther"
+    | "tools.ozone.report.defs#reasonSelfHarmStunts"
+    | "tools.ozone.report.defs#reasonSelfHarmSubstances"
     | "tools.ozone.report.defs#reasonSexualAbuseContent"
     | "tools.ozone.report.defs#reasonSexualAnimal"
     | "tools.ozone.report.defs#reasonSexualDeepfake"
     | "tools.ozone.report.defs#reasonSexualNCII"
     | "tools.ozone.report.defs#reasonSexualOther"
-    | "tools.ozone.report.defs#reasonSexualSextortion"
     | "tools.ozone.report.defs#reasonSexualUnlabeled"
-    | "tools.ozone.report.defs#reasonViolenceAnimalWelfare"
+    | "tools.ozone.report.defs#reasonViolenceAnimal"
     | "tools.ozone.report.defs#reasonViolenceExtremistContent"
     | "tools.ozone.report.defs#reasonViolenceGlorification"
     | "tools.ozone.report.defs#reasonViolenceGraphicContent"
     | "tools.ozone.report.defs#reasonViolenceOther"
-    | "tools.ozone.report.defs#reasonViolenceSelfHarm"
     | "tools.ozone.report.defs#reasonViolenceThreats"
     | "tools.ozone.report.defs#reasonViolenceTrafficking"
     | (string & {});
@@ -6475,27 +6470,14 @@ export declare namespace ToolsOzoneModerationSearchRepos {
 export declare namespace ToolsOzoneReportDefs {
   type ReasonAppeal = "tools.ozone.report.defs#reasonAppeal";
   type ReasonChildSafetyCSAM = "tools.ozone.report.defs#reasonChildSafetyCSAM";
-  type ReasonChildSafetyEndangerment =
-    "tools.ozone.report.defs#reasonChildSafetyEndangerment";
   type ReasonChildSafetyGroom =
     "tools.ozone.report.defs#reasonChildSafetyGroom";
   type ReasonChildSafetyHarassment =
     "tools.ozone.report.defs#reasonChildSafetyHarassment";
-  type ReasonChildSafetyMinorPrivacy =
-    "tools.ozone.report.defs#reasonChildSafetyMinorPrivacy";
   type ReasonChildSafetyOther =
     "tools.ozone.report.defs#reasonChildSafetyOther";
-  type ReasonChildSafetyPromotion =
-    "tools.ozone.report.defs#reasonChildSafetyPromotion";
-  type ReasonCivicDisclosure = "tools.ozone.report.defs#reasonCivicDisclosure";
-  type ReasonCivicElectoralProcess =
-    "tools.ozone.report.defs#reasonCivicElectoralProcess";
-  type ReasonCivicImpersonation =
-    "tools.ozone.report.defs#reasonCivicImpersonation";
-  type ReasonCivicInterference =
-    "tools.ozone.report.defs#reasonCivicInterference";
-  type ReasonCivicMisinformation =
-    "tools.ozone.report.defs#reasonCivicMisinformation";
+  type ReasonChildSafetyPrivacy =
+    "tools.ozone.report.defs#reasonChildSafetyPrivacy";
   type ReasonHarassmentDoxxing =
     "tools.ozone.report.defs#reasonHarassmentDoxxing";
   type ReasonHarassmentHateSpeech =
@@ -6505,81 +6487,76 @@ export declare namespace ToolsOzoneReportDefs {
     "tools.ozone.report.defs#reasonHarassmentTargeted";
   type ReasonHarassmentTroll = "tools.ozone.report.defs#reasonHarassmentTroll";
   type ReasonMisleadingBot = "tools.ozone.report.defs#reasonMisleadingBot";
+  type ReasonMisleadingElections =
+    "tools.ozone.report.defs#reasonMisleadingElections";
   type ReasonMisleadingImpersonation =
     "tools.ozone.report.defs#reasonMisleadingImpersonation";
-  type ReasonMisleadingMisinformation =
-    "tools.ozone.report.defs#reasonMisleadingMisinformation";
   type ReasonMisleadingOther = "tools.ozone.report.defs#reasonMisleadingOther";
   type ReasonMisleadingScam = "tools.ozone.report.defs#reasonMisleadingScam";
   type ReasonMisleadingSpam = "tools.ozone.report.defs#reasonMisleadingSpam";
-  type ReasonMisleadingSyntheticContent =
-    "tools.ozone.report.defs#reasonMisleadingSyntheticContent";
+  type ReasonOther = "tools.ozone.report.defs#reasonOther";
   type ReasonRuleBanEvasion = "tools.ozone.report.defs#reasonRuleBanEvasion";
   type ReasonRuleOther = "tools.ozone.report.defs#reasonRuleOther";
   type ReasonRuleProhibitedSales =
     "tools.ozone.report.defs#reasonRuleProhibitedSales";
   type ReasonRuleSiteSecurity =
     "tools.ozone.report.defs#reasonRuleSiteSecurity";
-  type ReasonRuleStolenContent =
-    "tools.ozone.report.defs#reasonRuleStolenContent";
+  type ReasonSelfHarmContent = "tools.ozone.report.defs#reasonSelfHarmContent";
+  type ReasonSelfHarmED = "tools.ozone.report.defs#reasonSelfHarmED";
+  type ReasonSelfHarmOther = "tools.ozone.report.defs#reasonSelfHarmOther";
+  type ReasonSelfHarmStunts = "tools.ozone.report.defs#reasonSelfHarmStunts";
+  type ReasonSelfHarmSubstances =
+    "tools.ozone.report.defs#reasonSelfHarmSubstances";
   type ReasonSexualAbuseContent =
     "tools.ozone.report.defs#reasonSexualAbuseContent";
   type ReasonSexualAnimal = "tools.ozone.report.defs#reasonSexualAnimal";
   type ReasonSexualDeepfake = "tools.ozone.report.defs#reasonSexualDeepfake";
   type ReasonSexualNCII = "tools.ozone.report.defs#reasonSexualNCII";
   type ReasonSexualOther = "tools.ozone.report.defs#reasonSexualOther";
-  type ReasonSexualSextortion =
-    "tools.ozone.report.defs#reasonSexualSextortion";
   type ReasonSexualUnlabeled = "tools.ozone.report.defs#reasonSexualUnlabeled";
   type ReasonType =
     | "tools.ozone.report.defs#reasonAppeal"
     | "tools.ozone.report.defs#reasonChildSafetyCSAM"
-    | "tools.ozone.report.defs#reasonChildSafetyEndangerment"
     | "tools.ozone.report.defs#reasonChildSafetyGroom"
     | "tools.ozone.report.defs#reasonChildSafetyHarassment"
-    | "tools.ozone.report.defs#reasonChildSafetyMinorPrivacy"
     | "tools.ozone.report.defs#reasonChildSafetyOther"
-    | "tools.ozone.report.defs#reasonChildSafetyPromotion"
-    | "tools.ozone.report.defs#reasonCivicDisclosure"
-    | "tools.ozone.report.defs#reasonCivicElectoralProcess"
-    | "tools.ozone.report.defs#reasonCivicImpersonation"
-    | "tools.ozone.report.defs#reasonCivicInterference"
-    | "tools.ozone.report.defs#reasonCivicMisinformation"
+    | "tools.ozone.report.defs#reasonChildSafetyPrivacy"
     | "tools.ozone.report.defs#reasonHarassmentDoxxing"
     | "tools.ozone.report.defs#reasonHarassmentHateSpeech"
     | "tools.ozone.report.defs#reasonHarassmentOther"
     | "tools.ozone.report.defs#reasonHarassmentTargeted"
     | "tools.ozone.report.defs#reasonHarassmentTroll"
     | "tools.ozone.report.defs#reasonMisleadingBot"
+    | "tools.ozone.report.defs#reasonMisleadingElections"
     | "tools.ozone.report.defs#reasonMisleadingImpersonation"
-    | "tools.ozone.report.defs#reasonMisleadingMisinformation"
     | "tools.ozone.report.defs#reasonMisleadingOther"
     | "tools.ozone.report.defs#reasonMisleadingScam"
     | "tools.ozone.report.defs#reasonMisleadingSpam"
-    | "tools.ozone.report.defs#reasonMisleadingSyntheticContent"
+    | "tools.ozone.report.defs#reasonOther"
     | "tools.ozone.report.defs#reasonRuleBanEvasion"
     | "tools.ozone.report.defs#reasonRuleOther"
     | "tools.ozone.report.defs#reasonRuleProhibitedSales"
     | "tools.ozone.report.defs#reasonRuleSiteSecurity"
-    | "tools.ozone.report.defs#reasonRuleStolenContent"
+    | "tools.ozone.report.defs#reasonSelfHarmContent"
+    | "tools.ozone.report.defs#reasonSelfHarmED"
+    | "tools.ozone.report.defs#reasonSelfHarmOther"
+    | "tools.ozone.report.defs#reasonSelfHarmStunts"
+    | "tools.ozone.report.defs#reasonSelfHarmSubstances"
     | "tools.ozone.report.defs#reasonSexualAbuseContent"
     | "tools.ozone.report.defs#reasonSexualAnimal"
     | "tools.ozone.report.defs#reasonSexualDeepfake"
     | "tools.ozone.report.defs#reasonSexualNCII"
     | "tools.ozone.report.defs#reasonSexualOther"
-    | "tools.ozone.report.defs#reasonSexualSextortion"
     | "tools.ozone.report.defs#reasonSexualUnlabeled"
-    | "tools.ozone.report.defs#reasonViolenceAnimalWelfare"
+    | "tools.ozone.report.defs#reasonViolenceAnimal"
     | "tools.ozone.report.defs#reasonViolenceExtremistContent"
     | "tools.ozone.report.defs#reasonViolenceGlorification"
     | "tools.ozone.report.defs#reasonViolenceGraphicContent"
     | "tools.ozone.report.defs#reasonViolenceOther"
-    | "tools.ozone.report.defs#reasonViolenceSelfHarm"
     | "tools.ozone.report.defs#reasonViolenceThreats"
     | "tools.ozone.report.defs#reasonViolenceTrafficking"
     | (string & {});
-  type ReasonViolenceAnimalWelfare =
-    "tools.ozone.report.defs#reasonViolenceAnimalWelfare";
+  type ReasonViolenceAnimal = "tools.ozone.report.defs#reasonViolenceAnimal";
   type ReasonViolenceExtremistContent =
     "tools.ozone.report.defs#reasonViolenceExtremistContent";
   type ReasonViolenceGlorification =
@@ -6587,8 +6564,6 @@ export declare namespace ToolsOzoneReportDefs {
   type ReasonViolenceGraphicContent =
     "tools.ozone.report.defs#reasonViolenceGraphicContent";
   type ReasonViolenceOther = "tools.ozone.report.defs#reasonViolenceOther";
-  type ReasonViolenceSelfHarm =
-    "tools.ozone.report.defs#reasonViolenceSelfHarm";
   type ReasonViolenceThreats = "tools.ozone.report.defs#reasonViolenceThreats";
   type ReasonViolenceTrafficking =
     "tools.ozone.report.defs#reasonViolenceTrafficking";
