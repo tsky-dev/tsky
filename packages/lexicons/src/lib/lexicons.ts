@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-10-29T04:10:36.941Z
+ * Generated on: 2025-10-30T03:46:18.781Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/cdb6b27fc6be1e858476d8c55fd0c37561b972b4/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/15fe80c39ff428652dfaa6b30c0bdb59a145aac6/lexicons
  */
 
 /** Base type with optional type field */
@@ -1672,6 +1672,7 @@ export declare namespace AppBskyGraphFollow {
     $type: "app.bsky.graph.follow";
     createdAt: string;
     subject: At.DID;
+    via?: ComAtprotoRepoStrongRef.Main;
   }
 }
 
