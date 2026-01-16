@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2025-10-30T03:46:18.781Z
+ * Generated on: 2026-01-16T12:18:49.085Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/15fe80c39ff428652dfaa6b30c0bdb59a145aac6/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/f7ae44d7f6d83aa97b7bdae1a755fbe321b50d42/lexicons
  */
 
 /** Base type with optional type field */
@@ -82,6 +82,22 @@ export declare namespace At {
     };
     size: number;
   }
+
+  /** Individual permission entry */
+  interface Permission {
+    resource: string;
+    lxm?: string[];
+    action?: string[];
+    collection?: string[];
+    inheritAud?: boolean;
+  }
+
+  /** Set of permissions */
+  interface PermissionSet {
+    title?: string;
+    detail?: string;
+    permissions: Permission[];
+  }
 }
 export declare namespace AppBskyActorDefs {
   interface AdultContentPref extends TypedBase {
@@ -113,6 +129,15 @@ export declare namespace AppBskyActorDefs {
     visibility: "hide" | "ignore" | "show" | "warn" | (string & {});
     /** Which labeler does this preference apply to? If undefined, applies globally. */
     labelerDid?: At.DID;
+  }
+  /** Read-only preference containing value(s) inferred from the user's declared birthdate. Absence of this preference object in the response indicates that the user has not made a declaration. */
+  interface DeclaredAgePref extends TypedBase {
+    /** Indicates if the user has declared that they are over 13 years of age. */
+    isOverAge13?: boolean;
+    /** Indicates if the user has declared that they are over 16 years of age. */
+    isOverAge16?: boolean;
+    /** Indicates if the user has declared that they are over 18 years of age. */
+    isOverAge18?: boolean;
   }
   interface FeedViewPref extends TypedBase {
     /** The URI of the feed, or an identifier which describes the feed. */
@@ -158,6 +183,16 @@ export declare namespace AppBskyActorDefs {
   }
   interface LabelersPref extends TypedBase {
     labelers: LabelerPrefItem[];
+  }
+  /** Preferences for live events. */
+  interface LiveEventPreferences extends TypedBase {
+    /** A list of feed IDs that the user has hidden from live events. */
+    hiddenFeedIds?: string[];
+    /**
+     * Whether to hide all feeds from live events.
+     * \@default false
+     */
+    hideAllFeeds?: boolean;
   }
   /** A word that the account owner has muted. */
   interface MutedWord extends TypedBase {
@@ -228,10 +263,12 @@ export declare namespace AppBskyActorDefs {
     | AdultContentPref
     | BskyAppStatePref
     | ContentLabelPref
+    | DeclaredAgePref
     | FeedViewPref
     | HiddenPostsPref
     | InterestsPref
     | LabelersPref
+    | LiveEventPreferences
     | MutedWordsPref
     | PersonalDetailsPref
     | PostInteractionSettingsPref
@@ -348,16 +385,18 @@ export declare namespace AppBskyActorDefs {
     record: unknown;
     /** The status for the account. */
     status: "app.bsky.actor.status#live" | (string & {});
+    cid?: At.CID;
     /** An optional embed associated with the status. */
     embed?: TypeUnion<AppBskyEmbedExternal.View>;
     /** The date when this status will expire. The application might choose to no longer return the status after expiration. */
     expiresAt?: string;
     /** True if the status is not expired, false if it is expired. Only present if expiration was set. */
     isActive?: boolean;
+    /** True if the user's go-live access has been disabled by a moderator, false otherwise. */
+    isDisabled?: boolean;
+    uri?: At.Uri;
   }
   interface ThreadViewPref extends TypedBase {
-    /** Show followed users at the top of all replies. */
-    prioritizeFollowedUsers?: boolean;
     /** Sorting mode for threads. */
     sort?:
       | "hotness"
@@ -493,6 +532,7 @@ export declare namespace AppBskyActorProfile {
     pronouns?: string;
     website?: string;
   }
+  type Main = Record;
 }
 
 /** Set the private preferences attached to the account. */
@@ -567,7 +607,189 @@ export declare namespace AppBskyActorStatus {
     /** An optional embed associated with the status. */
     embed?: TypeUnion<AppBskyEmbedExternal.Main>;
   }
+  type Main = Record;
   type Live = "app.bsky.actor.status#live";
+}
+
+/** Initiate Age Assurance for an account. */
+export declare namespace AppBskyAgeassuranceBegin {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** An ISO 3166-1 alpha-2 code of the user's location. */
+    countryCode: string;
+    /** The user's email address to receive Age Assurance instructions. */
+    email: string;
+    /** The user's preferred language for communication during the Age Assurance process. */
+    language: string;
+    /** An optional ISO 3166-2 code of the user's region or state within the country. */
+    regionCode?: string;
+  }
+  type Output = AppBskyAgeassuranceDefs.State;
+  interface Errors extends TypedBase {
+    InvalidEmail: {};
+    DidTooLong: {};
+    InvalidInitiation: {};
+    RegionNotSupported: {};
+  }
+}
+
+export declare namespace AppBskyAgeassuranceDefs {
+  /** The access level granted based on Age Assurance data we've processed. */
+  type Access = "full" | "none" | "safe" | "unknown" | (string & {});
+  interface Config extends TypedBase {
+    /** The per-region Age Assurance configuration. */
+    regions: AppBskyAgeassuranceDefs.ConfigRegion[];
+  }
+  /** The Age Assurance configuration for a specific region. */
+  interface ConfigRegion extends TypedBase {
+    /** The ISO 3166-1 alpha-2 country code this configuration applies to. */
+    countryCode: string;
+    /** The minimum age (as a whole integer) required to use Bluesky in this region. */
+    minAccessAge: number;
+    /** The ordered list of Age Assurance rules that apply to this region. Rules should be applied in order, and the first matching rule determines the access level granted. The rules array should always include a default rule as the last item. */
+    rules: TypeUnion<
+      | ConfigRegionRuleDefault
+      | ConfigRegionRuleIfAccountNewerThan
+      | ConfigRegionRuleIfAccountOlderThan
+      | ConfigRegionRuleIfAssuredOverAge
+      | ConfigRegionRuleIfAssuredUnderAge
+      | ConfigRegionRuleIfDeclaredOverAge
+      | ConfigRegionRuleIfDeclaredUnderAge
+    >[];
+    /** The ISO 3166-2 region code this configuration applies to. If omitted, the configuration applies to the entire country. */
+    regionCode?: string;
+  }
+  /** Age Assurance rule that applies by default. */
+  interface ConfigRegionRuleDefault extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+  }
+  /** Age Assurance rule that applies if the account is equal-to or newer than a certain date. */
+  interface ConfigRegionRuleIfAccountNewerThan extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+    /** The date threshold as a datetime string. */
+    date: string;
+  }
+  /** Age Assurance rule that applies if the account is older than a certain date. */
+  interface ConfigRegionRuleIfAccountOlderThan extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+    /** The date threshold as a datetime string. */
+    date: string;
+  }
+  /** Age Assurance rule that applies if the user has been assured to be equal-to or over a certain age. */
+  interface ConfigRegionRuleIfAssuredOverAge extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+    /** The age threshold as a whole integer. */
+    age: number;
+  }
+  /** Age Assurance rule that applies if the user has been assured to be under a certain age. */
+  interface ConfigRegionRuleIfAssuredUnderAge extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+    /** The age threshold as a whole integer. */
+    age: number;
+  }
+  /** Age Assurance rule that applies if the user has declared themselves equal-to or over a certain age. */
+  interface ConfigRegionRuleIfDeclaredOverAge extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+    /** The age threshold as a whole integer. */
+    age: number;
+  }
+  /** Age Assurance rule that applies if the user has declared themselves under a certain age. */
+  interface ConfigRegionRuleIfDeclaredUnderAge extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+    /** The age threshold as a whole integer. */
+    age: number;
+  }
+  /** Object used to store Age Assurance data in stash. */
+  interface Event extends TypedBase {
+    /** The access level granted based on Age Assurance data we've processed. */
+    access: "full" | "none" | "safe" | "unknown" | (string & {});
+    /** The unique identifier for this instance of the Age Assurance flow, in UUID format. */
+    attemptId: string;
+    /** The ISO 3166-1 alpha-2 country code provided when beginning the Age Assurance flow. */
+    countryCode: string;
+    /** The date and time of this write operation. */
+    createdAt: string;
+    /** The status of the Age Assurance process. */
+    status: "assured" | "blocked" | "pending" | "unknown" | (string & {});
+    /** The IP address used when completing the Age Assurance flow. */
+    completeIp?: string;
+    /** The user agent used when completing the Age Assurance flow. */
+    completeUa?: string;
+    /** The email used for Age Assurance. */
+    email?: string;
+    /** The IP address used when initiating the Age Assurance flow. */
+    initIp?: string;
+    /** The user agent used when initiating the Age Assurance flow. */
+    initUa?: string;
+    /** The ISO 3166-2 region code provided when beginning the Age Assurance flow. */
+    regionCode?: string;
+  }
+  /** The user's computed Age Assurance state. */
+  interface State extends TypedBase {
+    access: AppBskyAgeassuranceDefs.Access;
+    status: AppBskyAgeassuranceDefs.Status;
+    /** The timestamp when this state was last updated. */
+    lastInitiatedAt?: string;
+  }
+  /** Additional metadata needed to compute Age Assurance state client-side. */
+  interface StateMetadata extends TypedBase {
+    /** The account creation timestamp. */
+    accountCreatedAt?: string;
+  }
+  /** The status of the Age Assurance process. */
+  type Status = "assured" | "blocked" | "pending" | "unknown" | (string & {});
+}
+
+/** Returns Age Assurance configuration for use on the client. */
+export declare namespace AppBskyAgeassuranceGetConfig {
+  interface Params extends TypedBase {}
+  type Input = undefined;
+  type Output = AppBskyAgeassuranceDefs.Config;
+}
+
+/** Returns server-computed Age Assurance state, if available, and any additional metadata needed to compute Age Assurance state client-side. */
+export declare namespace AppBskyAgeassuranceGetState {
+  interface Params extends TypedBase {
+    countryCode: string;
+    regionCode?: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    metadata: AppBskyAgeassuranceDefs.StateMetadata;
+    state: AppBskyAgeassuranceDefs.State;
+  }
+}
+
+export declare namespace AppBskyAuthCreatePosts {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthFullApp {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthManageFeedDeclarations {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthManageLabelerService {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthManageModeration {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthManageNotifications {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthManageProfile {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthViewAll {
+  type Main = At.PermissionSet;
 }
 
 /** Creates a private bookmark for the specified record. Currently, only `app.bsky.feed.post` records are supported. Requires authentication. */
@@ -629,6 +851,323 @@ export declare namespace AppBskyBookmarkGetBookmarks {
     bookmarks: AppBskyBookmarkDefs.BookmarkView[];
     cursor?: string;
   }
+}
+
+export declare namespace AppBskyContactDefs {
+  /** Associates a profile with the positional index of the contact import input in the call to `app.bsky.contact.importContacts`, so clients can know which phone caused a particular match. */
+  interface MatchAndContactIndex extends TypedBase {
+    /**
+     * The index of this match in the import contact input.
+     * Minimum: 0
+     * Maximum: 999
+     */
+    contactIndex: number;
+    /** Profile of the matched user. */
+    match: AppBskyActorDefs.ProfileView;
+  }
+  /** A stash object to be sent via bsync representing a notification to be created. */
+  interface Notification extends TypedBase {
+    /** The DID of who this notification comes from. */
+    from: At.DID;
+    /** The DID of who this notification should go to. */
+    to: At.DID;
+  }
+  interface SyncStatus extends TypedBase {
+    /**
+     * Number of existing contact matches resulting of the user imports and of their imported contacts having imported the user. Matches stop being counted when the user either follows the matched contact or dismisses the match.
+     * Minimum: 0
+     */
+    matchesCount: number;
+    /** Last date when contacts where imported. */
+    syncedAt: string;
+  }
+}
+
+/** Removes a match that was found via contact import. It shouldn't appear again if the same contact is re-imported. Requires authentication. */
+export declare namespace AppBskyContactDismissMatch {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** The subject's DID to dismiss the match with. */
+    subject: At.DID;
+  }
+  interface Output extends TypedBase {}
+  interface Errors extends TypedBase {
+    InvalidDid: {};
+    InternalError: {};
+  }
+}
+
+/** Returns the matched contacts (contacts that were mutually imported). Excludes dismissed matches. Requires authentication. */
+export declare namespace AppBskyContactGetMatches {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    matches: AppBskyActorDefs.ProfileView[];
+    cursor?: string;
+  }
+  interface Errors extends TypedBase {
+    InvalidDid: {};
+    InvalidLimit: {};
+    InvalidCursor: {};
+    InternalError: {};
+  }
+}
+
+/** Gets the user's current contact import status. Requires authentication. */
+export declare namespace AppBskyContactGetSyncStatus {
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** If present, indicates the user has imported their contacts. If not present, indicates the user never used the feature or called `app.bsky.contact.removeData` and didn't import again since. */
+    syncStatus?: AppBskyContactDefs.SyncStatus;
+  }
+  interface Errors extends TypedBase {
+    InvalidDid: {};
+    InternalError: {};
+  }
+}
+
+/** Import contacts for securely matching with other users. This follows the protocol explained in https://docs.bsky.app/blog/contact-import-rfc. Requires authentication. */
+export declare namespace AppBskyContactImportContacts {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /**
+     * List of phone numbers in global E.164 format (e.g., '+12125550123'). Phone numbers that cannot be normalized into a valid phone number will be discarded. Should not repeat the 'phone' input used in `app.bsky.contact.verifyPhone`.
+     * Minimum array length: 1
+     * Maximum array length: 1000
+     */
+    contacts: string[];
+    /** JWT to authenticate the call. Use the JWT received as a response to the call to `app.bsky.contact.verifyPhone`. */
+    token: string;
+  }
+  interface Output extends TypedBase {
+    /** The users that matched during import and their indexes on the input contacts, so the client can correlate with its local list. */
+    matchesAndContactIndexes: AppBskyContactDefs.MatchAndContactIndex[];
+  }
+  interface Errors extends TypedBase {
+    InvalidDid: {};
+    InvalidContacts: {};
+    TooManyContacts: {};
+    InvalidToken: {};
+    InternalError: {};
+  }
+}
+
+/** Removes all stored hashes used for contact matching, existing matches, and sync status. Requires authentication. */
+export declare namespace AppBskyContactRemoveData {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {}
+  interface Output extends TypedBase {}
+  interface Errors extends TypedBase {
+    InvalidDid: {};
+    InternalError: {};
+  }
+}
+
+/** System endpoint to send notifications related to contact imports. Requires role authentication. */
+export declare namespace AppBskyContactSendNotification {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** The DID of who this notification comes from. */
+    from: At.DID;
+    /** The DID of who this notification should go to. */
+    to: At.DID;
+  }
+  interface Output extends TypedBase {}
+}
+
+/** Starts a phone verification flow. The phone passed will receive a code via SMS that should be passed to `app.bsky.contact.verifyPhone`. Requires authentication. */
+export declare namespace AppBskyContactStartPhoneVerification {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** The phone number to receive the code via SMS. */
+    phone: string;
+  }
+  interface Output extends TypedBase {}
+  interface Errors extends TypedBase {
+    RateLimitExceeded: {};
+    InvalidDid: {};
+    InvalidPhone: {};
+    InternalError: {};
+  }
+}
+
+/** Verifies control over a phone number with a code received via SMS and starts a contact import session. Requires authentication. */
+export declare namespace AppBskyContactVerifyPhone {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** The code received via SMS as a result of the call to `app.bsky.contact.startPhoneVerification`. */
+    code: string;
+    /** The phone number to verify. Should be the same as the one passed to `app.bsky.contact.startPhoneVerification`. */
+    phone: string;
+  }
+  interface Output extends TypedBase {
+    /** JWT to be used in a call to `app.bsky.contact.importContacts`. It is only valid for a single call. */
+    token: string;
+  }
+  interface Errors extends TypedBase {
+    RateLimitExceeded: {};
+    InvalidDid: {};
+    InvalidPhone: {};
+    InvalidCode: {};
+    InternalError: {};
+  }
+}
+
+/** Inserts a draft using private storage (stash). An upper limit of drafts might be enforced. Requires authentication. */
+export declare namespace AppBskyDraftCreateDraft {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    draft: AppBskyDraftDefs.Draft;
+  }
+  interface Output extends TypedBase {
+    /** The ID of the created draft. */
+    id: string;
+  }
+  interface Errors extends TypedBase {
+    DraftLimitReached: {};
+  }
+}
+
+export declare namespace AppBskyDraftDefs {
+  /** A draft containing an array of draft posts. */
+  interface Draft extends TypedBase {
+    /**
+     * Array of draft posts that compose this draft.
+     * Minimum array length: 1
+     * Maximum array length: 100
+     */
+    posts: DraftPost[];
+    /**
+     * Indicates human language of posts primary text content.
+     * Maximum array length: 3
+     */
+    langs?: string[];
+    /**
+     * Embedding rules for the postgates to be created when this draft is published.
+     * Maximum array length: 5
+     */
+    postgateEmbeddingRules?: TypeUnion<AppBskyFeedPostgate.DisableRule>[];
+    /**
+     * Allow-rules for the threadgate to be created when this draft is published.
+     * Maximum array length: 5
+     */
+    threadgateAllow?: TypeUnion<
+      | AppBskyFeedThreadgate.FollowerRule
+      | AppBskyFeedThreadgate.FollowingRule
+      | AppBskyFeedThreadgate.ListRule
+      | AppBskyFeedThreadgate.MentionRule
+    >[];
+  }
+  interface DraftEmbedCaption extends TypedBase {
+    /** Maximum string length: 10000 */
+    content: string;
+    lang: string;
+  }
+  interface DraftEmbedExternal extends TypedBase {
+    uri: string;
+  }
+  interface DraftEmbedImage extends TypedBase {
+    localRef: DraftEmbedLocalRef;
+    /** Maximum grapheme length: 2000 */
+    alt?: string;
+  }
+  interface DraftEmbedLocalRef extends TypedBase {
+    /**
+     * Local, on-device ref to file to be embedded. Embeds are currently device-bound for drafts.
+     * Minimum string length: 1
+     * Maximum string length: 1024
+     */
+    path: string;
+  }
+  interface DraftEmbedRecord extends TypedBase {
+    record: ComAtprotoRepoStrongRef.Main;
+  }
+  interface DraftEmbedVideo extends TypedBase {
+    localRef: DraftEmbedLocalRef;
+    /** Maximum grapheme length: 2000 */
+    alt?: string;
+    /** Maximum array length: 20 */
+    captions?: DraftEmbedCaption[];
+  }
+  /** One of the posts that compose a draft. */
+  interface DraftPost extends TypedBase {
+    /**
+     * The primary post content.
+     * Maximum string length: 3000
+     * Maximum grapheme length: 300
+     */
+    text: string;
+    /** Maximum array length: 1 */
+    embedExternals?: DraftEmbedExternal[];
+    /** Maximum array length: 4 */
+    embedImages?: DraftEmbedImage[];
+    /** Maximum array length: 1 */
+    embedRecords?: DraftEmbedRecord[];
+    /** Maximum array length: 1 */
+    embedVideos?: DraftEmbedVideo[];
+    /** Self-label values for this post. Effectively content warnings. */
+    labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
+  }
+  /** View to present drafts data to users. */
+  interface DraftView extends TypedBase {
+    /** The time the draft was created. */
+    createdAt: string;
+    draft: Draft;
+    /** A TID to be used as a draft identifier. */
+    id: At.TID;
+    /** The time the draft was last updated. */
+    updatedAt: string;
+  }
+  /** A draft with an identifier, used to store drafts in private storage (stash). */
+  interface DraftWithId extends TypedBase {
+    draft: Draft;
+    /** A TID to be used as a draft identifier. */
+    id: At.TID;
+  }
+}
+
+/** Deletes a draft by ID. Requires authentication. */
+export declare namespace AppBskyDraftDeleteDraft {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    id: At.TID;
+  }
+  type Output = undefined;
+}
+
+/** Gets views of user drafts. Requires authentication. */
+export declare namespace AppBskyDraftGetDrafts {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    drafts: AppBskyDraftDefs.DraftView[];
+    cursor?: string;
+  }
+}
+
+/** Updates a draft using private storage (stash). If the draft ID points to a non-existing ID, the update will be silently ignored. This is done because updates don't enforce draft limit, so it accepts all writes, but will ignore invalid ones. Requires authentication. */
+export declare namespace AppBskyDraftUpdateDraft {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    draft: AppBskyDraftDefs.DraftWithId;
+  }
+  type Output = undefined;
 }
 
 export declare namespace AppBskyEmbedDefs {
@@ -1010,6 +1549,7 @@ export declare namespace AppBskyFeedGenerator {
     /** Self-label values */
     labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
   }
+  type Main = Record;
 }
 
 /** Get a list of feeds (feed generator records) created by the actor (in the actor's repo). */
@@ -1362,6 +1902,7 @@ export declare namespace AppBskyFeedLike {
     subject: ComAtprotoRepoStrongRef.Main;
     via?: ComAtprotoRepoStrongRef.Main;
   }
+  type Main = Record;
 }
 
 export declare namespace AppBskyFeedPost {
@@ -1406,6 +1947,7 @@ export declare namespace AppBskyFeedPost {
      */
     tags?: string[];
   }
+  type Main = Record;
   /**
    * Deprecated: use facets instead.
    * \@deprecated
@@ -1450,6 +1992,7 @@ export declare namespace AppBskyFeedPostgate {
      */
     embeddingRules?: TypeUnion<DisableRule>[];
   }
+  type Main = Record;
   /** Disables embedding of this post. */
   interface DisableRule extends TypedBase {}
 }
@@ -1462,6 +2005,7 @@ export declare namespace AppBskyFeedRepost {
     subject: ComAtprotoRepoStrongRef.Main;
     via?: ComAtprotoRepoStrongRef.Main;
   }
+  type Main = Record;
 }
 
 /** Find posts matching search criteria, returning views of those posts. Note that this API endpoint may require authentication (eg, not public) for some service providers and implementations. */
@@ -1542,6 +2086,7 @@ export declare namespace AppBskyFeedThreadgate {
      */
     hiddenReplies?: At.Uri[];
   }
+  type Main = Record;
   /** Allow replies from actors who follow you. */
   interface FollowerRule extends TypedBase {}
   /** Allow replies from actors you follow. */
@@ -1562,6 +2107,7 @@ export declare namespace AppBskyGraphBlock {
     /** DID of the account to be blocked. */
     subject: At.DID;
   }
+  type Main = Record;
 }
 
 export declare namespace AppBskyGraphDefs {
@@ -1628,6 +2174,14 @@ export declare namespace AppBskyGraphDefs {
   /** lists the bi-directional graph relationships between one actor (not indicated in the object), and the target actors (the DID included in the object) */
   interface Relationship extends TypedBase {
     did: At.DID;
+    /** if the actor is blocked by this DID, contains the AT-URI of the block record */
+    blockedBy?: At.Uri;
+    /** if the actor is blocked by this DID via a block list, contains the AT-URI of the listblock record */
+    blockedByList?: At.Uri;
+    /** if the actor blocks this DID, this is the AT-URI of the block record */
+    blocking?: At.Uri;
+    /** if the actor blocks this DID via a block list, this is the AT-URI of the listblock record */
+    blockingByList?: At.Uri;
     /** if the actor is followed by this DID, contains the AT-URI of the follow record */
     followedBy?: At.Uri;
     /** if the actor follows this DID, this is the AT-URI of the follow record */
@@ -1674,6 +2228,7 @@ export declare namespace AppBskyGraphFollow {
     subject: At.DID;
     via?: ComAtprotoRepoStrongRef.Main;
   }
+  type Main = Record;
 }
 
 /** Get a list of starter packs created by the actor. */
@@ -2009,6 +2564,7 @@ export declare namespace AppBskyGraphList {
     descriptionFacets?: AppBskyRichtextFacet.Main[];
     labels?: TypeUnion<ComAtprotoLabelDefs.SelfLabels>;
   }
+  type Main = Record;
 }
 
 export declare namespace AppBskyGraphListblock {
@@ -2019,6 +2575,7 @@ export declare namespace AppBskyGraphListblock {
     /** Reference (AT-URI) to the mod list record. */
     subject: At.Uri;
   }
+  type Main = Record;
 }
 
 export declare namespace AppBskyGraphListitem {
@@ -2031,6 +2588,7 @@ export declare namespace AppBskyGraphListitem {
     /** The account which is included on the list. */
     subject: At.DID;
   }
+  type Main = Record;
 }
 
 /** Creates a mute relationship for the specified account. Mutes are private in Bluesky. Requires auth. */
@@ -2103,6 +2661,7 @@ export declare namespace AppBskyGraphStarterpack {
     /** Maximum array length: 3 */
     feeds?: FeedItem[];
   }
+  type Main = Record;
   interface FeedItem extends TypedBase {
     uri: At.Uri;
   }
@@ -2148,6 +2707,7 @@ export declare namespace AppBskyGraphVerification {
     /** DID of the subject the verification applies to. */
     subject: At.DID;
   }
+  type Main = Record;
 }
 
 export declare namespace AppBskyLabelerDefs {
@@ -2218,6 +2778,7 @@ export declare namespace AppBskyLabelerService {
     /** The set of subject types (account, record, etc) this service accepts reports on. */
     subjectTypes?: ComAtprotoModerationDefs.SubjectType[];
   }
+  type Main = Record;
 }
 
 export declare namespace AppBskyNotificationDeclaration {
@@ -2227,6 +2788,7 @@ export declare namespace AppBskyNotificationDeclaration {
     /** A declaration of the user's preference for allowing activity subscriptions from other users. Absence of a record implies 'followers'. */
     allowSubscriptions: "followers" | "mutuals" | "none" | (string & {});
   }
+  type Main = Record;
 }
 
 export declare namespace AppBskyNotificationDefs {
@@ -2340,6 +2902,7 @@ export declare namespace AppBskyNotificationListNotifications {
     isRead: boolean;
     /** The reason why this notification was delivered - e.g. your post was liked, or you received a new follower. */
     reason:
+      | "contact-match"
       | "follow"
       | "like"
       | "like-via-repost"
@@ -2632,11 +3195,6 @@ export declare namespace AppBskyUnspeccedGetPostThreadOtherV2 {
   interface Params extends TypedBase {
     /** Reference (AT-URI) to post record. This is the anchor post. */
     anchor: At.Uri;
-    /**
-     * Whether to prioritize posts from followed users. It only has effect when the user is authenticated.
-     * \@default false
-     */
-    prioritizeFollowedUsers?: boolean;
   }
   type Input = undefined;
   interface Output extends TypedBase {
@@ -2675,11 +3233,6 @@ export declare namespace AppBskyUnspeccedGetPostThreadV2 {
      * \@default 10
      */
     branchingFactor?: number;
-    /**
-     * Whether to prioritize posts from followed users. It only has effect when the user is authenticated.
-     * \@default false
-     */
-    prioritizeFollowedUsers?: boolean;
     /**
      * Sorting for the thread replies.
      * \@default "oldest"
@@ -2790,6 +3343,8 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsers {
   type Input = undefined;
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
   }
 }
 
@@ -2810,6 +3365,8 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsersSkeleton {
   type Input = undefined;
   interface Output extends TypedBase {
     dids: At.DID[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: number;
   }
 }
 
@@ -3092,6 +3649,7 @@ export declare namespace ChatBskyActorDeclaration {
     $type: "chat.bsky.actor.declaration";
     allowIncoming: "all" | "following" | "none" | (string & {});
   }
+  type Main = Record;
 }
 
 export declare namespace ChatBskyActorDefs {
@@ -3123,6 +3681,10 @@ export declare namespace ChatBskyActorExportAccountData {
   interface Params extends TypedBase {}
   type Input = undefined;
   type Output = Uint8Array;
+}
+
+export declare namespace ChatBskyAuthFullChatClient {
+  type Main = At.PermissionSet;
 }
 
 export declare namespace ChatBskyConvoAcceptConvo {
@@ -4017,6 +4579,26 @@ export declare namespace ComAtprotoLabelSubscribeLabels {
   }
 }
 
+/** Resolves an atproto lexicon (NSID) to a schema. */
+export declare namespace ComAtprotoLexiconResolveLexicon {
+  interface Params extends TypedBase {
+    /** The lexicon NSID to resolve. */
+    nsid: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** The CID of the lexicon schema record. */
+    cid: At.CID;
+    /** The resolved lexicon schema record. */
+    schema: ComAtprotoLexiconSchema.Main;
+    /** The AT-URI of the lexicon schema record. */
+    uri: At.Uri;
+  }
+  interface Errors extends TypedBase {
+    LexiconNotFound: {};
+  }
+}
+
 export declare namespace ComAtprotoLexiconSchema {
   /** Representation of Lexicon schemas themselves, when published as atproto records. Note that the schema language is not defined in Lexicon; this meta schema currently only includes a single version field ('lexicon'). See the atproto specifications for description of the other expected top-level fields ('id', 'defs', etc). */
   interface Record extends RecordBase {
@@ -4024,6 +4606,7 @@ export declare namespace ComAtprotoLexiconSchema {
     /** Indicates the 'version' of the Lexicon language. Must be '1' for the current atproto/Lexicon schema system. */
     lexicon: number;
   }
+  type Main = Record;
 }
 
 /** Submit a moderation report regarding an atproto account or record. Implemented by moderation services (with PDS proxying), and requires auth. */
@@ -4584,11 +5167,15 @@ export declare namespace ComAtprotoServerDeleteAccount {
   }
 }
 
-/** Delete the current session. Requires auth. */
+/** Delete the current session. Requires auth using the 'refreshJwt' (not the 'accessJwt'). */
 export declare namespace ComAtprotoServerDeleteSession {
   interface Params extends TypedBase {}
   type Input = undefined;
   type Output = undefined;
+  interface Errors extends TypedBase {
+    InvalidToken: {};
+    ExpiredToken: {};
+  }
 }
 
 /** Describes the server's account creation requirements and capabilities. Implemented by PDS. */
@@ -4701,11 +5288,16 @@ export declare namespace ComAtprotoServerRefreshSession {
     refreshJwt: string;
     active?: boolean;
     didDoc?: unknown;
+    email?: string;
+    emailAuthFactor?: boolean;
+    emailConfirmed?: boolean;
     /** Hosting status of the account. If not specified, then assume 'active'. */
     status?: "deactivated" | "suspended" | "takendown" | (string & {});
   }
   interface Errors extends TypedBase {
     AccountTakedown: {};
+    InvalidToken: {};
+    ExpiredToken: {};
   }
 }
 
@@ -5540,23 +6132,32 @@ export declare namespace ToolsOzoneModerationDefs {
     attemptId: string;
     /** The date and time of this write operation. */
     createdAt: string;
-    /** The status of the age assurance process. */
+    /** The status of the Age Assurance process. */
     status: "assured" | "pending" | "unknown" | (string & {});
+    access?: AppBskyAgeassuranceDefs.Access;
     /** The IP address used when completing the AA flow. */
     completeIp?: string;
     /** The user agent used when completing the AA flow. */
     completeUa?: string;
+    /** The ISO 3166-1 alpha-2 country code provided when beginning the Age Assurance flow. */
+    countryCode?: string;
     /** The IP address used when initiating the AA flow. */
     initIp?: string;
     /** The user agent used when initiating the AA flow. */
     initUa?: string;
+    /** The ISO 3166-2 region code provided when beginning the Age Assurance flow. */
+    regionCode?: string;
   }
   /** Age assurance status override by moderators. Only works on DID subjects. */
   interface AgeAssuranceOverrideEvent extends TypedBase {
-    /** Comment describing the reason for the override. */
+    /**
+     * Comment describing the reason for the override.
+     * Minimum string length: 1
+     */
     comment: string;
     /** The status to be set for the user decided by a moderator, overriding whatever value the user had previously. Use reset to default to original state. */
     status: "assured" | "blocked" | "reset" | (string & {});
+    access?: AppBskyAgeassuranceDefs.Access;
   }
   interface BlobView extends TypedBase {
     cid: At.CID;
@@ -5611,6 +6212,8 @@ export declare namespace ToolsOzoneModerationDefs {
     comment?: string;
     /** The content of the email sent to the user. */
     content?: string;
+    /** Indicates whether the email was successfully delivered to the user's inbox. */
+    isDelivered?: boolean;
     /**
      * Names/Keywords of the policies that necessitated the email.
      * Maximum array length: 5
@@ -5708,6 +6311,8 @@ export declare namespace ToolsOzoneModerationDefs {
     strikeCount?: number;
     /** When the strike should expire. If not provided, the strike never expires. */
     strikeExpiresAt?: string;
+    /** List of services where the takedown should be applied. If empty or not provided, takedown is applied on all configured services. */
+    targetServices?: ("appview" | "pds" | (string & {}))[];
   }
   /** Unmute action on a subject */
   interface ModEventUnmute extends TypedBase {
@@ -5913,7 +6518,10 @@ export declare namespace ToolsOzoneModerationDefs {
   type ReviewOpen = "tools.ozone.moderation.defs#reviewOpen";
   /** Account credentials revocation by moderators. Only works on DID subjects. */
   interface RevokeAccountCredentialsEvent extends TypedBase {
-    /** Comment describing the reason for the revocation. */
+    /**
+     * Comment describing the reason for the revocation.
+     * Minimum string length: 1
+     */
     comment: string;
   }
   /** View of a scheduled moderation action */
@@ -5957,10 +6565,10 @@ export declare namespace ToolsOzoneModerationDefs {
     executeUntil?: string;
   }
   type SubjectReviewState =
-    | "#reviewClosed"
-    | "#reviewEscalated"
-    | "#reviewNone"
-    | "#reviewOpen"
+    | "tools.ozone.moderation.defs#reviewClosed"
+    | "tools.ozone.moderation.defs#reviewEscalated"
+    | "tools.ozone.moderation.defs#reviewNone"
+    | "tools.ozone.moderation.defs#reviewOpen"
     | (string & {});
   interface SubjectStatusView extends TypedBase {
     /** Timestamp referencing the first moderation status impacting event was emitted on the subject */
@@ -6420,7 +7028,12 @@ export declare namespace ToolsOzoneModerationQueryStatuses {
     /** Search subjects reviewed before a given timestamp */
     reviewedBefore?: string;
     /** Specify when fetching subjects in a certain state */
-    reviewState?: string;
+    reviewState?:
+      | "tools.ozone.moderation.defs#reviewClosed"
+      | "tools.ozone.moderation.defs#reviewEscalated"
+      | "tools.ozone.moderation.defs#reviewNone"
+      | "tools.ozone.moderation.defs#reviewOpen"
+      | (string & {});
     /** \@default "desc" */
     sortDirection?: "asc" | "desc";
     /** \@default "lastReportedAt" */
@@ -6490,11 +7103,21 @@ export declare namespace ToolsOzoneModerationScheduleAction {
     comment?: string;
     /** Indicates how long the takedown should be in effect before automatically expiring. */
     durationInHours?: number;
+    /** Email content to be sent to the user upon takedown. */
+    emailContent?: string;
+    /** Subject of the email to be sent to the user upon takedown. */
+    emailSubject?: string;
     /**
      * Names/Keywords of the policies that drove the decision.
      * Maximum array length: 5
      */
     policies?: string[];
+    /** Severity level of the violation (e.g., 'sev-0', 'sev-1', 'sev-2', etc.). */
+    severityLevel?: string;
+    /** Number of strikes to assign to the user when takedown is applied. */
+    strikeCount?: number;
+    /** When the strike should expire. If not provided, the strike never expires. */
+    strikeExpiresAt?: string;
   }
 }
 
@@ -7115,10 +7738,10 @@ export declare namespace ToolsOzoneTeamDefs {
   interface Member extends TypedBase {
     did: At.DID;
     role:
-      | "#roleAdmin"
-      | "#roleModerator"
-      | "#roleTriage"
-      | "#roleVerifier"
+      | "tools.ozone.team.defs#roleAdmin"
+      | "tools.ozone.team.defs#roleModerator"
+      | "tools.ozone.team.defs#roleTriage"
+      | "tools.ozone.team.defs#roleVerifier"
       | (string & {});
     createdAt?: string;
     disabled?: boolean;
@@ -7370,9 +7993,27 @@ export declare interface Queries {
     params: AppBskyActorSearchActorsTypeahead.Params;
     output: AppBskyActorSearchActorsTypeahead.Output;
   };
+  "app.bsky.ageassurance.getConfig": {
+    output: AppBskyAgeassuranceGetConfig.Output;
+  };
+  "app.bsky.ageassurance.getState": {
+    params: AppBskyAgeassuranceGetState.Params;
+    output: AppBskyAgeassuranceGetState.Output;
+  };
   "app.bsky.bookmark.getBookmarks": {
     params: AppBskyBookmarkGetBookmarks.Params;
     output: AppBskyBookmarkGetBookmarks.Output;
+  };
+  "app.bsky.contact.getMatches": {
+    params: AppBskyContactGetMatches.Params;
+    output: AppBskyContactGetMatches.Output;
+  };
+  "app.bsky.contact.getSyncStatus": {
+    output: AppBskyContactGetSyncStatus.Output;
+  };
+  "app.bsky.draft.getDrafts": {
+    params: AppBskyDraftGetDrafts.Params;
+    output: AppBskyDraftGetDrafts.Output;
   };
   "app.bsky.feed.describeFeedGenerator": {
     output: AppBskyFeedDescribeFeedGenerator.Output;
@@ -7690,6 +8331,10 @@ export declare interface Queries {
     params: ComAtprotoLabelQueryLabels.Params;
     output: ComAtprotoLabelQueryLabels.Output;
   };
+  "com.atproto.lexicon.resolveLexicon": {
+    params: ComAtprotoLexiconResolveLexicon.Params;
+    output: ComAtprotoLexiconResolveLexicon.Output;
+  };
   "com.atproto.repo.describeRepo": {
     params: ComAtprotoRepoDescribeRepo.Params;
     output: ComAtprotoRepoDescribeRepo.Output;
@@ -7885,11 +8530,49 @@ export declare interface Procedures {
   "app.bsky.actor.putPreferences": {
     input: AppBskyActorPutPreferences.Input;
   };
+  "app.bsky.ageassurance.begin": {
+    input: AppBskyAgeassuranceBegin.Input;
+    output: AppBskyAgeassuranceBegin.Output;
+  };
   "app.bsky.bookmark.createBookmark": {
     input: AppBskyBookmarkCreateBookmark.Input;
   };
   "app.bsky.bookmark.deleteBookmark": {
     input: AppBskyBookmarkDeleteBookmark.Input;
+  };
+  "app.bsky.contact.dismissMatch": {
+    input: AppBskyContactDismissMatch.Input;
+    output: AppBskyContactDismissMatch.Output;
+  };
+  "app.bsky.contact.importContacts": {
+    input: AppBskyContactImportContacts.Input;
+    output: AppBskyContactImportContacts.Output;
+  };
+  "app.bsky.contact.removeData": {
+    input: AppBskyContactRemoveData.Input;
+    output: AppBskyContactRemoveData.Output;
+  };
+  "app.bsky.contact.sendNotification": {
+    input: AppBskyContactSendNotification.Input;
+    output: AppBskyContactSendNotification.Output;
+  };
+  "app.bsky.contact.startPhoneVerification": {
+    input: AppBskyContactStartPhoneVerification.Input;
+    output: AppBskyContactStartPhoneVerification.Output;
+  };
+  "app.bsky.contact.verifyPhone": {
+    input: AppBskyContactVerifyPhone.Input;
+    output: AppBskyContactVerifyPhone.Output;
+  };
+  "app.bsky.draft.createDraft": {
+    input: AppBskyDraftCreateDraft.Input;
+    output: AppBskyDraftCreateDraft.Output;
+  };
+  "app.bsky.draft.deleteDraft": {
+    input: AppBskyDraftDeleteDraft.Input;
+  };
+  "app.bsky.draft.updateDraft": {
+    input: AppBskyDraftUpdateDraft.Input;
   };
   "app.bsky.feed.sendInteractions": {
     input: AppBskyFeedSendInteractions.Input;
