@@ -1,31 +1,29 @@
 import type {
+  Client as AtcuteClient,
   CredentialManager,
-  RPCOptions,
-  XRPC,
-  XRPCRequestOptions,
-  XRPCResponse,
+  ProcedureRequestOptions,
+  QueryRequestOptions,
+  SuccessClientResponse,
 } from '@atcute/client';
-import type { At, Procedures, Queries } from '@tsky/lexicons';
+import { ok } from '@atcute/client';
+import type { GenericUri as Uri } from '@atcute/lexicons';
+import type { XRPCProcedures, XRPCQueries } from '@atcute/lexicons/ambient';
 import { parseAtUri } from '~/utils';
 import type { RPCOptions as GenericReqOptions, StrongRef } from './types';
-
-// From @atcute/client
-type OutputOf<T> = T extends {
-  output: unknown;
-}
-  ? T['output']
-  : never;
 
 const NO_SESSION_ERROR =
   'No session found. Please login to perform this action.';
 
-export class Client<Q = Queries, P = Procedures> {
-  xrpc: XRPC;
-  crenditials: CredentialManager;
+export class Client<
+  Q extends XRPCQueries = XRPCQueries,
+  P extends XRPCProcedures = XRPCProcedures,
+> {
+  xrpc: AtcuteClient<Q, P>;
+  credentials: CredentialManager;
 
-  constructor(xrpc: XRPC, crenditials: CredentialManager) {
+  constructor(xrpc: AtcuteClient<Q, P>, credentials: CredentialManager) {
     this.xrpc = xrpc;
-    this.crenditials = crenditials;
+    this.credentials = credentials;
   }
 
   /**
@@ -36,10 +34,9 @@ export class Client<Q = Queries, P = Procedures> {
    */
   async get<K extends keyof Q>(
     nsid: K,
-    options: RPCOptions<Q[K]>,
-  ): Promise<XRPCResponse<OutputOf<Q[K]>>> {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    return this.xrpc.get(nsid as any, options);
+    options: QueryRequestOptions<Q[K]>,
+  ): Promise<SuccessClientResponse<Q[K], QueryRequestOptions<Q[K]>>['data']> {
+    return await ok(this.xrpc.get(nsid, options));
   }
 
   /**
@@ -50,15 +47,11 @@ export class Client<Q = Queries, P = Procedures> {
    */
   async call<K extends keyof P>(
     nsid: K,
-    options: RPCOptions<P[K]>,
-  ): Promise<XRPCResponse<OutputOf<P[K]>>> {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    return this.xrpc.call(nsid as any, options);
-  }
-
-  /** Makes a request to the XRPC service */
-  async request(options: XRPCRequestOptions): Promise<XRPCResponse> {
-    return this.xrpc.request(options);
+    options: ProcedureRequestOptions<P[K]>,
+  ): Promise<
+    SuccessClientResponse<P[K], ProcedureRequestOptions<P[K]>>['data']
+  > {
+    return await ok(this.xrpc.post(nsid, options));
   }
 
   /**
@@ -70,27 +63,26 @@ export class Client<Q = Queries, P = Procedures> {
    */
   async createRecord<K extends keyof P>(
     nsid: K,
-    record: Omit<RPCOptions<P[K]>, '$type' | 'createdAt'>,
+    record: object,
     rkey?: string,
   ): Promise<StrongRef> {
-    if (!this.crenditials.session) throw new Error(NO_SESSION_ERROR);
-    const response = await this.call(
-      'com.atproto.repo.createRecord' as keyof P,
-      {
-        data: {
-          collection: nsid,
-          record: {
-            $type: nsid,
-            createdAt: new Date().toISOString(),
-            ...record,
-          },
-          repo: this.crenditials.session.did,
-          ...(rkey ? { rkey } : {}),
+    if (!this.credentials.session) throw new Error(NO_SESSION_ERROR);
+    // @ts-expect-error: complex procedure input types
+    const response = await this.call(nsid, {
+      input: {
+        collection: nsid,
+        record: {
+          $type: nsid,
+          createdAt: new Date().toISOString(),
+          ...record,
         },
-      } as unknown as RPCOptions<P[keyof P]>,
-    );
+        repo: this.credentials.session.did,
+        ...(rkey ? { rkey } : {}),
+      },
+    });
 
-    return response.data as StrongRef;
+    // @ts-expect-error: StrongRef compatibility
+    return response;
   }
 
   /**
@@ -100,47 +92,41 @@ export class Client<Q = Queries, P = Procedures> {
    * @param rkey The rkey to use.
    * @returns The record's AT URI and CID.
    */
-  async putRecord(
-    nsid: string,
+  async putRecord<K extends keyof P>(
+    nsid: K,
     record: object,
     rkey: string,
   ): Promise<StrongRef> {
-    if (!this.crenditials.session) throw new Error(NO_SESSION_ERROR);
-    const response = await this.call(
-      'com.atproto.repo.putRecord' as keyof P,
-      {
-        data: {
-          collection: nsid,
-          record: {
-            $type: nsid,
-            createdAt: new Date().toISOString(),
-            ...record,
-          },
-          repo: this.crenditials.session.did,
-          rkey,
+    if (!this.credentials.session) throw new Error(NO_SESSION_ERROR);
+    // @ts-expect-error: complex procedure input types
+    const response = await this.call(nsid, {
+      input: {
+        collection: nsid,
+        record: {
+          $type: nsid,
+          createdAt: new Date().toISOString(),
+          ...record,
         },
-      } as unknown as RPCOptions<P[keyof P]>,
-    );
-    return response.data as StrongRef;
+        repo: this.credentials.session.did,
+        rkey,
+      },
+    });
+    // @ts-expect-error: StrongRef compatibility
+    return response;
   }
 
   /**
    * Delete a record.
    * @param uri The record's AT URI.
    */
-  async deleteRecord(
-    uri: At.Uri,
-    options: GenericReqOptions = {},
-  ): Promise<void> {
+  async deleteRecord(uri: Uri, options: GenericReqOptions = {}): Promise<void> {
     const { host: repo, collection, rkey } = parseAtUri(uri);
-    if (repo !== this.crenditials.session?.did)
+    if (repo !== this.credentials.session?.did)
       throw new Error('Can only delete own record.');
-    await this.call(
-      'com.atproto.repo.deleteRecord' as keyof P,
-      {
-        data: { collection, repo, rkey },
-        ...options,
-      } as unknown as RPCOptions<P[keyof P]>,
-    );
+    // @ts-expect-error: complex procedure input types
+    await this.call(collection, {
+      input: { collection, repo, rkey },
+      ...options,
+    });
   }
 }

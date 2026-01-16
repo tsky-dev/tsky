@@ -1,5 +1,4 @@
-import { type ActorProfile, createAgent } from '@tsky/client';
-import type { At } from '@tsky/lexicons';
+import { type ActorProfile, createAgent, isDid } from '@tsky/client';
 import { useEffect, useState } from 'react';
 
 async function getUserProfile(identity: string) {
@@ -12,12 +11,12 @@ async function getUserProfile(identity: string) {
 
     let did = identity;
 
-    if (!did.startsWith('did:')) {
+    if (!isDid(did)) {
       const _id = await agent.resolveDIDFromHandle(identity);
       did = _id.did;
     }
 
-    const actor = await agent.actor(did as At.DID);
+    const actor = await agent.actor(did);
 
     return actor.profile();
   } catch (err) {

@@ -1,6 +1,12 @@
+import type { Did } from '@atcute/lexicons';
+
 const ATP_URI_REGEX =
-  // proto-    --did--------------   --name----------------   --path----   --query--   --hash--
+  // proto + did + name + path + query + hash
   /^(at:\/\/)?((?:did:[a-z0-9:%-]+)|(?:[a-z0-9][a-z0-9.:-]*))(\/[^?#\s]*)?(\?[^#\s]+)?(#[^\s]+)?$/i;
+
+export function isDid(input: string): input is Did {
+  return input.startsWith('did:');
+}
 
 export function parseAtUri(uri: string): {
   host: string;

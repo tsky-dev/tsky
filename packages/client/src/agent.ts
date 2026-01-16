@@ -1,12 +1,10 @@
-import { type CredentialManager, XRPC } from '@atcute/client';
+import type {
+  ComAtprotoLabelDefs,
+  ComAtprotoRepoStrongRef,
+} from '@atcute/atproto';
 import type {
   AppBskyActorDefs,
   AppBskyActorPutPreferences,
-  AppBskyEmbedExternal,
-  AppBskyEmbedImages,
-  AppBskyEmbedRecord,
-  AppBskyEmbedRecordWithMedia,
-  AppBskyEmbedVideo,
   AppBskyFeedDefs,
   AppBskyFeedGetAuthorFeed,
   AppBskyFeedGetFeed,
@@ -14,7 +12,6 @@ import type {
   AppBskyFeedGetFeedGenerators,
   AppBskyFeedGetFeedSkeleton,
   AppBskyFeedGetLikes,
-  AppBskyFeedGetPostThread,
   AppBskyFeedGetQuotes,
   AppBskyFeedGetRepostedBy,
   AppBskyFeedGetTimeline,
@@ -27,21 +24,25 @@ import type {
   AppBskyRichtextFacet,
   AppBskyVideoDefs,
   AppBskyVideoUploadVideo,
-  At,
-  ComAtprotoLabelDefs,
-  ComAtprotoRepoStrongRef,
-  Queries,
-  Typed,
-} from '@tsky/lexicons';
+} from '@atcute/bluesky';
+
+import { Client as AtcuteClient, type CredentialManager } from '@atcute/client';
+import type {
+  ActorIdentifier,
+  Did,
+  Handle,
+  ResourceUri,
+} from '@atcute/lexicons';
+
 import { Client } from './client';
 import type { RPCOptions } from './types';
 import { Paginator, parseAtUri } from './utils';
 
 export class Actor {
   client: Client;
-  did: At.DID;
+  did: Did;
 
-  constructor(client: Client, did: At.DID) {
+  constructor(client: Client, did: Did) {
     this.client = client;
     this.did = did;
   }
@@ -51,15 +52,17 @@ export class Actor {
    */
   starterPacks(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.getActorStarterPacks', {
+      const data = await this.client.get(
+        'app.bsky.graph.getActorStarterPacks',
+        {
           params: { cursor, actor: this.did, limit },
           ...options,
-        })
-        .then((res) => res.data);
+        },
+      );
 
       data.starterPacks = data.starterPacks.map(
-        (starterPack) => new StarterpackBasicView(this.client, starterPack),
+        (starterPack: AppBskyGraphDefs.StarterPackViewBasic) =>
+          new StarterpackBasicView(this.client, starterPack),
       );
 
       return data;
@@ -71,20 +74,25 @@ export class Actor {
    */
   followers(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.getFollowers', {
-          params: {
-            cursor,
-            actor: this.did,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.getFollowers', {
+        params: {
+          cursor,
+          actor: this.did,
+          limit,
+        },
+        ...options,
+      });
 
-      data.subject = new ActorProfile(this.client, data.subject);
+      data.subject = new ActorProfile(
+        this.client,
+        data.subject as AppBskyActorDefs.ProfileViewDetailed,
+      ) as unknown as AppBskyActorDefs.ProfileView;
       data.followers = data.followers.map(
-        (follower) => new ActorProfile(this.client, follower),
+        (follower: AppBskyActorDefs.ProfileView) =>
+          new ActorProfile(
+            this.client,
+            follower,
+          ) as unknown as AppBskyActorDefs.ProfileView,
       );
 
       return data;
@@ -96,20 +104,25 @@ export class Actor {
    */
   follows(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.getFollows', {
-          params: {
-            cursor,
-            actor: this.did,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.getFollows', {
+        params: {
+          cursor,
+          actor: this.did,
+          limit,
+        },
+        ...options,
+      });
 
-      data.subject = new ActorProfile(this.client, data.subject);
+      data.subject = new ActorProfile(
+        this.client,
+        data.subject as AppBskyActorDefs.ProfileViewDetailed,
+      ) as unknown as AppBskyActorDefs.ProfileView;
       data.follows = data.follows.map(
-        (follow) => new ActorProfile(this.client, follow),
+        (follow: AppBskyActorDefs.ProfileView) =>
+          new ActorProfile(
+            this.client,
+            follow,
+          ) as unknown as AppBskyActorDefs.ProfileView,
       );
 
       return data;
@@ -121,18 +134,22 @@ export class Actor {
    */
   lists(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.getLists', {
-          params: {
-            cursor,
-            actor: this.did,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.getLists', {
+        params: {
+          cursor,
+          actor: this.did,
+          limit,
+        },
+        ...options,
+      });
 
-      data.lists = data.lists.map((list) => new ListView(this.client, list));
+      data.lists = data.lists.map(
+        (list: AppBskyGraphDefs.ListView) =>
+          new ListView(
+            this.client,
+            list,
+          ) as unknown as AppBskyGraphDefs.ListView,
+      );
 
       return data;
     });
@@ -141,21 +158,19 @@ export class Actor {
   /**
    * Enumerates public relationships between one account, and a list of other accounts. Does not require auth.
    */
-  async relationships(others?: string[], options?: RPCOptions) {
-    const data = await this.client
-      .get('app.bsky.graph.getRelationships', {
-        params: {
-          actor: this.did,
-          others,
-        },
-        ...options,
-      })
-      .then((res) => res.data);
+  async relationships(others?: ActorIdentifier[], options?: RPCOptions) {
+    const data = await this.client.get('app.bsky.graph.getRelationships', {
+      params: {
+        actor: this.did,
+        others,
+      },
+      ...(options ?? {}),
+    });
 
     return {
       ...data,
       actor: data.actor
-        ? new ActorLazyProfile(this.client, data.actor)
+        ? new ActorLazyProfile(this.client, data.actor as Did)
         : undefined,
     };
   }
@@ -165,15 +180,17 @@ export class Actor {
    */
   feeds(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getActorFeeds', {
-          params: { cursor, actor: this.did, limit },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getActorFeeds', {
+        params: { cursor, actor: this.did, limit },
+        ...options,
+      });
 
       data.feeds = data.feeds.map(
-        (feed) => new FeedGeneratorView(this.client, feed),
+        (feed: AppBskyFeedDefs.GeneratorView) =>
+          new FeedGeneratorView(
+            this.client,
+            feed,
+          ) as unknown as AppBskyFeedDefs.GeneratorView,
       );
 
       return data;
@@ -184,18 +201,19 @@ export class Actor {
    * Get a list of feeds (feed generator records) created by the actor (in the actor's repo).
    */
   feed(
-    params?: Omit<AppBskyFeedGetAuthorFeed.Params, 'actor'>,
+    params?: Omit<AppBskyFeedGetAuthorFeed.$params, 'actor'>,
     options?: RPCOptions,
   ) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getAuthorFeed', {
-          params: { cursor, ...params, actor: this.did },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getAuthorFeed', {
+        params: { cursor, ...params, actor: this.did },
+        ...options,
+      });
 
-      data.feed = data.feed.map((item) => new FeedViewPost(this.client, item));
+      data.feed = data.feed.map(
+        (item: AppBskyFeedDefs.FeedViewPost) =>
+          new FeedViewPost(this.client, item),
+      );
 
       return data;
     });
@@ -210,13 +228,14 @@ export class Actor {
 
 export class ActorLazyProfile extends Actor {
   async profile() {
-    const data = await this.client
-      .get('app.bsky.actor.getProfile', {
-        params: { actor: this.did },
-      })
-      .then((res) => res.data);
+    const data = await this.client.get('app.bsky.actor.getProfile', {
+      params: { actor: this.did },
+    });
 
-    return new ActorProfile(this.client, data);
+    return new ActorProfile(
+      this.client,
+      data as AppBskyActorDefs.ProfileViewDetailed,
+    );
   }
 }
 
@@ -224,24 +243,24 @@ export class ActorBasicProfile
   extends Actor
   implements AppBskyActorDefs.ProfileViewBasic
 {
-  handle: string;
+  handle: AppBskyActorDefs.ProfileViewBasic['handle'];
   associated?: AppBskyActorDefs.ProfileAssociated | undefined;
-  avatar?: string | undefined;
+  avatar?: AppBskyActorDefs.ProfileViewBasic['avatar'];
   createdAt?: string | undefined;
   displayName?: string | undefined;
   labels?: ComAtprotoLabelDefs.Label[] | undefined;
   viewer?: AppBskyActorDefs.ViewerState | undefined;
-  $type?: string | undefined;
+  $type?: AppBskyActorDefs.ProfileViewBasic['$type'];
 
   constructor(client: Client, actor: AppBskyActorDefs.ProfileViewBasic) {
-    super(client, actor.did);
+    super(client, actor.did as Did);
     this.handle = actor.handle;
     this.associated = actor.associated;
     this.avatar = actor.avatar;
     this.createdAt = actor.createdAt;
     this.displayName = actor.displayName;
     this.labels = actor.labels;
-    this.$type = actor.$type;
+    this.$type = actor.$type as AppBskyActorDefs.ProfileViewBasic['$type'];
 
     if (actor.viewer) {
       this.viewer = actor.viewer;
@@ -249,14 +268,15 @@ export class ActorBasicProfile
       if (actor.viewer?.knownFollowers) {
         actor.viewer.knownFollowers.followers =
           actor.viewer.knownFollowers.followers.map(
-            (follower) => new ActorBasicProfile(client, follower),
+            (follower: AppBskyActorDefs.ProfileViewBasic) =>
+              new ActorBasicProfile(client, follower),
           );
       }
 
       if (actor.viewer?.blockingByList) {
         actor.viewer.blockingByList = new ListBasicView(
           client,
-          actor.viewer.blockingByList,
+          actor.viewer.blockingByList as AppBskyGraphDefs.ListViewBasic,
         );
       }
     }
@@ -281,25 +301,32 @@ export class ActorProfile
   extends ActorBasicProfile
   implements AppBskyActorDefs.ProfileViewDetailed
 {
-  description?: string;
-  indexedAt?: string;
-  followersCount?: number;
-  followsCount?: number;
-  postsCount?: number;
-  banner?: string | undefined;
+  description?: AppBskyActorDefs.ProfileViewDetailed['description'];
+  indexedAt?: AppBskyActorDefs.ProfileViewDetailed['indexedAt'];
+  followersCount?: AppBskyActorDefs.ProfileViewDetailed['followersCount'];
+  followsCount?: AppBskyActorDefs.ProfileViewDetailed['followsCount'];
+  postsCount?: AppBskyActorDefs.ProfileViewDetailed['postsCount'];
+  banner?: AppBskyActorDefs.ProfileViewDetailed['banner'];
   joinedViaStarterPack?: AppBskyGraphDefs.StarterPackViewBasic | undefined;
   pinnedPost?: ComAtprotoRepoStrongRef.Main | undefined;
+  // @ts-expect-error: $type literal in subclass conflicts with parent's type definition
+  override $type?: AppBskyActorDefs.ProfileViewDetailed['$type'];
 
-  constructor(client: Client, actor: AppBskyActorDefs.ProfileViewDetailed) {
-    super(client, actor);
-    this.description = actor.description;
-    this.indexedAt = actor.indexedAt;
-    this.followersCount = actor.followersCount;
-    this.followsCount = actor.followsCount;
-    this.postsCount = actor.postsCount;
-    this.banner = actor.banner;
-    this.joinedViaStarterPack = actor.joinedViaStarterPack;
-    this.pinnedPost = actor.pinnedPost;
+  constructor(
+    client: Client,
+    actor: AppBskyActorDefs.ProfileView | AppBskyActorDefs.ProfileViewDetailed,
+  ) {
+    super(client, actor as AppBskyActorDefs.ProfileViewBasic);
+    const detailed = actor as AppBskyActorDefs.ProfileViewDetailed;
+    this.description = detailed.description;
+    this.indexedAt = detailed.indexedAt;
+    this.followersCount = detailed.followersCount;
+    this.followsCount = detailed.followsCount;
+    this.postsCount = detailed.postsCount;
+    this.banner = detailed.banner;
+    this.joinedViaStarterPack = detailed.joinedViaStarterPack;
+    this.pinnedPost = detailed.pinnedPost;
+    this.$type = actor.$type as AppBskyActorDefs.ProfileViewDetailed['$type'];
   }
 
   override toJSON() {
@@ -319,9 +346,9 @@ export class ActorProfile
 
 export class List {
   client: Client;
-  uri: string;
+  uri: ResourceUri;
 
-  constructor(client: Client, uri: string) {
+  constructor(client: Client, uri: ResourceUri) {
     this.client = client;
     this.uri = uri;
   }
@@ -331,23 +358,25 @@ export class List {
    */
   about(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.getList', {
-          params: {
-            cursor,
-            list: this.uri,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.getList', {
+        params: {
+          cursor,
+          list: this.uri,
+          limit,
+        },
+        ...options,
+      });
 
-      data.items = data.items.map((item) => {
-        item.subject = new ActorProfile(this.client, item.subject);
+      data.items = data.items.map((item: AppBskyGraphDefs.ListItemView) => {
+        item.subject = new ActorProfile(
+          this.client,
+          item.subject as AppBskyActorDefs.ProfileView,
+        ) as unknown as AppBskyActorDefs.ProfileView;
 
         return item;
       });
 
+      // @ts-expect-error: ListView is a compatible superset of ListViewBasic
       data.list = new ListView(this.client, data.list);
 
       return data;
@@ -359,18 +388,19 @@ export class List {
    */
   feed(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getListFeed', {
-          params: {
-            cursor,
-            list: this.uri,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getListFeed', {
+        params: {
+          cursor,
+          list: this.uri,
+          limit,
+        },
+        ...options,
+      });
 
-      data.feed = data.feed.map((item) => new FeedViewPost(this.client, item));
+      data.feed = data.feed.map(
+        (item: AppBskyFeedDefs.FeedViewPost) =>
+          new FeedViewPost(this.client, item),
+      );
 
       return data;
     });
@@ -383,16 +413,16 @@ export class ListBasicView
 {
   cid: string;
   name: string;
-  purpose: AppBskyGraphDefs.ListPurpose;
-  avatar?: string | undefined;
-  indexedAt?: string | undefined;
-  labels?: ComAtprotoLabelDefs.Label[] | undefined;
-  listItemCount?: number | undefined;
+  purpose: AppBskyGraphDefs.ListViewBasic['purpose'];
+  avatar?: AppBskyGraphDefs.ListViewBasic['avatar'];
+  indexedAt?: AppBskyGraphDefs.ListViewBasic['indexedAt'];
+  labels?: AppBskyGraphDefs.ListViewBasic['labels'];
+  listItemCount?: AppBskyGraphDefs.ListViewBasic['listItemCount'];
   viewer?: AppBskyGraphDefs.ListViewerState | undefined;
-  $type?: string | undefined;
+  $type?: AppBskyGraphDefs.ListViewBasic['$type'];
 
   constructor(client: Client, list: AppBskyGraphDefs.ListViewBasic) {
-    super(client, list.uri);
+    super(client, list.uri as ResourceUri);
     this.cid = list.cid;
     this.name = list.name;
     this.purpose = list.purpose;
@@ -401,7 +431,7 @@ export class ListBasicView
     this.labels = list.labels;
     this.listItemCount = list.listItemCount;
     this.viewer = list.viewer;
-    this.$type = list.$type;
+    this.$type = list.$type as AppBskyGraphDefs.ListViewBasic['$type'];
   }
 }
 
@@ -410,43 +440,54 @@ export class ListView
   implements AppBskyGraphDefs.ListView
 {
   override indexedAt: string;
-  creator: AppBskyActorDefs.ProfileView;
-  description?: string | undefined;
+  // @ts-expect-error: Property type in subclass conflicts with parent's type definition
+  creator: ActorProfile;
+  description?: AppBskyGraphDefs.ListView['description'];
   descriptionFacets?: AppBskyRichtextFacet.Main[] | undefined;
+  // @ts-expect-error: $type literal in subclass conflicts with parent's type definition
+  override $type?: AppBskyGraphDefs.ListView['$type'];
 
   constructor(client: Client, list: AppBskyGraphDefs.ListView) {
-    super(client, list);
+    super(client, list as AppBskyGraphDefs.ListViewBasic);
     this.indexedAt = list.indexedAt;
-    this.creator = new ActorProfile(client, list.creator);
+    this.creator = new ActorProfile(
+      client,
+      list.creator as AppBskyActorDefs.ProfileViewDetailed,
+    ) as unknown as ActorProfile & AppBskyActorDefs.ProfileView;
     this.description = list.description;
     this.descriptionFacets = list.descriptionFacets;
+    this.$type = list.$type;
   }
 }
 
 export class Starterpack {
   cid: string;
-  creator: AppBskyActorDefs.ProfileViewBasic;
+  creator: ActorBasicProfile;
   indexedAt: string;
-  record: unknown;
-  uri: string;
+  record: AppBskyGraphDefs.StarterPackViewBasic['record'];
+  uri: ResourceUri;
   joinedAllTimeCount?: number | undefined;
   joinedWeekCount?: number | undefined;
-  labels?: ComAtprotoLabelDefs.Label[] | undefined;
-  $type?: string | undefined;
+  labels?: AppBskyGraphDefs.StarterPackViewBasic['labels'];
+  $type?: AppBskyGraphDefs.StarterPackViewBasic['$type'];
 
   constructor(
     public client: Client,
     payload: Omit<AppBskyGraphDefs.StarterPackViewBasic, 'listItemCount'>,
   ) {
     this.cid = payload.cid;
-    this.creator = new ActorBasicProfile(this.client, payload.creator);
+    this.creator = new ActorBasicProfile(
+      this.client,
+      payload.creator,
+    ) as unknown as ActorBasicProfile & AppBskyActorDefs.ProfileViewBasic;
     this.indexedAt = payload.indexedAt;
     this.record = payload.record;
-    this.uri = payload.uri;
+    this.uri = payload.uri as ResourceUri;
     this.joinedAllTimeCount = payload.joinedAllTimeCount;
     this.joinedWeekCount = payload.joinedWeekCount;
     this.labels = payload.labels;
-    this.$type = payload.$type;
+    this.$type =
+      payload.$type as AppBskyGraphDefs.StarterPackViewBasic['$type'];
   }
 }
 
@@ -457,8 +498,12 @@ export class StarterpackBasicView
   listItemCount?: number | undefined;
 
   constructor(client: Client, payload: AppBskyGraphDefs.StarterPackViewBasic) {
-    super(client, payload);
+    super(
+      client,
+      payload as Omit<AppBskyGraphDefs.StarterPackViewBasic, 'listItemCount'>,
+    );
     this.listItemCount = payload.listItemCount;
+    this.uri = payload.uri as ResourceUri;
   }
 }
 
@@ -466,54 +511,66 @@ export class StarterpackView
   extends Starterpack
   implements AppBskyGraphDefs.StarterPackView
 {
-  feeds?: AppBskyFeedDefs.GeneratorView[] | undefined;
-  list?: AppBskyGraphDefs.ListViewBasic | undefined;
-  listItemsSample?: AppBskyGraphDefs.ListItemView[] | undefined;
+  // @ts-expect-error: Property type in subclass conflicts with parent's type definition
+  feeds?: FeedGeneratorView[];
+  list?: ListBasicView;
+  listItemsSample?: (AppBskyGraphDefs.ListItemView & {
+    subject: ActorProfile;
+  })[];
+  // @ts-expect-error: $type literal in subclass conflicts with parent's type definition
+  override $type?: AppBskyGraphDefs.StarterPackView['$type'];
 
   constructor(client: Client, payload: AppBskyGraphDefs.StarterPackView) {
-    super(client, payload);
+    super(
+      client,
+      payload as Omit<AppBskyGraphDefs.StarterPackViewBasic, 'listItemCount'>,
+    );
     this.feeds = payload.feeds?.map(
-      (feed) => new FeedGeneratorView(client, feed),
+      (feed: AppBskyFeedDefs.GeneratorView) =>
+        new FeedGeneratorView(client, feed),
     );
 
     if (payload.list) {
       this.list = new ListBasicView(client, payload.list);
     }
 
-    this.listItemsSample = payload.listItemsSample?.map((item) => {
-      item.subject = new ActorProfile(client, item.subject);
-      return item;
-    });
+    // @ts-expect-error: Property type in subclass conflicts with parent's type definition
+    this.listItemsSample = payload.listItemsSample?.map(
+      (item: AppBskyGraphDefs.ListItemView) => {
+        return {
+          ...item,
+          subject: new ActorProfile(client, item.subject),
+        };
+      },
+    );
+    this.$type = payload.$type as AppBskyGraphDefs.StarterPackView['$type'];
   }
 }
 
 export class PostView implements AppBskyFeedDefs.PostView {
-  author: AppBskyActorDefs.ProfileViewBasic;
+  author: ActorBasicProfile;
   cid: string;
   indexedAt: string;
-  record: unknown;
-  uri: string;
-  embed?:
-    | Typed<AppBskyEmbedExternal.View, string>
-    | Typed<AppBskyEmbedImages.View, string>
-    | Typed<AppBskyEmbedRecord.View, string>
-    | Typed<AppBskyEmbedRecordWithMedia.View, string>
-    | Typed<AppBskyEmbedVideo.View, string>
-    | undefined;
-  labels?: ComAtprotoLabelDefs.Label[] | undefined;
+  record: AppBskyFeedDefs.PostView['record'];
+  uri: AppBskyFeedDefs.PostView['uri'];
+  embed?: AppBskyFeedDefs.PostView['embed'];
+  labels?: AppBskyFeedDefs.PostView['labels'];
   likeCount?: number | undefined;
   quoteCount?: number | undefined;
   replyCount?: number | undefined;
   repostCount?: number | undefined;
   threadgate?: AppBskyFeedDefs.ThreadgateView | undefined;
   viewer?: AppBskyFeedDefs.ViewerState | undefined;
-  $type?: string | undefined;
+  $type?: AppBskyFeedDefs.PostView['$type'];
 
   constructor(
     public client: Client,
     payload: AppBskyFeedDefs.PostView,
   ) {
-    this.author = new ActorBasicProfile(this.client, payload.author);
+    this.author = new ActorBasicProfile(
+      this.client,
+      payload.author,
+    ) as unknown as ActorBasicProfile & AppBskyActorDefs.ProfileViewBasic;
     this.cid = payload.cid;
     this.indexedAt = payload.indexedAt;
     this.record = payload.record;
@@ -526,52 +583,48 @@ export class PostView implements AppBskyFeedDefs.PostView {
     this.repostCount = payload.repostCount;
     this.threadgate = payload.threadgate;
     this.viewer = payload.viewer;
-    this.$type = payload.$type;
+    this.$type = payload.$type as AppBskyFeedDefs.PostView['$type'];
   }
 
   isOfCurrentUser() {
-    const { host: repo } = parseAtUri(this.uri);
-    return repo !== this.client.crenditials.session?.did;
+    const { host: repo } = parseAtUri(this.uri as string);
+    return repo !== this.client.credentials.session?.did;
   }
 
   remove(options: RPCOptions = {}) {
-    return this.client.deleteRecord(this.uri, options);
+    return this.client.deleteRecord(this.uri as ResourceUri, options);
   }
 
   // TODO: method for liking, unliking, reposting, un-reposting, quoting, etc.
 
   /**
-   * Get posts in a thread. Does not require auth, but additional metadata and filtering will be applied for authed requests.
+   * Resolve a handle to a DID.
    */
-  async threads(
-    params: Omit<AppBskyFeedGetPostThread.Params, 'uri'> = {},
-    options: RPCOptions = {},
-  ) {
-    return this.client
-      .get('app.bsky.feed.getPostThread', {
-        params: { uri: this.uri, ...params },
-        ...options,
-      })
-      .then((res) => res.data);
+  async resolveDIDFromHandle(handle: string, options: RPCOptions = {}) {
+    return this.client.get('com.atproto.identity.resolveHandle', {
+      params: { handle: handle as unknown as Handle },
+      ...options,
+    });
   }
 
   /**
    * Get like records which reference a subject (by AT-URI and CID).
    */
   likes(
-    params: Omit<AppBskyFeedGetLikes.Params, 'uri'> = {},
+    params: Omit<AppBskyFeedGetLikes.$params, 'uri'> = {},
     options: RPCOptions = {},
   ) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getLikes', {
-          params: { cursor, uri: this.uri, ...params },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getLikes', {
+        params: { cursor, uri: this.uri, ...params },
+        ...options,
+      });
 
-      data.likes = data.likes.map((like) => {
-        like.actor = new ActorBasicProfile(this.client, like.actor);
+      data.likes = data.likes.map((like: AppBskyFeedGetLikes.Like) => {
+        like.actor = new ActorBasicProfile(
+          this.client,
+          like.actor as AppBskyActorDefs.ProfileViewBasic,
+        ) as unknown as AppBskyActorDefs.ProfileView;
         return like;
       });
 
@@ -583,18 +636,18 @@ export class PostView implements AppBskyFeedDefs.PostView {
    * Get a list of quotes for a given post.
    */
   quotes(
-    params: Omit<AppBskyFeedGetQuotes.Params, 'uri'> = {},
+    params: Omit<AppBskyFeedGetQuotes.$params, 'uri'> = {},
     options: RPCOptions = {},
   ) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getQuotes', {
-          params: { cursor, uri: this.uri, ...params },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getQuotes', {
+        params: { cursor, uri: this.uri, ...params },
+        ...options,
+      });
 
-      data.posts = data.posts.map((post) => new PostView(this.client, post));
+      data.posts = data.posts.map(
+        (post: AppBskyFeedDefs.PostView) => new PostView(this.client, post),
+      );
 
       return data;
     });
@@ -604,19 +657,21 @@ export class PostView implements AppBskyFeedDefs.PostView {
    * Get a list of reposts for a given post.
    */
   repostedBy(
-    params: Omit<AppBskyFeedGetRepostedBy.Params, 'uri'> = {},
+    params: Omit<AppBskyFeedGetRepostedBy.$params, 'uri'> = {},
     options: RPCOptions = {},
   ) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getRepostedBy', {
-          params: { cursor, uri: this.uri, ...params },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getRepostedBy', {
+        params: { cursor, uri: this.uri, ...params },
+        ...options,
+      });
 
       data.repostedBy = data.repostedBy.map(
-        (repost) => new ActorProfile(this.client, repost),
+        (repost: AppBskyActorDefs.ProfileView) =>
+          new ActorProfile(
+            this.client,
+            repost,
+          ) as unknown as AppBskyActorDefs.ProfileView,
       );
 
       return data;
@@ -628,17 +683,17 @@ export class PostView implements AppBskyFeedDefs.PostView {
    */
   static async getMany(
     client: Client,
-    posts: string[],
+    posts: ResourceUri[],
     options: RPCOptions = {},
   ) {
-    const data = await client
-      .get('app.bsky.feed.getPosts', {
-        params: { uris: posts },
-        ...options,
-      })
-      .then((res) => res.data);
+    const data = await client.get('app.bsky.feed.getPosts', {
+      params: { uris: posts },
+      ...options,
+    });
 
-    data.posts = data.posts.map((post) => new PostView(client, post));
+    data.posts = data.posts.map(
+      (post: AppBskyFeedDefs.PostView) => new PostView(client, post),
+    );
 
     return data;
   }
@@ -650,16 +705,16 @@ export class Search {
   /**
    * Find posts matching search criteria, returning views of those posts.
    */
-  posts(params: AppBskyFeedSearchPosts.Params, options: RPCOptions = {}) {
+  posts(params: AppBskyFeedSearchPosts.$params, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.searchPosts', {
-          params: { cursor, ...params },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.searchPosts', {
+        params: { cursor, ...params },
+        ...options,
+      });
 
-      data.posts = data.posts.map((post) => new PostView(this.client, post));
+      data.posts = data.posts.map(
+        (post: AppBskyFeedDefs.PostView) => new PostView(this.client, post),
+      );
 
       return data;
     });
@@ -669,22 +724,21 @@ export class Search {
    * Search for starter packs.
    */
   starterpacks(
-    params: AppBskyGraphSearchStarterPacks.Params,
+    params: AppBskyGraphSearchStarterPacks.$params,
     options?: RPCOptions,
   ) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.searchStarterPacks', {
-          params: {
-            cursor,
-            ...params,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.searchStarterPacks', {
+        params: {
+          cursor,
+          ...params,
+        },
+        ...options,
+      });
 
       data.starterPacks = data.starterPacks.map(
-        (starterPack) => new StarterpackBasicView(this.client, starterPack),
+        (starterPack: AppBskyGraphDefs.StarterPackViewBasic) =>
+          new StarterpackBasicView(this.client, starterPack),
       );
 
       return data;
@@ -693,20 +747,17 @@ export class Search {
 }
 
 export class FeedViewPost implements AppBskyFeedDefs.FeedViewPost {
-  post: AppBskyFeedDefs.PostView;
+  post: PostView;
   feedContext?: string | undefined;
-  reason?:
-    | Typed<AppBskyFeedDefs.ReasonPin, string>
-    | Typed<AppBskyFeedDefs.ReasonRepost, string>
-    | undefined;
-  reply?: AppBskyFeedDefs.ReplyRef | undefined;
-  $type?: string | undefined;
+  reason?: AppBskyFeedDefs.FeedViewPost['reason'];
+  reply?: AppBskyFeedDefs.FeedViewPost['reply'];
+  $type?: AppBskyFeedDefs.FeedViewPost['$type'];
 
   constructor(
     public client: Client,
     payload: AppBskyFeedDefs.FeedViewPost,
   ) {
-    this.$type = payload.$type;
+    this.$type = payload.$type as AppBskyFeedDefs.FeedViewPost['$type'];
     this.feedContext = payload.feedContext;
     this.reason = payload.reason;
     this.post = new PostView(this.client, payload.post);
@@ -729,93 +780,85 @@ export class FeedGenerator {
    * Get information about a feed generator, including policies and offered feed URIs. Does not require auth; implemented by Feed Generator services (not App View).
    */
   async describe(options: RPCOptions = {}) {
-    return this.client
-      .get('app.bsky.feed.describeFeedGenerator', options)
-      .then((res) => res.data);
+    return this.client.get('app.bsky.feed.describeFeedGenerator', options);
   }
 
   /**
    * Get information about a feed generator. Implemented by AppView.
    */
   feed(
-    feed: string,
+    feed: ResourceUri,
     options: RPCOptions,
-  ): Promise<AppBskyFeedGetFeedGenerator.Output>;
+  ): Promise<AppBskyFeedGetFeedGenerator.$output>;
   /**
    * Get information about a list of feed generators.
    */
   feed(
-    feeds: string[],
+    feeds: ResourceUri[],
     options: RPCOptions,
-  ): Promise<AppBskyFeedGetFeedGenerators.Output['feeds']>;
+  ): Promise<AppBskyFeedGetFeedGenerators.$output['feeds']>;
 
-  async feed(feed: string | string[], options: RPCOptions) {
+  async feed(feed: ResourceUri | ResourceUri[], options: RPCOptions) {
     if (Array.isArray(feed)) {
-      const data = await this.client
-        .get('app.bsky.feed.getFeedGenerators', {
-          params: {
-            feeds: feed,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getFeedGenerators', {
+        params: {
+          feeds: feed,
+        },
+        ...options,
+      });
 
       return data.feeds;
     }
 
-    return this.client
-      .get('app.bsky.feed.getFeedGenerator', {
-        params: { feed },
-        ...options,
-      })
-      .then((res) => res.data);
+    return this.client.get('app.bsky.feed.getFeedGenerator', {
+      params: { feed },
+      ...options,
+    });
   }
 
   /**
    * Get a skeleton of a feed provided by a feed generator. Auth is optional, depending on provider requirements, and provides the DID of the requester. Implemented by Feed Generator Service.
    */
   skeleton(
-    params: AppBskyFeedGetFeedSkeleton.Params,
+    params: AppBskyFeedGetFeedSkeleton.$params,
     options: RPCOptions = {},
   ) {
     return Paginator.init(async (cursor) => {
-      return this.client
-        .get('app.bsky.feed.getFeedSkeleton', {
-          params: { cursor, ...params },
-          ...options,
-        })
-        .then((res) => res.data);
+      return this.client.get('app.bsky.feed.getFeedSkeleton', {
+        params: { cursor, ...params },
+        ...options,
+      });
     });
   }
 }
 
 export class FeedGeneratorView implements AppBskyFeedDefs.GeneratorView {
   cid: string;
-  creator: AppBskyActorDefs.ProfileView;
-  did: At.DID;
+  // @ts-expect-error: Property type in subclass conflicts with parent's type definition
+  creator: ActorProfile;
+  did: Did;
   displayName: string;
   indexedAt: string;
-  uri: string;
+  uri: AppBskyFeedDefs.GeneratorView['uri'];
   acceptsInteractions?: boolean | undefined;
-  avatar?: string | undefined;
-  contentMode?:
-    | (string & {})
-    | 'app.bsky.feed.defs#contentModeUnspecified'
-    | 'app.bsky.feed.defs#contentModeVideo'
-    | undefined;
+  avatar?: AppBskyFeedDefs.GeneratorView['avatar'];
+  contentMode?: AppBskyFeedDefs.GeneratorView['contentMode'];
   description?: string | undefined;
   descriptionFacets?: AppBskyRichtextFacet.Main[] | undefined;
-  labels?: ComAtprotoLabelDefs.Label[] | undefined;
+  labels?: AppBskyFeedDefs.GeneratorView['labels'];
   likeCount?: number | undefined;
   viewer?: AppBskyFeedDefs.GeneratorViewerState | undefined;
-  $type?: string | undefined;
+  $type?: AppBskyFeedDefs.GeneratorView['$type'];
 
   constructor(
     public client: Client,
     payload: AppBskyFeedDefs.GeneratorView,
   ) {
     this.cid = payload.cid;
-    this.creator = new ActorProfile(this.client, payload.creator);
+    this.creator = new ActorProfile(
+      this.client,
+      payload.creator as AppBskyActorDefs.ProfileViewDetailed,
+    ) as unknown as ActorProfile;
     this.did = payload.did;
     this.displayName = payload.displayName;
     this.indexedAt = payload.indexedAt;
@@ -828,7 +871,7 @@ export class FeedGeneratorView implements AppBskyFeedDefs.GeneratorView {
     this.labels = payload.labels;
     this.likeCount = payload.likeCount;
     this.viewer = payload.viewer;
-    this.$type = payload.$type;
+    this.$type = payload.$type as AppBskyFeedDefs.GeneratorView['$type'];
   }
 }
 
@@ -839,20 +882,24 @@ export class Preferences {
    * Get private preferences attached to the current account. Expected use is synchronization between multiple devices, and import/export during account migration. Requires auth.
    */
   async get(options: RPCOptions = {}) {
-    const res = await this.client.get('app.bsky.actor.getPreferences', options);
+    const data = await this.client.get('app.bsky.actor.getPreferences', {
+      params: {},
+      ...options,
+    });
 
-    return res.data.preferences;
+    return data.preferences;
   }
 
   /**
    * Set the private preferences attached to the account.
    */
   async set(
-    preferences: AppBskyActorPutPreferences.Input['preferences'],
+    preferences: AppBskyActorPutPreferences.$input['preferences'],
     options: RPCOptions = {},
   ) {
     await this.client.call('app.bsky.actor.putPreferences', {
-      data: { preferences },
+      input: { preferences },
+      as: null,
       ...options,
     });
   }
@@ -866,17 +913,18 @@ export class Muted {
    */
   lists(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.getListMutes', {
-          params: {
-            cursor,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.getListMutes', {
+        params: {
+          cursor,
+          limit,
+        },
+        ...options,
+      });
 
-      data.lists = data.lists.map((list) => new ListView(this.client, list));
+      // @ts-expect-error: ListView is a compatible superset of ListViewBasic
+      data.lists = data.lists.map(
+        (list: AppBskyGraphDefs.ListView) => new ListView(this.client, list),
+      );
 
       return data;
     });
@@ -887,18 +935,18 @@ export class Muted {
    */
   profiles(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.graph.getMutes', {
-          params: {
-            cursor,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.getMutes', {
+        params: {
+          cursor,
+          limit,
+        },
+        ...options,
+      });
 
+      // @ts-expect-error: ActorProfile is a compatible superset of ProfileView
       data.mutes = data.mutes.map(
-        (mute) => new ActorProfile(this.client, mute),
+        (mute: AppBskyActorDefs.ProfileView) =>
+          new ActorProfile(this.client, mute),
       );
 
       return data;
@@ -914,18 +962,18 @@ export class Suggestion {
    */
   follow(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.actor.getSuggestions', {
-          params: {
-            cursor,
-            limit,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.actor.getSuggestions', {
+        params: {
+          cursor,
+          limit,
+        },
+        ...options,
+      });
 
+      // @ts-expect-error: ActorProfile is a compatible superset of ProfileView
       data.actors = data.actors.map(
-        (actor) => new ActorProfile(this.client, actor),
+        (actor: AppBskyActorDefs.ProfileView) =>
+          new ActorProfile(this.client, actor),
       );
 
       return data;
@@ -935,18 +983,21 @@ export class Suggestion {
   /**
    * Enumerates follows similar to a given account (actor). Expected use is to recommend additional accounts immediately after following one account.
    */
-  async afterFollowing(actor: string, options?: RPCOptions) {
-    const data = await this.client
-      .get('app.bsky.graph.getSuggestedFollowsByActor', {
+  async afterFollowing(actor: ActorIdentifier, options?: RPCOptions) {
+    const data = await this.client.get(
+      'app.bsky.graph.getSuggestedFollowsByActor',
+      {
         params: {
           actor,
         },
         ...options,
-      })
-      .then((res) => res.data);
+      },
+    );
 
+    // @ts-expect-error: ActorProfile is a compatible superset of ProfileView
     data.suggestions = data.suggestions.map(
-      (suggestion) => new ActorProfile(this.client, suggestion),
+      (suggestion: AppBskyActorDefs.ProfileView) =>
+        new ActorProfile(this.client, suggestion),
     );
 
     return data;
@@ -957,15 +1008,17 @@ export class Suggestion {
    */
   feeds(limit?: number, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getSuggestedFeeds', {
-          params: { cursor, limit },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getSuggestedFeeds', {
+        params: { cursor, limit },
+        ...options,
+      });
 
       data.feeds = data.feeds.map(
-        (feed) => new FeedGeneratorView(this.client, feed),
+        (feed: AppBskyFeedDefs.GeneratorView) =>
+          new FeedGeneratorView(
+            this.client,
+            feed,
+          ) as unknown as AppBskyFeedDefs.GeneratorView,
       );
 
       return data;
@@ -982,21 +1035,22 @@ export class User extends ActorLazyProfile {
    * Get a view of the requesting account's home timeline. This is expected to be some form of reverse-chronological feed.
    */
   timeline(
-    params: AppBskyFeedGetTimeline.Params,
-    options?: AppBskyFeedGetTimeline.Input,
-  ): Promise<Paginator<AppBskyFeedGetTimeline.Output>> {
+    params: AppBskyFeedGetTimeline.$params,
+    options?: RPCOptions,
+  ): Promise<Paginator<AppBskyFeedGetTimeline.$output>> {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getTimeline', {
-          ...(options ?? {}),
-          params: {
-            cursor,
-            ...params,
-          },
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getTimeline', {
+        ...(options ?? {}),
+        params: {
+          cursor,
+          ...params,
+        },
+      });
 
-      data.feed = data.feed.map((item) => new FeedViewPost(this.client, item));
+      data.feed = data.feed.map(
+        (item: AppBskyFeedDefs.FeedViewPost) =>
+          new FeedViewPost(this.client, item),
+      );
 
       return data;
     });
@@ -1007,14 +1061,15 @@ export class User extends ActorLazyProfile {
    */
   likes(limit?: number, options: RPCOptions = {}) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getActorLikes', {
-          params: { cursor, actor: this.did, limit },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getActorLikes', {
+        params: { cursor, actor: this.did, limit },
+        ...options,
+      });
 
-      data.feed = data.feed.map((item) => new FeedViewPost(this.client, item));
+      data.feed = data.feed.map(
+        (item: AppBskyFeedDefs.FeedViewPost) =>
+          new FeedViewPost(this.client, item),
+      );
 
       return data;
     });
@@ -1031,9 +1086,10 @@ export class User extends ActorLazyProfile {
   /**
    * Creates a mute relationship for the specified account. Mutes are private in Bluesky.
    */
-  muteActor(identifier: string, options: RPCOptions = {}) {
+  muteActor(identifier: ActorIdentifier, options: RPCOptions = {}) {
     return this.client.call('app.bsky.graph.muteActor', {
-      data: { actor: identifier },
+      input: { actor: identifier },
+      as: null,
       ...options,
     });
   }
@@ -1041,9 +1097,10 @@ export class User extends ActorLazyProfile {
   /**
    * Unmutes the specified account.
    */
-  unmuteActor(identifier: string, options: RPCOptions = {}) {
+  unmuteActor(identifier: ActorIdentifier, options: RPCOptions = {}) {
     return this.client.call('app.bsky.graph.unmuteActor', {
-      data: { actor: identifier },
+      input: { actor: identifier },
+      as: null,
       ...options,
     });
   }
@@ -1051,19 +1108,20 @@ export class User extends ActorLazyProfile {
   /**
    * Mutes a thread preventing notifications from the thread and any of its children. Mutes are private in Bluesky.
    */
-  muteThread(identifier: string, options: RPCOptions = {}) {
+  muteThread(identifier: ResourceUri, options: RPCOptions = {}) {
     return this.client.call('app.bsky.graph.muteThread', {
-      data: { root: identifier },
+      input: { root: identifier },
+      as: null,
       ...options,
     });
   }
 
   /**
-   * Unmutes the specified thread.
+   * Resolve a handle to a DID.
    */
-  unmuteThread(identifier: string, options: RPCOptions = {}) {
-    return this.client.call('app.bsky.graph.unmuteThread', {
-      data: { root: identifier },
+  async resolveDIDFromHandle(handle: string, options: RPCOptions = {}) {
+    return this.client.get('com.atproto.identity.resolveHandle', {
+      params: { handle: handle as unknown as Handle },
       ...options,
     });
   }
@@ -1072,9 +1130,10 @@ export class User extends ActorLazyProfile {
    * Mute an entire list (specified by AT-URI) of actors. This creates a mute relationship for all actors
    * on the specified list. Mutes are private on Bluesky.
    */
-  muteActorList(identifier: string, options: RPCOptions = {}) {
+  muteActorList(identifier: ResourceUri, options: RPCOptions = {}) {
     return this.client.call('app.bsky.graph.muteActorList', {
-      data: { list: identifier },
+      input: { list: identifier },
+      as: null,
       ...options,
     });
   }
@@ -1083,9 +1142,10 @@ export class User extends ActorLazyProfile {
    * Unmute an entire list (specified by AT-URI) of actors. This removes the mute relationship for all actors
    * on the specified list.
    */
-  unmuteActorList(identifier: string, options: RPCOptions = {}) {
+  unmuteActorList(identifier: ResourceUri, options: RPCOptions = {}) {
     return this.client.call('app.bsky.graph.unmuteActorList', {
-      data: { list: identifier },
+      input: { list: identifier },
+      as: null,
       ...options,
     });
   }
@@ -1098,36 +1158,32 @@ export class Video {
    * Get video upload limits for the authenticated user.
    */
   async limit(options: RPCOptions = {}) {
-    const res = await this.client.get(
-      'app.bsky.video.getUploadLimits',
-      options,
-    );
-
-    return res.data;
+    return this.client.get('app.bsky.video.getUploadLimits', options);
   }
 
   /**
    * Get status details for a video processing job.
    */
   async status(jobId: string, options?: RPCOptions) {
-    const res = await this.client.get('app.bsky.video.getJobStatus', {
+    const data = await this.client.get('app.bsky.video.getJobStatus', {
       params: { jobId },
       ...options,
     });
 
-    return new JobStatus(this.client, res.data.jobStatus);
+    return new JobStatus(this.client, data.jobStatus);
   }
 
   /**
    * Upload a video to be processed then stored on the PDS.
    */
-  async upload(data: AppBskyVideoUploadVideo.Input, options?: RPCOptions) {
-    const res = await this.client.call('app.bsky.video.uploadVideo', {
-      data,
+  async upload(input: AppBskyVideoUploadVideo.$input, options?: RPCOptions) {
+    const data = await this.client.call('app.bsky.video.uploadVideo', {
+      input,
+      as: null,
       ...options,
     });
 
-    return new JobStatus(this.client, res.data.jobStatus);
+    return new JobStatus(this.client, data.jobStatus);
   }
 }
 
@@ -1161,28 +1217,26 @@ class JobStatus {
    * Update status details for a video processing job.
    */
   async refresh(options?: RPCOptions) {
-    const res = await this.client
-      .get('app.bsky.video.getJobStatus', {
-        params: { jobId: this.jobId },
-        ...options,
-      })
-      .then((res) => res.data.jobStatus);
+    const data = await this.client.get('app.bsky.video.getJobStatus', {
+      params: { jobId: this.jobId },
+      ...options,
+    });
 
-    this.state = res.state;
+    this.state = data.jobStatus.state;
 
-    this.progress = res.progress;
-    this.blob = res.blob;
-    this.error = res.error;
-    this.message = res.message;
+    this.progress = data.jobStatus.progress;
+    this.blob = data.jobStatus.blob;
+    this.error = data.jobStatus.error;
+    this.message = data.jobStatus.message;
   }
 }
 
 export class Agent {
-  client: Client<Queries>;
+  client: Client;
 
   constructor(private handler: CredentialManager) {
     // Initialize the client
-    const xrpc = new XRPC({ handler: this.handler });
+    const xrpc = new AtcuteClient({ handler: this.handler });
     this.client = new Client(xrpc, this.handler);
   }
 
@@ -1193,29 +1247,27 @@ export class Agent {
   /**
    * Get detailed profile view of an actor. Does not require auth, but contains relevant metadata with auth.
    */
-  async actor(identifier: At.DID) {
-    return new ActorLazyProfile(this.client, identifier);
+  async actor(identifier: Did | string) {
+    return new ActorLazyProfile(this.client, identifier as Did);
   }
 
   /**
    * Get a hydrated feed from an actor's selected feed generator. Implemented by App View.
    */
-  async feed(
-    params: AppBskyFeedGetFeed.Params,
-    options?: AppBskyFeedGetFeed.Input,
-  ) {
+  async feed(params: AppBskyFeedGetFeed.$params, options?: RPCOptions) {
     return Paginator.init(async (cursor) => {
-      const data = await this.client
-        .get('app.bsky.feed.getFeed', {
-          ...(options ?? {}),
-          params: {
-            cursor,
-            ...params,
-          },
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.feed.getFeed', {
+        ...(options ?? {}),
+        params: {
+          cursor,
+          ...params,
+        },
+      });
 
-      data.feed = data.feed.map((item) => new FeedViewPost(this.client, item));
+      data.feed = data.feed.map(
+        (item: AppBskyFeedDefs.FeedViewPost) =>
+          new FeedViewPost(this.client, item),
+      );
 
       return data;
     });
@@ -1225,15 +1277,14 @@ export class Agent {
    * Send information about interactions with feed items back to the feed generator that served them.
    */
   async sendInteractions(
-    interactions: AppBskyFeedSendInteractions.Input['interactions'],
+    interactions: AppBskyFeedSendInteractions.$input['interactions'],
     options: RPCOptions = {},
   ) {
-    return this.client
-      .call('app.bsky.feed.sendInteractions', {
-        data: { interactions },
-        ...options,
-      })
-      .then((res) => res.data);
+    return this.client.call('app.bsky.feed.sendInteractions', {
+      input: { interactions },
+      as: null,
+      ...options,
+    });
   }
 
   get search() {
@@ -1245,7 +1296,7 @@ export class Agent {
       throw new Error('There is no active session');
     }
 
-    return new User(this.client, this.session.did);
+    return new User(this.client, this.session.did as Did);
   }
 
   get video() {
@@ -1256,62 +1307,59 @@ export class Agent {
     return new Video(this.client);
   }
 
-  async posts(uris: string[], options?: RPCOptions) {
-    const data = await this.client
-      .get('app.bsky.feed.getPosts', {
-        params: { uris },
-        ...options,
-      })
-      .then((res) => res.data);
+  async posts(uris: ResourceUri[], options?: RPCOptions) {
+    const data = await this.client.get('app.bsky.feed.getPosts', {
+      params: { uris },
+      ...options,
+    });
 
-    return data.posts.map((post) => new PostView(this.client, post));
+    return data.posts.map(
+      (post: AppBskyFeedDefs.PostView) => new PostView(this.client, post),
+    );
   }
 
   /**
    * Gets a view of a starter pack.
    */
   startpacks(
-    uri: string,
+    uri: ResourceUri,
     options?: RPCOptions,
-  ): Promise<AppBskyGraphGetStarterPack.Output>;
+  ): Promise<AppBskyGraphGetStarterPack.$output>;
   /**
    * Get views for a list of starter packs.
    */
   startpacks(
-    uris: string[],
+    uris: ResourceUri[],
     options?: RPCOptions,
-  ): Promise<AppBskyGraphGetStarterPacks.Output['starterPacks']>;
+  ): Promise<AppBskyGraphGetStarterPacks.$output['starterPacks']>;
 
-  async startpacks(uris: string | string[], options: RPCOptions = {}) {
+  async startpacks(
+    uris: ResourceUri | ResourceUri[],
+    options: RPCOptions = {},
+  ) {
     if (Array.isArray(uris)) {
-      const data = await this.client
-        .get('app.bsky.graph.getStarterPacks', {
-          params: {
-            uris,
-          },
-          ...options,
-        })
-        .then((res) => res.data);
+      const data = await this.client.get('app.bsky.graph.getStarterPacks', {
+        params: {
+          uris,
+        },
+        ...options,
+      });
 
       return data.starterPacks;
     }
 
-    const data = await this.client
-      .get('app.bsky.graph.getStarterPack', {
-        params: { starterPack: uris },
-        ...options,
-      })
-      .then((res) => res.data);
+    const data = await this.client.get('app.bsky.graph.getStarterPack', {
+      params: { starterPack: uris },
+      ...options,
+    });
 
     return data;
   }
 
   async resolveDIDFromHandle(handle: string, options: RPCOptions = {}) {
-    return this.client
-      .get('com.atproto.identity.resolveHandle', {
-        params: { handle },
-        ...options,
-      })
-      .then((res) => res.data);
+    return this.client.get('com.atproto.identity.resolveHandle', {
+      params: { handle: handle as unknown as Handle },
+      ...options,
+    });
   }
 }

@@ -1,4 +1,6 @@
+import type { AppBskyActorDefs } from '@atcute/bluesky';
 import { describe, expect, it } from 'vitest';
+
 import { createAgent } from '~/index';
 
 const TEST_CREDENTIALS = {
@@ -36,9 +38,9 @@ describe('preferences', () => {
     });
 
     const payload = {
-      $type: 'app.bsky.actor.defs.adultContentPref',
+      $type: 'app.bsky.actor.defs#adultContentPref',
       enabled: false,
-    };
+    } as const satisfies AppBskyActorDefs.AdultContentPref;
 
     await agent.user.preferences.set([payload]);
 
@@ -46,7 +48,11 @@ describe('preferences', () => {
 
     expect(preferences).toBeDefined();
 
-    const pref = preferences.find((p) => p.$type === payload.$type);
+    const pref = preferences?.find(
+      (p: unknown): p is AppBskyActorDefs.AdultContentPref =>
+        (p as { $type: string }).$type ===
+        'app.bsky.actor.defs#adultContentPref',
+    );
 
     expect(pref).toBeDefined();
     expect(pref).toHaveProperty('enabled');

@@ -2,7 +2,9 @@ import fs from 'node:fs/promises';
 
 import type { TestProject } from 'vitest/node';
 
-import { CredentialManager, XRPC } from '@atcute/client';
+import type { ComAtprotoRepoUploadBlob } from '@atcute/atproto';
+import { Client, CredentialManager } from '@atcute/client';
+import type { ActorIdentifier, Handle } from '@atcute/lexicons';
 import { TestNetwork } from '@atproto/dev-env';
 
 declare module 'vitest' {
@@ -21,7 +23,7 @@ export async function setup(project: TestProject) {
   );
 
   const manager = new CredentialManager({ service: network.pds.url });
-  const rpc = new XRPC({
+  const rpc = new Client({
     handler: manager,
   });
 
@@ -44,9 +46,9 @@ export async function teardown() {
   await network.close();
 }
 
-const createAccount = async (rpc: XRPC, handle: string) => {
-  await rpc.call('com.atproto.server.createAccount', {
-    data: {
+const createAccount = async (rpc: Client, handle: Handle) => {
+  await rpc.post('com.atproto.server.createAccount', {
+    input: {
       handle: handle,
       email: `${handle}@example.com`,
       password: 'password',
@@ -55,15 +57,15 @@ const createAccount = async (rpc: XRPC, handle: string) => {
   console.log(`🙋 Created new account: @${handle}`);
 };
 
-async function createProfileRecord(rpc: XRPC, handle: string) {
+async function createProfileRecord(rpc: Client, handle: ActorIdentifier) {
   const imageBuffer = await fs.readFile('alice-avatar.jpeg');
-  const { data: blob } = await rpc.call('com.atproto.repo.uploadBlob', {
+  const { data: blob } = (await rpc.post('com.atproto.repo.uploadBlob', {
     headers: { 'content-type': 'image/jpeg' },
-    data: imageBuffer,
-  });
+    input: imageBuffer,
+  })) as { data: ComAtprotoRepoUploadBlob.$output };
 
-  await rpc.call('com.atproto.repo.createRecord', {
-    data: {
+  await rpc.post('com.atproto.repo.createRecord', {
+    input: {
       repo: handle,
       collection: 'app.bsky.actor.profile',
       record: {
@@ -77,9 +79,9 @@ async function createProfileRecord(rpc: XRPC, handle: string) {
   });
 }
 
-async function createSamplePosts(rpc: XRPC, handle: string) {
-  await rpc.call('com.atproto.repo.createRecord', {
-    data: {
+async function createSamplePosts(rpc: Client, handle: ActorIdentifier) {
+  await rpc.post('com.atproto.repo.createRecord', {
+    input: {
       repo: handle,
       collection: 'app.bsky.feed.post',
       record: {
