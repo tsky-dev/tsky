@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import {
-  toNamespace,
   getDescriptions,
-  writeJsdoc,
   mainPrelude,
   sortDefinition,
   sortName,
   sortPropertyKeys,
+  toNamespace,
+  writeJsdoc,
 } from '../utils/index.js';
 import { resolveType } from './resolvers/index.js';
 import { type DocumentSchema, documentSchema } from './schema.js';
@@ -262,6 +262,11 @@ ${metadataLines.join('\n')}`;
         chunk += writeJsdoc(descriptions);
         chunk += `type ${typeName} = ${value};`;
       } else if (type === 'bytes') {
+        const { value, descriptions } = resolveType(nsid, def);
+
+        chunk += writeJsdoc(descriptions);
+        chunk += `type ${typeName} = ${value};`;
+      } else if (type === 'permission' || type === 'permission-set') {
         const { value, descriptions } = resolveType(nsid, def);
 
         chunk += writeJsdoc(descriptions);
