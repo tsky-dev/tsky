@@ -167,6 +167,10 @@ ${metadataLines.join('\n')}`;
 
         chunk += '}';
 
+        if (key === 'main') {
+          chunk += 'type Main = Record;';
+        }
+
         records += `\n'${nsid}': ${tsNamespace}.Record;`;
       } else if (type === 'query' || type === 'procedure') {
         let parameters = def.parameters;
