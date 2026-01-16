@@ -41,7 +41,10 @@
     "url": "https://github.com/tsky-dev/tsky/issues"
   },
   "dependencies": {
-    "@atcute/client": "^2.0.6"
+    "@atcute/atproto": "^3.1.10",
+    "@atcute/bluesky": "^3.2.15",
+    "@atcute/client": "^4.2.1",
+    "@atcute/lexicons": "^1.2.6"
   },
   "devDependencies": {
     "@atproto/dev-env": "^0.3.93",
