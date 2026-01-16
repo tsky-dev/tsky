@@ -10,8 +10,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "~/*": ["src/*"],
-      "~~/*": ["*"],
-      "@tsky/lexicons": ["../lexicons/index.ts"],
+      "~~/*": ["*"]
     },
     "resolveJsonModule": true,
     "allowJs": true,
@@ -38,6 +37,6 @@
     "theme": "default",
     "exclude": ["**/+(__tests__|__mocks__)/*", "**/*.test.ts", "**/*.spec.ts"],
     "excludePrivate": true,
-    "excludeProtected": true,
-  },
+    "excludeProtected": true
+  }
 }
