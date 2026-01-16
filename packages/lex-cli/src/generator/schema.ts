@@ -349,6 +349,30 @@ export const recordSchema = t.isObject({
 
 export type RecordSchema = t.InferType<typeof objectSchema>;
 
+export const permissionSchema = t.isObject({
+  type: t.isLiteral('permission'),
+  description: t.isOptional(t.isString()),
+  resource: t.isString(),
+  lxm: t.isOptional(t.isArray(t.isString())),
+  action: t.isOptional(t.isArray(t.isString())),
+  collection: t.isOptional(t.isArray(t.isString())),
+  inheritAud: t.isOptional(t.isBoolean()),
+});
+
+export type PermissionSchema = t.InferType<typeof permissionSchema>;
+
+export const permissionSetSchema = t.isObject({
+  type: t.isLiteral('permission-set'),
+  description: t.isOptional(t.isString()),
+  title: t.isOptional(t.isString()),
+  'title:lang': t.isOptional(t.isRecord(t.isUnknown())),
+  detail: t.isOptional(t.isString()),
+  'detail:lang': t.isOptional(t.isRecord(t.isUnknown())),
+  permissions: t.isArray(permissionSchema),
+});
+
+export type PermissionSetSchema = t.InferType<typeof permissionSetSchema>;
+
 export const userTypeSchema = t.isOneOf([
   recordSchema,
   xrpcQuerySchema,
@@ -364,6 +388,8 @@ export const userTypeSchema = t.isOneOf([
   bytesSchema,
   cidLinkSchema,
   unknownSchema,
+  permissionSchema,
+  permissionSetSchema,
 ]);
 
 export type UserTypeSchema = t.InferType<typeof userTypeSchema>;

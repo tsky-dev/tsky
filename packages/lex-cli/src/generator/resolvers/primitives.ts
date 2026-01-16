@@ -8,6 +8,10 @@ export function resolvePrimitiveType(type: string): string {
       return 'At.Bytes';
     case 'blob':
       return 'At.Blob';
+    case 'permission':
+      return 'At.Permission';
+    case 'permission-set':
+      return 'At.PermissionSet';
     default:
       return 'unknown';
   }

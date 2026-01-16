@@ -12,5 +12,7 @@ export const IGNORED_FORMATS = new Set([
   'datetime',
   'language',
   'nsid',
+  'record-key',
+  'tid',
   'uri',
 ]);

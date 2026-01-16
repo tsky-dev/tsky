@@ -29,8 +29,11 @@ export function resolveType(
     case 'cid-link':
     case 'blob':
     case 'bytes':
+    case 'permission':
+    case 'permission-set':
       val = resolvePrimitiveType(def.type);
       break;
+
     case 'integer':
       val = resolveIntegerType(def, descs);
       break;

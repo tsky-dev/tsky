@@ -60,4 +60,20 @@ export declare namespace At {
     };
     size: number;
   }
+
+  /** Individual permission entry */
+  interface Permission {
+    resource: string;
+    lxm?: string[];
+    action?: string[];
+    collection?: string[];
+    inheritAud?: boolean;
+  }
+
+  /** Set of permissions */
+  interface PermissionSet {
+    title?: string;
+    detail?: string;
+    permissions: Permission[];
+  }
 }`;
