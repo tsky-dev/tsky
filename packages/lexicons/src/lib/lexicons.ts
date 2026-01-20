@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-01-16T12:18:49.085Z
+ * Generated on: 2026-01-20T04:11:34.320Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/f7ae44d7f6d83aa97b7bdae1a755fbe321b50d42/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/d8e53636c84da6dd3dd69e1d260f4fa617f3883c/lexicons
  */
 
 /** Base type with optional type field */
@@ -3343,8 +3343,6 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsers {
   type Input = undefined;
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
-    recId?: number;
   }
 }
 
@@ -3365,8 +3363,6 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsersSkeleton {
   type Input = undefined;
   interface Output extends TypedBase {
     dids: At.DID[];
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
-    recId?: number;
   }
 }
 
