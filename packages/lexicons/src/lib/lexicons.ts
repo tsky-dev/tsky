@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-01-20T04:11:34.320Z
+ * Generated on: 2026-01-21T05:31:42.772Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/d8e53636c84da6dd3dd69e1d260f4fa617f3883c/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/9bdd35881aa7efce6595ef708ba13d99c473d114/lexicons
  */
 
 /** Base type with optional type field */
@@ -281,6 +281,7 @@ export declare namespace AppBskyActorDefs {
     activitySubscription?: ProfileAssociatedActivitySubscription;
     chat?: ProfileAssociatedChat;
     feedgens?: number;
+    germ?: ProfileAssociatedGerm;
     labeler?: boolean;
     lists?: number;
     starterPacks?: number;
@@ -290,6 +291,10 @@ export declare namespace AppBskyActorDefs {
   }
   interface ProfileAssociatedChat extends TypedBase {
     allowIncoming: "all" | "following" | "none" | (string & {});
+  }
+  interface ProfileAssociatedGerm extends TypedBase {
+    messageMeUrl: string;
+    showButtonTo: "everyone" | "usersIFollow" | (string & {});
   }
   interface ProfileView extends TypedBase {
     did: At.DID;
@@ -3343,6 +3348,8 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsers {
   type Input = undefined;
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: string;
   }
 }
 
@@ -3363,6 +3370,8 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsersSkeleton {
   type Input = undefined;
   interface Output extends TypedBase {
     dids: At.DID[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: string;
   }
 }
 
