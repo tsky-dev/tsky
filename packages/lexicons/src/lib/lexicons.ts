@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-01-21T05:31:42.772Z
+ * Generated on: 2026-01-22T04:14:17.501Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/9bdd35881aa7efce6595ef708ba13d99c473d114/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/2c4eb7fe207e0ae5f1840881940f400c486bf143/lexicons
  */
 
 /** Base type with optional type field */
@@ -766,6 +766,10 @@ export declare namespace AppBskyAgeassuranceGetState {
 }
 
 export declare namespace AppBskyAuthCreatePosts {
+  type Main = At.PermissionSet;
+}
+
+export declare namespace AppBskyAuthDeleteContent {
   type Main = At.PermissionSet;
 }
 
