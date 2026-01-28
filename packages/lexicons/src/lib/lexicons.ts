@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-01-22T04:14:17.501Z
+ * Generated on: 2026-01-28T04:11:07.415Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/2c4eb7fe207e0ae5f1840881940f400c486bf143/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/2830daeaa6f580fbf777a0f832d64a6579616dc7/lexicons
  */
 
 /** Base type with optional type field */
@@ -1320,6 +1320,8 @@ export declare namespace AppBskyEmbedVideo {
     aspectRatio?: AppBskyEmbedDefs.AspectRatio;
     /** Maximum array length: 20 */
     captions?: Caption[];
+    /** A hint to the client about how to present the video. */
+    presentation?: "default" | "gif" | (string & {});
   }
   interface Caption extends TypedBase {
     file: At.Blob;
@@ -1334,6 +1336,8 @@ export declare namespace AppBskyEmbedVideo {
      */
     alt?: string;
     aspectRatio?: AppBskyEmbedDefs.AspectRatio;
+    /** A hint to the client about how to present the video. */
+    presentation?: "default" | "gif" | (string & {});
     thumbnail?: string;
   }
 }
