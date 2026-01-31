@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-01-30T04:47:14.769Z
+ * Generated on: 2026-01-31T04:40:27.185Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/3ba21f9a36edec348ef14f18a0d6eb2a8d6a82d8/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/4f5c4001271bbf38b30506efd30ebdabb969878f/lexicons
  */
 
 /** Base type with optional type field */
@@ -1054,6 +1054,16 @@ export declare namespace AppBskyDraftDefs {
      * Maximum array length: 100
      */
     posts: DraftPost[];
+    /**
+     * UUIDv4 identifier of the device that created this draft.
+     * Maximum string length: 100
+     */
+    deviceId?: string;
+    /**
+     * The device and/or platform on which the draft was created.
+     * Maximum string length: 100
+     */
+    deviceName?: string;
     /**
      * Indicates human language of posts primary text content.
      * Maximum array length: 3
