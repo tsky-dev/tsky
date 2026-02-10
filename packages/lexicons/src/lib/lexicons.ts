@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-01-31T04:40:27.185Z
+ * Generated on: 2026-02-10T05:10:20.161Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/4f5c4001271bbf38b30506efd30ebdabb969878f/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/f8c84ebd3db960234cbd72dae6d1ab57d9361317/lexicons
  */
 
 /** Base type with optional type field */
