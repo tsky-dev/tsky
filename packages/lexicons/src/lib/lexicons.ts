@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-01-31T04:40:27.185Z
+ * Generated on: 2026-02-23T05:05:53.078Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/4f5c4001271bbf38b30506efd30ebdabb969878f/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/978a99efad8393247449bebd88af1ac5b602842e/lexicons
  */
 
 /** Base type with optional type field */
@@ -1119,9 +1119,9 @@ export declare namespace AppBskyDraftDefs {
   /** One of the posts that compose a draft. */
   interface DraftPost extends TypedBase {
     /**
-     * The primary post content.
-     * Maximum string length: 3000
-     * Maximum grapheme length: 300
+     * The primary post content. It has a higher limit than post contents to allow storing a larger text that can later be refined into smaller posts.
+     * Maximum string length: 10000
+     * Maximum grapheme length: 1000
      */
     text: string;
     /** Maximum array length: 1 */
@@ -2560,8 +2560,13 @@ export declare namespace AppBskyGraphGetSuggestedFollowsByActor {
      * \@default false
      */
     isFallback?: boolean;
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    /**
+     * DEPRECATED: use recIdStr instead.
+     * \@deprecated
+     */
     recId?: number;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
   }
 }
 
@@ -3194,6 +3199,28 @@ export declare namespace AppBskyUnspeccedGetOnboardingSuggestedStarterPacksSkele
   }
 }
 
+/** Get a skeleton of suggested users for onboarding. Intended to be called and hydrated by app.bsky.unspecced.getSuggestedOnboardingUsers */
+export declare namespace AppBskyUnspeccedGetOnboardingSuggestedUsersSkeleton {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    dids: At.DID[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: string;
+  }
+}
+
 /** An unspecced view of globally popular feed generators. */
 export declare namespace AppBskyUnspeccedGetPopularFeedGenerators {
   interface Params extends TypedBase {
@@ -3317,6 +3344,26 @@ export declare namespace AppBskyUnspeccedGetSuggestedFeedsSkeleton {
   }
 }
 
+/** Get a list of suggested users for onboarding */
+export declare namespace AppBskyUnspeccedGetSuggestedOnboardingUsers {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    actors: AppBskyActorDefs.ProfileView[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recId?: string;
+  }
+}
+
 /** Get a list of suggested starterpacks */
 export declare namespace AppBskyUnspeccedGetSuggestedStarterPacks {
   interface Params extends TypedBase {
@@ -3412,8 +3459,13 @@ export declare namespace AppBskyUnspeccedGetSuggestionsSkeleton {
   interface Output extends TypedBase {
     actors: AppBskyUnspeccedDefs.SkeletonSearchActor[];
     cursor?: string;
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    /**
+     * DEPRECATED: use recIdStr instead.
+     * \@deprecated
+     */
     recId?: number;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
     /** DID of the account these suggestions are relative to. If this is returned undefined, suggestions are based on the viewer. */
     relativeToDid?: At.DID;
   }
@@ -8206,6 +8258,10 @@ export declare interface Queries {
     params: AppBskyUnspeccedGetOnboardingSuggestedStarterPacksSkeleton.Params;
     output: AppBskyUnspeccedGetOnboardingSuggestedStarterPacksSkeleton.Output;
   };
+  "app.bsky.unspecced.getOnboardingSuggestedUsersSkeleton": {
+    params: AppBskyUnspeccedGetOnboardingSuggestedUsersSkeleton.Params;
+    output: AppBskyUnspeccedGetOnboardingSuggestedUsersSkeleton.Output;
+  };
   "app.bsky.unspecced.getPopularFeedGenerators": {
     params: AppBskyUnspeccedGetPopularFeedGenerators.Params;
     output: AppBskyUnspeccedGetPopularFeedGenerators.Output;
@@ -8225,6 +8281,10 @@ export declare interface Queries {
   "app.bsky.unspecced.getSuggestedFeedsSkeleton": {
     params: AppBskyUnspeccedGetSuggestedFeedsSkeleton.Params;
     output: AppBskyUnspeccedGetSuggestedFeedsSkeleton.Output;
+  };
+  "app.bsky.unspecced.getSuggestedOnboardingUsers": {
+    params: AppBskyUnspeccedGetSuggestedOnboardingUsers.Params;
+    output: AppBskyUnspeccedGetSuggestedOnboardingUsers.Output;
   };
   "app.bsky.unspecced.getSuggestedStarterPacks": {
     params: AppBskyUnspeccedGetSuggestedStarterPacks.Params;
