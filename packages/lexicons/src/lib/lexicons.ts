@@ -5,9 +5,9 @@
  * @module
  * Contains type declarations for Bluesky lexicons
  * @generated
- * Generated on: 2026-02-23T05:05:53.078Z
+ * Generated on: 2026-05-13T08:06:06.728Z
  * Version: main
- * Source: https://github.com/bluesky-social/atproto/tree/978a99efad8393247449bebd88af1ac5b602842e/lexicons
+ * Source: https://github.com/bluesky-social/atproto/tree/18d311494038b73e3c3429e504ca6cc05bba5f6d/lexicons
  */
 
 /** Base type with optional type field */
@@ -291,6 +291,7 @@ export declare namespace AppBskyActorDefs {
   }
   interface ProfileAssociatedChat extends TypedBase {
     allowIncoming: "all" | "following" | "none" | (string & {});
+    allowGroupInvites?: "all" | "following" | "none" | (string & {});
   }
   interface ProfileAssociatedGerm extends TypedBase {
     messageMeUrl: string;
@@ -399,6 +400,7 @@ export declare namespace AppBskyActorDefs {
     isActive?: boolean;
     /** True if the user's go-live access has been disabled by a moderator, false otherwise. */
     isDisabled?: boolean;
+    labels?: ComAtprotoLabelDefs.Label[];
     uri?: At.Uri;
   }
   interface ThreadViewPref extends TypedBase {
@@ -500,8 +502,13 @@ export declare namespace AppBskyActorGetSuggestions {
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
     cursor?: string;
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    /**
+     * DEPRECATED: use recIdStr instead.
+     * \@deprecated
+     */
     recId?: number;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
   }
 }
 
@@ -1208,6 +1215,8 @@ export declare namespace AppBskyEmbedExternal {
     description: string;
     title: string;
     uri: string;
+    /** The URI of the Atmosphere record representing this external content, if it exists. Example: a site.standard.document record. */
+    associatedRecord?: At.Uri;
     thumb?: At.Blob;
   }
   interface View extends TypedBase {
@@ -1229,6 +1238,7 @@ export declare namespace AppBskyEmbedImages {
   interface Image extends TypedBase {
     /** Alt text description of the image, for accessibility. */
     alt: string;
+    /** The raw image file. May be up to 2 MB, formerly limited to 1 MB. */
     image: At.Blob;
     aspectRatio?: AppBskyEmbedDefs.AspectRatio;
   }
@@ -2087,6 +2097,7 @@ export declare namespace AppBskyFeedSendInteractions {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
     interactions: AppBskyFeedDefs.Interaction[];
+    feed?: At.Uri;
   }
   interface Output extends TypedBase {}
 }
@@ -2556,7 +2567,8 @@ export declare namespace AppBskyGraphGetSuggestedFollowsByActor {
   interface Output extends TypedBase {
     suggestions: AppBskyActorDefs.ProfileView[];
     /**
-     * If true, response has fallen-back to generic results, and is not scoped using relativeToDid
+     * DEPRECATED, unused. Previously: if true, response has fallen-back to generic results, and is not scoped using relativeToDid
+     * \@deprecated
      * \@default false
      */
     isFallback?: boolean;
@@ -3216,8 +3228,13 @@ export declare namespace AppBskyUnspeccedGetOnboardingSuggestedUsersSkeleton {
   type Input = undefined;
   interface Output extends TypedBase {
     dids: At.DID[];
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    /**
+     * DEPRECATED: use recIdStr instead.
+     * \@deprecated
+     */
     recId?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
   }
 }
 
@@ -3359,8 +3376,13 @@ export declare namespace AppBskyUnspeccedGetSuggestedOnboardingUsers {
   type Input = undefined;
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    /**
+     * DEPRECATED: use recIdStr instead.
+     * \@deprecated
+     */
     recId?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
   }
 }
 
@@ -3413,8 +3435,135 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsers {
   type Input = undefined;
   interface Output extends TypedBase {
     actors: AppBskyActorDefs.ProfileView[];
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    /**
+     * DEPRECATED: use recIdStr instead.
+     * \@deprecated
+     */
     recId?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
+  }
+}
+
+/** Get a list of suggested users for the Discover page */
+export declare namespace AppBskyUnspeccedGetSuggestedUsersForDiscover {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    actors: AppBskyActorDefs.ProfileView[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
+  }
+}
+
+/** Get a skeleton of suggested users for the Discover page. Intended to be called and hydrated by app.bsky.unspecced.getSuggestedUsersForDiscover */
+export declare namespace AppBskyUnspeccedGetSuggestedUsersForDiscoverSkeleton {
+  interface Params extends TypedBase {
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    dids: At.DID[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
+  }
+}
+
+/** Get a list of suggested users for the Explore page */
+export declare namespace AppBskyUnspeccedGetSuggestedUsersForExplore {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    actors: AppBskyActorDefs.ProfileView[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
+  }
+}
+
+/** Get a skeleton of suggested users for the Explore page. Intended to be called and hydrated by app.bsky.unspecced.getSuggestedUsersForExplore */
+export declare namespace AppBskyUnspeccedGetSuggestedUsersForExploreSkeleton {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    dids: At.DID[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
+  }
+}
+
+/** Get a list of suggested users for the See More page */
+export declare namespace AppBskyUnspeccedGetSuggestedUsersForSeeMore {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    actors: AppBskyActorDefs.ProfileView[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
+  }
+}
+
+/** Get a skeleton of suggested users for the See More page. Intended to be called and hydrated by app.bsky.unspecced.getSuggestedUsersForSeeMore */
+export declare namespace AppBskyUnspeccedGetSuggestedUsersForSeeMoreSkeleton {
+  interface Params extends TypedBase {
+    /** Category of users to get suggestions for. */
+    category?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 50
+     * \@default 25
+     */
+    limit?: number;
+    /** DID of the account making the request (not included for public/unauthenticated queries). */
+    viewer?: At.DID;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    dids: At.DID[];
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
   }
 }
 
@@ -3435,8 +3584,13 @@ export declare namespace AppBskyUnspeccedGetSuggestedUsersSkeleton {
   type Input = undefined;
   interface Output extends TypedBase {
     dids: At.DID[];
-    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    /**
+     * DEPRECATED: use recIdStr instead.
+     * \@deprecated
+     */
     recId?: string;
+    /** Snowflake for this recommendation, use when submitting recommendation events. */
+    recIdStr?: string;
   }
 }
 
@@ -3723,11 +3877,25 @@ export declare namespace ChatBskyActorDeclaration {
   interface Record extends RecordBase {
     $type: "chat.bsky.actor.declaration";
     allowIncoming: "all" | "following" | "none" | (string & {});
+    /** [NOTE: This is under active development and should be considered unstable while this note is here]. Declaration about group chat invitation preferences for the record owner. */
+    allowGroupInvites?: "all" | "following" | "none" | (string & {});
   }
   type Main = Record;
 }
 
 export declare namespace ChatBskyActorDefs {
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. */
+  interface DirectConvoMember extends TypedBase {}
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. A current group convo member. */
+  interface GroupConvoMember extends TypedBase {
+    /** The member's role within this conversation. Only present in group conversation member lists. */
+    role: MemberRole;
+    /** Who added this member. Only present if the member was added (instead of joining via link). */
+    addedBy?: ProfileViewBasic;
+  }
+  type MemberRole = "owner" | "standard" | (string & {});
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. A past group convo member. */
+  interface PastGroupConvoMember extends TypedBase {}
   interface ProfileViewBasic extends TypedBase {
     did: At.DID;
     handle: At.Handle;
@@ -3735,11 +3903,16 @@ export declare namespace ChatBskyActorDefs {
     avatar?: string;
     /** Set to true when the actor cannot actively participate in conversations */
     chatDisabled?: boolean;
+    createdAt?: string;
     /**
      * Maximum string length: 640
      * Maximum grapheme length: 64
      */
     displayName?: string;
+    /** Union field that has data specific to different kinds of convos. */
+    kind?: TypeUnion<
+      DirectConvoMember | GroupConvoMember | PastGroupConvoMember
+    >;
     labels?: ComAtprotoLabelDefs.Label[];
     verification?: AppBskyActorDefs.VerificationState;
     viewer?: AppBskyActorDefs.ViewerState;
@@ -3762,6 +3935,7 @@ export declare namespace ChatBskyAuthFullChatClient {
   type Main = At.PermissionSet;
 }
 
+/** Marks a conversation as accepted, so it is shown in the list of accepted convos instead on the request convos. */
 export declare namespace ChatBskyConvoAcceptConvo {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -3770,6 +3944,9 @@ export declare namespace ChatBskyConvoAcceptConvo {
   interface Output extends TypedBase {
     /** Rev when the convo was accepted. If not present, the convo was already accepted. */
     rev?: string;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
   }
 }
 
@@ -3790,6 +3967,8 @@ export declare namespace ChatBskyConvoAddReaction {
     message: ChatBskyConvoDefs.MessageView;
   }
   interface Errors extends TypedBase {
+    InvalidConvo: {};
+    ReactionNotAllowed: {};
     ReactionMessageDeleted: {};
     ReactionLimitReached: {};
     ReactionInvalidValue: {};
@@ -3797,15 +3976,32 @@ export declare namespace ChatBskyConvoAddReaction {
 }
 
 export declare namespace ChatBskyConvoDefs {
+  type ConvoKind = "direct" | "group" | (string & {});
+  type ConvoLockStatus =
+    | "locked"
+    | "locked-permanently"
+    | "unlocked"
+    | (string & {});
+  interface ConvoRef extends TypedBase {
+    convoId: string;
+    did: At.DID;
+  }
+  type ConvoStatus = "accepted" | "request" | (string & {});
   interface ConvoView extends TypedBase {
     id: string;
+    /** Members of this conversation. For direct convos, it will be an immutable list of the 2 members. For group convos, it will a list of important members (the first few members, the viewer, the member who invited the viewer, the member who sent the last message, the member who sent the last reaction), but will not contain the full list of members. Use chat.bsky.convo.getConvoMembers to list all members. */
     members: ChatBskyActorDefs.ProfileViewBasic[];
     muted: boolean;
     rev: string;
     unreadCount: number;
-    lastMessage?: TypeUnion<DeletedMessageView | MessageView>;
+    /** Union field that has data specific to different kinds of convos. */
+    kind?: TypeUnion<DirectConvo | GroupConvo>;
+    lastMessage?: TypeUnion<
+      DeletedMessageView | MessageView | SystemMessageView
+    >;
     lastReaction?: TypeUnion<MessageAndReactionView>;
-    status?: "accepted" | "request" | (string & {});
+    /** Convo status for the viewer member (not the convo itself). */
+    status?: ConvoStatus;
   }
   interface DeletedMessageView extends TypedBase {
     id: string;
@@ -3813,49 +4009,215 @@ export declare namespace ChatBskyConvoDefs {
     sender: MessageViewSender;
     sentAt: string;
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. */
+  interface DirectConvo extends TypedBase {}
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. */
+  interface GroupConvo extends TypedBase {
+    createdAt: string;
+    /** The lock status of the conversation. */
+    lockStatus: ConvoLockStatus;
+    /** The total number of members in the group conversation. */
+    memberCount: number;
+    /**
+     * The display name of the group conversation.
+     * Maximum string length: 1280
+     * Maximum grapheme length: 128
+     */
+    name: string;
+    joinLink?: ChatBskyGroupDefs.JoinLinkView;
+  }
+  /** Event indicating the viewer accepted a convo, and it can be moved out of the request inbox. Can be direct or group. */
   interface LogAcceptConvo extends TypedBase {
     convoId: string;
     rev: string;
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a member was added to a group convo. The member who was added gets a logBeginConvo (to create the convo) but also a logAddMember (to show the system message as the first message the user sees). */
+  interface LogAddMember extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataAddMember */
+    message: SystemMessageView;
+    /** Profiles referred in the system message. */
+    relatedProfiles: ChatBskyActorDefs.ProfileViewBasic[];
+    rev: string;
+  }
+  /** Event indicating a reaction was added to a message. */
   interface LogAddReaction extends TypedBase {
     convoId: string;
     message: TypeUnion<DeletedMessageView | MessageView>;
     reaction: ReactionView;
     rev: string;
+    /** Profiles referred in the message and reaction views. This isn't required for compatibility, because it was added later, but should generally be present. */
+    relatedProfiles?: ChatBskyActorDefs.ProfileViewBasic[];
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a join request was approved by the viewer. Only the owner gets this. The approved member gets a logBeginConvo. */
+  interface LogApproveJoinRequest extends TypedBase {
+    convoId: string;
+    /** Prospective member who requested to join. */
+    member: ChatBskyActorDefs.ProfileViewBasic;
+    rev: string;
+  }
+  /** Event indicating a convo containing the viewer was started. Can be direct or group. When a member is added to a group convo, they also get this event. */
   interface LogBeginConvo extends TypedBase {
     convoId: string;
     rev: string;
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a join link was created for a group convo. */
+  interface LogCreateJoinLink extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataCreateJoinLink */
+    message: SystemMessageView;
+    rev: string;
+  }
+  /** Event indicating a user-originated message was created. Is not emitted for system messages. */
   interface LogCreateMessage extends TypedBase {
     convoId: string;
     message: TypeUnion<DeletedMessageView | MessageView>;
     rev: string;
+    /** Profiles referred to in the message view. This isn't required for compatibility, because it was added later, but should generally be present. */
+    relatedProfiles?: ChatBskyActorDefs.ProfileViewBasic[];
   }
+  /** Event indicating a user-originated message was deleted. Is not emitted for system messages. */
   interface LogDeleteMessage extends TypedBase {
     convoId: string;
     message: TypeUnion<DeletedMessageView | MessageView>;
     rev: string;
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a join link was disabled for a group convo. */
+  interface LogDisableJoinLink extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataDisableJoinLink */
+    message: SystemMessageView;
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating info about group convo was edited. */
+  interface LogEditGroup extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataEditGroup */
+    message: SystemMessageView;
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a settings about a join link for a group convo were edited. */
+  interface LogEditJoinLink extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataEditJoinLink */
+    message: SystemMessageView;
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a join link was enabled for a group convo. */
+  interface LogEnableJoinLink extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataEnableJoinLink */
+    message: SystemMessageView;
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a join request was made to a group the viewer owns. Only the owner gets this. */
+  interface LogIncomingJoinRequest extends TypedBase {
+    convoId: string;
+    /** Prospective member who requested to join. */
+    member: ChatBskyActorDefs.ProfileViewBasic;
+    rev: string;
+  }
+  /** Event indicating the viewer left a convo. Can be direct or group. */
   interface LogLeaveConvo extends TypedBase {
     convoId: string;
     rev: string;
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a group convo was locked. */
+  interface LogLockConvo extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataLockConvo */
+    message: SystemMessageView;
+    /** Profiles referred in the system message. */
+    relatedProfiles: ChatBskyActorDefs.ProfileViewBasic[];
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a group convo was locked permanently. */
+  interface LogLockConvoPermanently extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataLockConvoPermanently */
+    message: SystemMessageView;
+    /** Profiles referred in the system message. */
+    relatedProfiles: ChatBskyActorDefs.ProfileViewBasic[];
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a member joined a group convo via join link. The member who was added gets a logBeginConvo (to create the convo) but also a logMemberJoin (to show the system message as the first message the user sees). */
+  interface LogMemberJoin extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataMemberJoin */
+    message: SystemMessageView;
+    /** Profiles referred in the system message. */
+    relatedProfiles: ChatBskyActorDefs.ProfileViewBasic[];
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a member voluntarily left a group convo. The member who was removed gets a logLeaveConvo (to leave the convo) but not a logMemberLeave (because they already left, so can't see the system message). */
+  interface LogMemberLeave extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataMemberLeave */
+    message: SystemMessageView;
+    /** Profiles referred in the system message. */
+    relatedProfiles: ChatBskyActorDefs.ProfileViewBasic[];
+    rev: string;
+  }
+  /** Event indicating the viewer muted a convo. Can be direct or group. */
   interface LogMuteConvo extends TypedBase {
     convoId: string;
     rev: string;
   }
-  interface LogReadMessage extends TypedBase {
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a join request was made by the viewer. */
+  interface LogOutgoingJoinRequest extends TypedBase {
     convoId: string;
-    message: TypeUnion<DeletedMessageView | MessageView>;
     rev: string;
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a convo was read up to a certain message. */
+  interface LogReadConvo extends TypedBase {
+    convoId: string;
+    message: TypeUnion<DeletedMessageView | MessageView | SystemMessageView>;
+    rev: string;
+  }
+  /**
+   * DEPRECATED: use logReadConvo instead. Event indicating a convo was read up to a certain message.
+   * \@deprecated
+   */
+  interface LogReadMessage extends TypedBase {
+    convoId: string;
+    message: TypeUnion<DeletedMessageView | MessageView | SystemMessageView>;
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a join request was rejected by the viewer. Only the owner gets this. */
+  interface LogRejectJoinRequest extends TypedBase {
+    convoId: string;
+    /** Prospective member who requested to join. */
+    member: ChatBskyActorDefs.ProfileViewBasic;
+    rev: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a member was removed from a group convo. The member who was removed gets a logLeaveConvo (to leave the convo) but not a logRemoveMember (because they already left, so can't see the system message). */
+  interface LogRemoveMember extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataRemoveMember */
+    message: SystemMessageView;
+    /** Profiles referred in the system message. */
+    relatedProfiles: ChatBskyActorDefs.ProfileViewBasic[];
+    rev: string;
+  }
+  /** Event indicating a reaction was removed from a message. */
   interface LogRemoveReaction extends TypedBase {
     convoId: string;
     message: TypeUnion<DeletedMessageView | MessageView>;
     reaction: ReactionView;
     rev: string;
+    /** Profiles referred in the message and reaction views. This isn't required for compatibility, because it was added later, but should generally be present. */
+    relatedProfiles?: ChatBskyActorDefs.ProfileViewBasic[];
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. Event indicating a group convo was unlocked. */
+  interface LogUnlockConvo extends TypedBase {
+    convoId: string;
+    /** A system message with data of type #systemMessageDataUnlockConvo */
+    message: SystemMessageView;
+    /** Profiles referred in the system message. */
+    relatedProfiles: ChatBskyActorDefs.ProfileViewBasic[];
+    rev: string;
+  }
+  /** Event indicating the viewer unmuted a convo. Can be direct or group. */
   interface LogUnmuteConvo extends TypedBase {
     convoId: string;
     rev: string;
@@ -3906,8 +4268,90 @@ export declare namespace ChatBskyConvoDefs {
   interface ReactionViewSender extends TypedBase {
     did: At.DID;
   }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating a user was added to the group convo. */
+  interface SystemMessageDataAddMember extends TypedBase {
+    addedBy: SystemMessageReferredUser;
+    /** Current view of the member who was added. */
+    member: SystemMessageReferredUser;
+    /** Role the user was added to the group with. The role from 'member' will reflect the current data, not historical. */
+    role: ChatBskyActorDefs.MemberRole;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group join link was created. */
+  interface SystemMessageDataCreateJoinLink extends TypedBase {}
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group join link was disabled. */
+  interface SystemMessageDataDisableJoinLink extends TypedBase {}
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group info was edited. */
+  interface SystemMessageDataEditGroup extends TypedBase {
+    /** Group name that replaced the old. */
+    newName?: string;
+    /** Group name that was replaced. */
+    oldName?: string;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group join link was edited. */
+  interface SystemMessageDataEditJoinLink extends TypedBase {}
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group join link was enabled. */
+  interface SystemMessageDataEnableJoinLink extends TypedBase {}
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group convo was locked. */
+  interface SystemMessageDataLockConvo extends TypedBase {
+    /** Current view of the member who locked the group. */
+    lockedBy: SystemMessageReferredUser;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group convo was locked permanently. */
+  interface SystemMessageDataLockConvoPermanently extends TypedBase {
+    /** Current view of the member who locked the group. */
+    lockedBy: SystemMessageReferredUser;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating a user joined the group convo via join link. */
+  interface SystemMessageDataMemberJoin extends TypedBase {
+    /** Current view of the member who joined. */
+    member: SystemMessageReferredUser;
+    /** Role the user was added to the group with. The role from 'member' will reflect the current data, not historical. */
+    role: ChatBskyActorDefs.MemberRole;
+    /** If join link was configured to require approval, this will be set to who approved the request. Undefined if approval was not required. */
+    approvedBy?: SystemMessageReferredUser;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating a user voluntarily left the group convo. */
+  interface SystemMessageDataMemberLeave extends TypedBase {
+    /** Current view of the member who left the group. */
+    member: SystemMessageReferredUser;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating a user was removed from the group convo. */
+  interface SystemMessageDataRemoveMember extends TypedBase {
+    /** Current view of the member who was removed. */
+    member: SystemMessageReferredUser;
+    removedBy: SystemMessageReferredUser;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. System message indicating the group convo was unlocked. */
+  interface SystemMessageDataUnlockConvo extends TypedBase {
+    /** Current view of the member who unlocked the group. */
+    unlockedBy: SystemMessageReferredUser;
+  }
+  interface SystemMessageReferredUser extends TypedBase {
+    did: At.DID;
+  }
+  /** [NOTE: This is under active development and should be considered unstable while this note is here]. */
+  interface SystemMessageView extends TypedBase {
+    data: TypeUnion<
+      | SystemMessageDataAddMember
+      | SystemMessageDataCreateJoinLink
+      | SystemMessageDataDisableJoinLink
+      | SystemMessageDataEditGroup
+      | SystemMessageDataEditJoinLink
+      | SystemMessageDataEnableJoinLink
+      | SystemMessageDataLockConvo
+      | SystemMessageDataLockConvoPermanently
+      | SystemMessageDataMemberJoin
+      | SystemMessageDataMemberLeave
+      | SystemMessageDataRemoveMember
+      | SystemMessageDataUnlockConvo
+    >;
+    id: string;
+    rev: string;
+    sentAt: string;
+  }
 }
 
+/** Marks a message as deleted for the viewer, so they won't see that message in future enumerations. */
 export declare namespace ChatBskyConvoDeleteMessageForSelf {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -3915,8 +4359,13 @@ export declare namespace ChatBskyConvoDeleteMessageForSelf {
     messageId: string;
   }
   type Output = ChatBskyConvoDefs.DeletedMessageView;
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    MessageDeleteNotAllowed: {};
+  }
 }
 
+/** Gets an existing conversation by its ID. */
 export declare namespace ChatBskyConvoGetConvo {
   interface Params extends TypedBase {
     convoId: string;
@@ -3925,9 +4374,12 @@ export declare namespace ChatBskyConvoGetConvo {
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+  }
 }
 
-/** Get whether the requester and the other members can chat. If an existing convo is found for these members, it is returned. */
+/** Check whether the requester and the other members can start a 1-1 chat. Only applicable to direct (non-group) conversations. If an existing convo is found for these members, it is returned. Does not create a new convo if it doesn't exist. */
 export declare namespace ChatBskyConvoGetConvoAvailability {
   interface Params extends TypedBase {
     /**
@@ -3943,6 +4395,7 @@ export declare namespace ChatBskyConvoGetConvoAvailability {
   }
 }
 
+/** Get or create a 1-1 conversation for the given members. Always returns the same direct (non-group) conversation. To create a group conversation, use createGroup. */
 export declare namespace ChatBskyConvoGetConvoForMembers {
   interface Params extends TypedBase {
     /**
@@ -3955,6 +4408,35 @@ export declare namespace ChatBskyConvoGetConvoForMembers {
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
+  interface Errors extends TypedBase {
+    AccountSuspended: {};
+    BlockedActor: {};
+    MessagesDisabled: {};
+    NotFollowedBySender: {};
+    RecipientNotFound: {};
+  }
+}
+
+/** Returns a paginated list of members from a conversation. */
+export declare namespace ChatBskyConvoGetConvoMembers {
+  interface Params extends TypedBase {
+    convoId: string;
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    members: ChatBskyActorDefs.ProfileViewBasic[];
+    cursor?: string;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+  }
 }
 
 export declare namespace ChatBskyConvoGetLog {
@@ -3965,20 +4447,38 @@ export declare namespace ChatBskyConvoGetLog {
   interface Output extends TypedBase {
     logs: TypeUnion<
       | ChatBskyConvoDefs.LogAcceptConvo
+      | ChatBskyConvoDefs.LogAddMember
       | ChatBskyConvoDefs.LogAddReaction
+      | ChatBskyConvoDefs.LogApproveJoinRequest
       | ChatBskyConvoDefs.LogBeginConvo
+      | ChatBskyConvoDefs.LogCreateJoinLink
       | ChatBskyConvoDefs.LogCreateMessage
       | ChatBskyConvoDefs.LogDeleteMessage
+      | ChatBskyConvoDefs.LogDisableJoinLink
+      | ChatBskyConvoDefs.LogEditGroup
+      | ChatBskyConvoDefs.LogEditJoinLink
+      | ChatBskyConvoDefs.LogEnableJoinLink
+      | ChatBskyConvoDefs.LogIncomingJoinRequest
       | ChatBskyConvoDefs.LogLeaveConvo
+      | ChatBskyConvoDefs.LogLockConvo
+      | ChatBskyConvoDefs.LogLockConvoPermanently
+      | ChatBskyConvoDefs.LogMemberJoin
+      | ChatBskyConvoDefs.LogMemberLeave
       | ChatBskyConvoDefs.LogMuteConvo
+      | ChatBskyConvoDefs.LogOutgoingJoinRequest
+      | ChatBskyConvoDefs.LogReadConvo
       | ChatBskyConvoDefs.LogReadMessage
+      | ChatBskyConvoDefs.LogRejectJoinRequest
+      | ChatBskyConvoDefs.LogRemoveMember
       | ChatBskyConvoDefs.LogRemoveReaction
+      | ChatBskyConvoDefs.LogUnlockConvo
       | ChatBskyConvoDefs.LogUnmuteConvo
     >[];
     cursor?: string;
   }
 }
 
+/** Returns a page of messages from a conversation. */
 export declare namespace ChatBskyConvoGetMessages {
   interface Params extends TypedBase {
     convoId: string;
@@ -3993,12 +4493,20 @@ export declare namespace ChatBskyConvoGetMessages {
   type Input = undefined;
   interface Output extends TypedBase {
     messages: TypeUnion<
-      ChatBskyConvoDefs.DeletedMessageView | ChatBskyConvoDefs.MessageView
+      | ChatBskyConvoDefs.DeletedMessageView
+      | ChatBskyConvoDefs.MessageView
+      | ChatBskyConvoDefs.SystemMessageView
     >[];
     cursor?: string;
+    /** Set of all members who authored or reacted to the returned messages. Members referred to by system messages are also included. */
+    relatedProfiles?: ChatBskyActorDefs.ProfileViewBasic[];
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
   }
 }
 
+/** Leaves a conversation (direct or group). For group, this effectively removes membership. For direct, membership is never removed, only changed to remove from enumerations by the user who left. */
 export declare namespace ChatBskyConvoLeaveConvo {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4008,9 +4516,14 @@ export declare namespace ChatBskyConvoLeaveConvo {
     convoId: string;
     rev: string;
   }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    OwnerCannotLeave: {};
+  }
 }
 
-export declare namespace ChatBskyConvoListConvos {
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Returns a page of incoming conversation requests for the user. Direct convo requests are returned as convoView; group join requests are returned as joinRequestView. */
+export declare namespace ChatBskyConvoListConvoRequests {
   interface Params extends TypedBase {
     cursor?: string;
     /**
@@ -4019,7 +4532,32 @@ export declare namespace ChatBskyConvoListConvos {
      * \@default 50
      */
     limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    requests: TypeUnion<
+      ChatBskyConvoDefs.ConvoView | ChatBskyGroupDefs.JoinRequestView
+    >[];
+    cursor?: string;
+  }
+}
+
+/** Returns a page of conversations (direct or group) for the user. */
+export declare namespace ChatBskyConvoListConvos {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /** Filter by conversation kind. */
+    kind?: "direct" | "group" | (string & {});
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /** Filter by conversation lock status. Values follow chat.bsky.convo.defs#convoLockStatus. */
+    lockStatus?: "locked" | "locked-permanently" | "unlocked" | (string & {});
     readState?: "unread" | (string & {});
+    /** Filter convos by their status. It is discouraged to call with "request" and preferred to call chat.bsky.convo.listConvoRequests, which also includes group join requests made by the user. */
     status?: "accepted" | "request" | (string & {});
   }
   type Input = undefined;
@@ -4029,6 +4567,23 @@ export declare namespace ChatBskyConvoListConvos {
   }
 }
 
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Locks a group convo so no more content (messages, reactions) can be added to it. */
+export declare namespace ChatBskyConvoLockConvo {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+  }
+  interface Output extends TypedBase {
+    convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    ConvoLocked: {};
+    InvalidConvo: {};
+    InsufficientRole: {};
+  }
+}
+
+/** Mutes a conversation, preventing notifications related to it. */
 export declare namespace ChatBskyConvoMuteConvo {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4036,6 +4591,9 @@ export declare namespace ChatBskyConvoMuteConvo {
   }
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
   }
 }
 
@@ -4056,11 +4614,14 @@ export declare namespace ChatBskyConvoRemoveReaction {
     message: ChatBskyConvoDefs.MessageView;
   }
   interface Errors extends TypedBase {
+    InvalidConvo: {};
+    ReactionNotAllowed: {};
     ReactionMessageDeleted: {};
     ReactionInvalidValue: {};
   }
 }
 
+/** Sends a message to a conversation. */
 export declare namespace ChatBskyConvoSendMessage {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4068,8 +4629,13 @@ export declare namespace ChatBskyConvoSendMessage {
     message: ChatBskyConvoDefs.MessageInput;
   }
   type Output = ChatBskyConvoDefs.MessageView;
+  interface Errors extends TypedBase {
+    ConvoLocked: {};
+    InvalidConvo: {};
+  }
 }
 
+/** Sends a batch of messages to a conversation. */
 export declare namespace ChatBskyConvoSendMessageBatch {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4079,12 +4645,32 @@ export declare namespace ChatBskyConvoSendMessageBatch {
   interface Output extends TypedBase {
     items: ChatBskyConvoDefs.MessageView[];
   }
+  interface Errors extends TypedBase {
+    ConvoLocked: {};
+    InvalidConvo: {};
+  }
   interface BatchItem extends TypedBase {
     convoId: string;
     message: ChatBskyConvoDefs.MessageInput;
   }
 }
 
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Unlocks a group convo so it is able to receive new content. */
+export declare namespace ChatBskyConvoUnlockConvo {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+  }
+  interface Output extends TypedBase {
+    convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+  }
+}
+
+/** Unmutes a conversation, allowing notifications related to it. */
 export declare namespace ChatBskyConvoUnmuteConvo {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4093,8 +4679,12 @@ export declare namespace ChatBskyConvoUnmuteConvo {
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
   }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+  }
 }
 
+/** Sets conversations from a user as read to the latest message, with filters. */
 export declare namespace ChatBskyConvoUpdateAllRead {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4106,6 +4696,7 @@ export declare namespace ChatBskyConvoUpdateAllRead {
   }
 }
 
+/** Updates the read state of a conversation from, optionally specifying the last read message. */
 export declare namespace ChatBskyConvoUpdateRead {
   interface Params extends TypedBase {}
   interface Input extends TypedBase {
@@ -4114,6 +4705,282 @@ export declare namespace ChatBskyConvoUpdateRead {
   }
   interface Output extends TypedBase {
     convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Adds members to a group. The members are added in 'request' status, so they have to accept it. This creates convo memberships. */
+export declare namespace ChatBskyGroupAddMembers {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    /** Minimum array length: 1 */
+    members: At.DID[];
+  }
+  interface Output extends TypedBase {
+    convo: ChatBskyConvoDefs.ConvoView;
+    addedMembers?: ChatBskyActorDefs.ProfileViewBasic[];
+  }
+  interface Errors extends TypedBase {
+    AccountSuspended: {};
+    BlockedActor: {};
+    GroupInvitesDisabled: {};
+    ConvoLocked: {};
+    InsufficientRole: {};
+    InvalidConvo: {};
+    MemberLimitReached: {};
+    NotFollowedBySender: {};
+    RecipientNotFound: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Approves a request to join a group (via join link) the user owns. Action taken by the group owner. */
+export declare namespace ChatBskyGroupApproveJoinRequest {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    member: At.DID;
+  }
+  interface Output extends TypedBase {
+    convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+    MemberLimitReached: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Creates a group convo, specifying the members to be added to it. Unlike getConvoForMembers, this isn't idempotent. It will create new groups even if the membership is identical to pre-existing groups. Will create 'pending' membership for all members, except the owner who is 'accepted'. */
+export declare namespace ChatBskyGroupCreateGroup {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** Maximum array length: 49 */
+    members: At.DID[];
+    /**
+     * Minimum string length: 1
+     * Maximum string length: 1280
+     * Maximum grapheme length: 128
+     */
+    name: string;
+  }
+  interface Output extends TypedBase {
+    convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    AccountSuspended: {};
+    BlockedActor: {};
+    GroupInvitesDisabled: {};
+    NotFollowedBySender: {};
+    RecipientNotFound: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Creates a join link for the group convo. */
+export declare namespace ChatBskyGroupCreateJoinLink {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    joinRule: ChatBskyGroupDefs.JoinRule;
+    /** \@default false */
+    requireApproval?: boolean;
+  }
+  interface Output extends TypedBase {
+    joinLink: ChatBskyGroupDefs.JoinLinkView;
+  }
+  interface Errors extends TypedBase {
+    EnabledJoinLinkAlreadyExists: {};
+    InvalidConvo: {};
+    InsufficientRole: {};
+  }
+}
+
+export declare namespace ChatBskyGroupDefs {
+  interface JoinLinkPreviewView extends TypedBase {
+    memberCount: number;
+    name: string;
+    owner: ChatBskyActorDefs.ProfileViewBasic;
+    requireApproval: boolean;
+    /** Present only if the request is authenticated and the user is a member of the group. */
+    convo?: ChatBskyConvoDefs.ConvoView;
+  }
+  interface JoinLinkView extends TypedBase {
+    code: string;
+    createdAt: string;
+    enabledStatus: LinkEnabledStatus;
+    joinRule: JoinRule;
+    requireApproval: boolean;
+  }
+  interface JoinRequestView extends TypedBase {
+    convoId: string;
+    requestedAt: string;
+    requestedBy: ChatBskyActorDefs.ProfileViewBasic;
+  }
+  type JoinRule = "anyone" | "followedByOwner" | (string & {});
+  type LinkEnabledStatus = "disabled" | "enabled" | (string & {});
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Disables the active join link for the group convo. */
+export declare namespace ChatBskyGroupDisableJoinLink {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+  }
+  interface Output extends TypedBase {
+    joinLink: ChatBskyGroupDefs.JoinLinkView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+    NoJoinLink: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Edits group settings. */
+export declare namespace ChatBskyGroupEditGroup {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    /**
+     * Minimum string length: 1
+     * Maximum string length: 1280
+     * Maximum grapheme length: 128
+     */
+    name: string;
+  }
+  interface Output extends TypedBase {
+    convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    ConvoLocked: {};
+    InvalidConvo: {};
+    InsufficientRole: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Edits the existing join link settings for the group convo. */
+export declare namespace ChatBskyGroupEditJoinLink {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    joinRule?: ChatBskyGroupDefs.JoinRule;
+    requireApproval?: boolean;
+  }
+  interface Output extends TypedBase {
+    joinLink: ChatBskyGroupDefs.JoinLinkView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+    NoJoinLink: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Re-enables a previously disabled join link for the group convo. */
+export declare namespace ChatBskyGroupEnableJoinLink {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+  }
+  interface Output extends TypedBase {
+    joinLink: ChatBskyGroupDefs.JoinLinkView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+    NoJoinLink: {};
+    LinkAlreadyEnabled: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Get public information about a group from an join link. */
+export declare namespace ChatBskyGroupGetJoinLinkPreview {
+  interface Params extends TypedBase {
+    code: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    joinLinkPreview: ChatBskyGroupDefs.JoinLinkPreviewView;
+  }
+  interface Errors extends TypedBase {
+    InvalidCode: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Lists a page of request to join a group (via join link) the user owns. Shows the data from the owner's point of view. */
+export declare namespace ChatBskyGroupListJoinRequests {
+  interface Params extends TypedBase {
+    convoId: string;
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    requests: ChatBskyGroupDefs.JoinRequestView[];
+    cursor?: string;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Rejects a request to join a group (via join link) the user owns. Action taken by the group owner. */
+export declare namespace ChatBskyGroupRejectJoinRequest {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    member: At.DID;
+  }
+  interface Output extends TypedBase {}
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Removes members from a group. This deletes convo memberships, doesn't just set a status. */
+export declare namespace ChatBskyGroupRemoveMembers {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    convoId: string;
+    /** Minimum array length: 1 */
+    members: At.DID[];
+  }
+  interface Output extends TypedBase {
+    convo: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    InvalidConvo: {};
+    InsufficientRole: {};
+  }
+}
+
+/** [NOTE: This is under active development and should be considered unstable while this note is here]. Sends a request to join a group (via join link) to the group owner. Action taken by the prospective group member. */
+export declare namespace ChatBskyGroupRequestJoin {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    code: string;
+  }
+  interface Output extends TypedBase {
+    status: "joined" | "pending" | (string & {});
+    /** The group convo joined. This is only present in the case of status=joined */
+    convo?: ChatBskyConvoDefs.ConvoView;
+  }
+  interface Errors extends TypedBase {
+    ConvoLocked: {};
+    FollowRequired: {};
+    InvalidCode: {};
+    LinkDisabled: {};
+    MemberLimitReached: {};
+    UserKicked: {};
   }
 }
 
@@ -4148,8 +5015,32 @@ export declare namespace ChatBskyModerationGetMessageContext {
   type Input = undefined;
   interface Output extends TypedBase {
     messages: TypeUnion<
-      ChatBskyConvoDefs.DeletedMessageView | ChatBskyConvoDefs.MessageView
+      | ChatBskyConvoDefs.DeletedMessageView
+      | ChatBskyConvoDefs.MessageView
+      | ChatBskyConvoDefs.SystemMessageView
     >[];
+  }
+}
+
+export declare namespace ChatBskyModerationSubscribeModEvents {
+  interface Params extends TypedBase {
+    /** The last known event seq number to backfill from. Use '2222222222222' to backfill from the beginning. Don't specify a cursor to listen only for new events. */
+    cursor?: string;
+  }
+  type Message = TypeUnion<EventConvoFirstMessage>;
+  interface Errors extends TypedBase {
+    FutureCursor: {};
+    ConsumerTooSlow: {};
+  }
+  interface EventConvoFirstMessage extends TypedBase {
+    convoId: string;
+    createdAt: string;
+    /** The list of DIDs message recipients. Does not include the sender, which is in the `user` field */
+    recipients: At.DID[];
+    rev: string;
+    /** The DID of the message author. */
+    user: At.DID;
+    messageId?: string;
   }
 }
 
@@ -4549,13 +5440,10 @@ export declare namespace ComAtprotoLabelDefs {
   }
   type LabelValue =
     | "!hide"
-    | "!no-promote"
     | "!no-unauthenticated"
     | "!warn"
-    | "dmca-violation"
-    | "doxxing"
-    | "gore"
-    | "nsfl"
+    | "bot"
+    | "graphic-media"
     | "nudity"
     | "porn"
     | "sexual"
@@ -6234,6 +7122,14 @@ export declare namespace ToolsOzoneModerationDefs {
     status: "assured" | "blocked" | "reset" | (string & {});
     access?: AppBskyAgeassuranceDefs.Access;
   }
+  /** Purges all age assurance events for the subject. Only works on DID subjects. Moderator-only. */
+  interface AgeAssurancePurgeEvent extends TypedBase {
+    /**
+     * Comment describing the reason for the purge.
+     * Minimum string length: 1
+     */
+    comment: string;
+  }
   interface BlobView extends TypedBase {
     cid: At.CID;
     createdAt: string;
@@ -6367,6 +7263,8 @@ export declare namespace ToolsOzoneModerationDefs {
     remove: string[];
     /** Additional comment about added/removed tags. */
     comment?: string;
+    /** Indicates how long the tags being added should remain before automatically being removed. Only applies to tags being added. */
+    durationInHours?: number;
   }
   /** Take down a subject permanently or temporarily */
   interface ModEventTakedown extends TypedBase {
@@ -6406,6 +7304,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | AccountEvent
       | AgeAssuranceEvent
       | AgeAssuranceOverrideEvent
+      | AgeAssurancePurgeEvent
       | CancelScheduledTakedownEvent
       | IdentityEvent
       | ModEventAcknowledge
@@ -6446,6 +7345,7 @@ export declare namespace ToolsOzoneModerationDefs {
       | AccountEvent
       | AgeAssuranceEvent
       | AgeAssuranceOverrideEvent
+      | AgeAssurancePurgeEvent
       | CancelScheduledTakedownEvent
       | IdentityEvent
       | ModEventAcknowledge
@@ -6728,6 +7628,7 @@ export declare namespace ToolsOzoneModerationEmitEvent {
       | ToolsOzoneModerationDefs.AccountEvent
       | ToolsOzoneModerationDefs.AgeAssuranceEvent
       | ToolsOzoneModerationDefs.AgeAssuranceOverrideEvent
+      | ToolsOzoneModerationDefs.AgeAssurancePurgeEvent
       | ToolsOzoneModerationDefs.CancelScheduledTakedownEvent
       | ToolsOzoneModerationDefs.IdentityEvent
       | ToolsOzoneModerationDefs.ModEventAcknowledge
@@ -6756,12 +7657,25 @@ export declare namespace ToolsOzoneModerationEmitEvent {
     /** An optional external ID for the event, used to deduplicate events from external systems. Fails when an event of same type with the same external ID exists for the same subject. */
     externalId?: string;
     modTool?: ToolsOzoneModerationDefs.ModTool;
+    /** Optional report-level targeting. If provided, this event will be linked to specific reports and reporters may be notified. */
+    reportAction?: ReportAction;
     subjectBlobCids?: At.CID[];
   }
   type Output = ToolsOzoneModerationDefs.ModEventView;
   interface Errors extends TypedBase {
     SubjectHasAction: {};
     DuplicateExternalId: {};
+  }
+  /** Target specific reports when emitting a moderation event */
+  interface ReportAction extends TypedBase {
+    /** Target ALL reports on the subject */
+    all?: boolean;
+    /** Target specific report IDs */
+    ids?: number[];
+    /** Note to send to reporter(s) when actioning their report */
+    note?: string;
+    /** Target reports matching these report types on the subject (fully qualified NSIDs) */
+    types?: string[];
   }
 }
 
@@ -7220,7 +8134,382 @@ export declare namespace ToolsOzoneModerationSearchRepos {
   }
 }
 
+/** Assign a user to a queue. */
+export declare namespace ToolsOzoneQueueAssignModerator {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** DID to be assigned. */
+    did: string;
+    /** The ID of the queue to assign the user to. */
+    queueId: number;
+  }
+  type Output = ToolsOzoneQueueDefs.AssignmentView;
+  interface Errors extends TypedBase {
+    InvalidAssignment: {};
+  }
+}
+
+/** Create a new moderation queue. Will fail if the queue configuration conflicts with an existing queue. */
+export declare namespace ToolsOzoneQueueCreateQueue {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** Display name for the queue (must be unique) */
+    name: string;
+    /**
+     * Report reason types (fully qualified NSIDs)
+     * Minimum array length: 1
+     * Maximum array length: 25
+     */
+    reportTypes: string[];
+    /**
+     * Subject types this queue accepts
+     * Minimum array length: 1
+     */
+    subjectTypes: ("account" | "message" | "record" | (string & {}))[];
+    /** Collection name for record subjects. Required if subjectTypes includes 'record'. */
+    collection?: string;
+    /** Optional description of the queue */
+    description?: string;
+  }
+  interface Output extends TypedBase {
+    queue: ToolsOzoneQueueDefs.QueueView;
+  }
+  interface Errors extends TypedBase {
+    ConflictingQueue: {};
+  }
+}
+
+export declare namespace ToolsOzoneQueueDefs {
+  interface AssignmentView extends TypedBase {
+    did: At.DID;
+    id: number;
+    queue: QueueView;
+    startAt: string;
+    endAt?: string;
+    /** The moderator assigned to this queue */
+    moderator?: ToolsOzoneTeamDefs.Member;
+  }
+  interface QueueStats extends TypedBase {
+    /** Number of reports in 'closed' status */
+    actionedCount?: number;
+    /** Percentage of reports actioned (actionedCount / inboundCount * 100), rounded to nearest integer. Absent when inboundCount is 0. */
+    actionRate?: number;
+    /** Average time in seconds from report creation to close, for reports closed in this period. */
+    avgHandlingTimeSec?: number;
+    /** Number of reports in 'escalated' status */
+    escalatedCount?: number;
+    /** Reports received in this queue in the last 24 hours. */
+    inboundCount?: number;
+    /** When these statistics were last computed */
+    lastUpdated?: string;
+    /** Number of reports in 'open' status */
+    pendingCount?: number;
+  }
+  interface QueueView extends TypedBase {
+    createdAt: string;
+    /** DID of moderator who created this queue */
+    createdBy: At.DID;
+    /** Whether this queue is currently active */
+    enabled: boolean;
+    /** Queue ID */
+    id: number;
+    /** Display name of the queue */
+    name: string;
+    /**
+     * Report reason types this queue accepts (fully qualified NSIDs)
+     * Minimum array length: 1
+     */
+    reportTypes: string[];
+    /** Statistics about this queue */
+    stats: QueueStats;
+    /**
+     * Subject types this queue accepts.
+     * Minimum array length: 1
+     */
+    subjectTypes: ("account" | "message" | "record" | (string & {}))[];
+    updatedAt: string;
+    /** Collection name for record subjects (e.g., 'app.bsky.feed.post') */
+    collection?: string;
+    /** When the queue was deleted, if applicable */
+    deletedAt?: string;
+    /** Optional description of the queue */
+    description?: string;
+  }
+}
+
+/** Delete a moderation queue. Optionally migrate reports to another queue. */
+export declare namespace ToolsOzoneQueueDeleteQueue {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** ID of the queue to delete */
+    queueId: number;
+    /** Optional: migrate all reports to this queue. If not specified, reports will be set to unassigned (-1). */
+    migrateToQueueId?: number;
+  }
+  interface Output extends TypedBase {
+    deleted: boolean;
+    /** Number of reports that were migrated (if migration occurred) */
+    reportsMigrated?: number;
+  }
+}
+
+/** Get moderator assignments, optionally filtered by active status, queue, or moderator. */
+export declare namespace ToolsOzoneQueueGetAssignments {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /** If specified, returns assignments for these moderators only. */
+    dids?: At.DID[];
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /**
+     * When true, only returns active assignments.
+     * \@default true
+     */
+    onlyActive?: boolean;
+    /** If specified, returns assignments for these queues only. */
+    queueIds?: number[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    assignments: ToolsOzoneQueueDefs.AssignmentView[];
+    cursor?: string;
+  }
+}
+
+/** List all configured moderation queues with statistics. */
+export declare namespace ToolsOzoneQueueListQueues {
+  interface Params extends TypedBase {
+    /** Filter queues by collection name (e.g. 'app.bsky.feed.post'). */
+    collection?: string;
+    cursor?: string;
+    /** Filter by enabled status. If not specified, returns all queues. */
+    enabled?: boolean;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /**
+     * Filter queues that handle any of these report reason types.
+     * Maximum array length: 10
+     */
+    reportTypes?: string[];
+    /** Filter queues that handle this subject type ('account' or 'record'). */
+    subjectType?: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    queues: ToolsOzoneQueueDefs.QueueView[];
+    cursor?: string;
+  }
+}
+
+/** Route reports within an ID range to matching queues based. */
+export declare namespace ToolsOzoneQueueRouteReports {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** End of report ID range (inclusive). Difference between start and end must be less than 5,000. */
+    endReportId: number;
+    /** Start of report ID range (inclusive). */
+    startReportId: number;
+  }
+  interface Output extends TypedBase {
+    /** The number of reports assigned to a queue. */
+    assigned: number;
+    /** The number of reports with no matching queue. */
+    unmatched: number;
+  }
+  interface Errors extends TypedBase {
+    OutOfRange: {};
+  }
+}
+
+/** Remove a user's assignment from a queue. */
+export declare namespace ToolsOzoneQueueUnassignModerator {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** DID to be unassigned. */
+    did: At.DID;
+    /** The ID of the queue to unassign the user from. */
+    queueId: number;
+  }
+  type Output = undefined;
+  interface Errors extends TypedBase {
+    InvalidAssignment: {};
+  }
+}
+
+/** Update queue properties. Currently only supports updating the name and enabled status to prevent configuration conflicts. */
+export declare namespace ToolsOzoneQueueUpdateQueue {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** ID of the queue to update */
+    queueId: number;
+    /** Optional description of the queue */
+    description?: string;
+    /** Enable or disable the queue */
+    enabled?: boolean;
+    /** New display name for the queue */
+    name?: string;
+  }
+  interface Output extends TypedBase {
+    queue: ToolsOzoneQueueDefs.QueueView;
+  }
+}
+
+/** Assign a report to a user. Defaults to the caller. Admins may assign to any moderator. */
+export declare namespace ToolsOzoneReportAssignModerator {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** The ID of the report to assign. */
+    reportId: number;
+    /** DID to be assigned. Defaults to the caller's DID. Admins may assign to any moderator. */
+    did?: At.DID;
+    /** When true, the assignment has no expiry (endAt is null). Throws AlreadyAssigned if another user already has a permanent assignment on this report. */
+    isPermanent?: boolean;
+    /** Optional queue ID to associate the assignment with. If not provided and the report has been assigned on a queue before, it will stay on that queue. */
+    queueId?: number;
+  }
+  type Output = ToolsOzoneReportDefs.AssignmentView;
+  interface Errors extends TypedBase {
+    AlreadyAssigned: {};
+    InvalidAssignment: {};
+  }
+}
+
+/** Register an activity on a report. For state-change activity types, validates the transition and updates report.status atomically. */
+export declare namespace ToolsOzoneReportCreateActivity {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** The type of activity to record. */
+    activity: TypeUnion<
+      | ToolsOzoneReportDefs.AssignmentActivity
+      | ToolsOzoneReportDefs.CloseActivity
+      | ToolsOzoneReportDefs.EscalationActivity
+      | ToolsOzoneReportDefs.NoteActivity
+      | ToolsOzoneReportDefs.QueueActivity
+      | ToolsOzoneReportDefs.ReopenActivity
+    >;
+    /** ID of the report to record activity on */
+    reportId: number;
+    /** Optional moderator-only note. Not visible to reporters. */
+    internalNote?: string;
+    /**
+     * Set true when this activity is triggered by an automated process. Defaults to false.
+     * \@default false
+     */
+    isAutomated?: boolean;
+    /** Optional public-facing note, potentially visible to the reporter. */
+    publicNote?: string;
+  }
+  interface Output extends TypedBase {
+    activity: ToolsOzoneReportDefs.ReportActivityView;
+  }
+  interface Errors extends TypedBase {
+    ReportNotFound: {};
+    InvalidStateTransition: {};
+    AlreadyInTargetState: {};
+  }
+}
+
 export declare namespace ToolsOzoneReportDefs {
+  /** Activity recording a moderator being assigned to a report. */
+  interface AssignmentActivity extends TypedBase {
+    /** The report's status before this activity. Populated automatically from the report row; not required in input. */
+    previousStatus?:
+      | "assigned"
+      | "closed"
+      | "escalated"
+      | "open"
+      | "queued"
+      | (string & {});
+  }
+  interface AssignmentView extends TypedBase {
+    did: At.DID;
+    id: number;
+    reportId: number;
+    startAt: string;
+    endAt?: string;
+    /** The moderator assigned to this report */
+    moderator?: ToolsOzoneTeamDefs.Member;
+    queue?: ToolsOzoneQueueDefs.QueueView;
+  }
+  /** Activity recording a report being closed. */
+  interface CloseActivity extends TypedBase {
+    /** The report's status before this activity. Populated automatically from the report row; not required in input. */
+    previousStatus?:
+      | "assigned"
+      | "closed"
+      | "escalated"
+      | "open"
+      | "queued"
+      | (string & {});
+  }
+  /** Activity recording a report being escalated. */
+  interface EscalationActivity extends TypedBase {
+    /** The report's status before this activity. Populated automatically from the report row; not required in input. */
+    previousStatus?:
+      | "assigned"
+      | "closed"
+      | "escalated"
+      | "open"
+      | "queued"
+      | (string & {});
+  }
+  /** A single daily snapshot of report statistics for a calendar date. */
+  interface HistoricalStats extends TypedBase {
+    /** The calendar date this snapshot covers (YYYY-MM-DD). */
+    date: string;
+    /** Number of reports closed during this day. */
+    actionedCount?: number;
+    /** Percentage of reports actioned (actionedCount / inboundCount * 100), rounded to nearest integer. */
+    actionRate?: number;
+    /** Average time in seconds from report creation (or moderator assignment) to close. */
+    avgHandlingTimeSec?: number;
+    /** When this snapshot was last computed. */
+    computedAt?: string;
+    /** Number of reports escalated during this day. */
+    escalatedCount?: number;
+    /** Reports received during this day. */
+    inboundCount?: number;
+    /** Number of reports not closed at time of computation. */
+    pendingCount?: number;
+  }
+  /** Live statistics for reports for the current calendar day, filterable by queue, moderator, or report type. */
+  interface LiveStats extends TypedBase {
+    /** Number of reports closed today. */
+    actionedCount?: number;
+    /** Percentage of reports actioned (actionedCount / inboundCount * 100), rounded to nearest integer. */
+    actionRate?: number;
+    /** Average time in seconds from report creation (or moderator assignment) to close. */
+    avgHandlingTimeSec?: number;
+    /** Number of reports escalated today. */
+    escalatedCount?: number;
+    /** Reports received today. */
+    inboundCount?: number;
+    /** When these statistics were last computed. */
+    lastUpdated?: string;
+    /** Number of reports currently not closed. */
+    pendingCount?: number;
+  }
+  /** Activity recording a note on a report. Use internalNote for moderator-only notes or publicNote for reporter-visible notes (or both). */
+  interface NoteActivity extends TypedBase {}
+  /** Activity recording a report being routed to a queue. */
+  interface QueueActivity extends TypedBase {
+    /** The report's status before this activity. Populated automatically from the report row; not required in input. */
+    previousStatus?:
+      | "assigned"
+      | "closed"
+      | "escalated"
+      | "open"
+      | "queued"
+      | (string & {});
+  }
   type ReasonAppeal = "tools.ozone.report.defs#reasonAppeal";
   type ReasonChildSafetyCSAM = "tools.ozone.report.defs#reasonChildSafetyCSAM";
   type ReasonChildSafetyGroom =
@@ -7320,6 +8609,332 @@ export declare namespace ToolsOzoneReportDefs {
   type ReasonViolenceThreats = "tools.ozone.report.defs#reasonViolenceThreats";
   type ReasonViolenceTrafficking =
     "tools.ozone.report.defs#reasonViolenceTrafficking";
+  /** Activity recording a closed report being reopened. Only valid when the report is in 'closed' status. */
+  interface ReopenActivity extends TypedBase {
+    /** The report's status before this activity. Populated automatically from the report row; not required in input. */
+    previousStatus?:
+      | "assigned"
+      | "closed"
+      | "escalated"
+      | "open"
+      | "queued"
+      | (string & {});
+  }
+  /** A single activity entry on a report. */
+  interface ReportActivityView extends TypedBase {
+    /** The typed activity object describing what occurred. */
+    activity: TypeUnion<
+      | AssignmentActivity
+      | CloseActivity
+      | EscalationActivity
+      | NoteActivity
+      | QueueActivity
+      | ReopenActivity
+    >;
+    /** When this activity was created */
+    createdAt: string;
+    /** DID of the actor who created this activity, or the service DID for automated activities. */
+    createdBy: At.DID;
+    /** Activity ID */
+    id: number;
+    /** True if this activity was created by an automated process (e.g. queue router) rather than a direct human action. */
+    isAutomated: boolean;
+    /** ID of the report this activity belongs to */
+    reportId: number;
+    /** Optional moderator-only note. Not visible to reporters. */
+    internalNote?: string;
+    /** Extensible JSON payload for loose activity-specific metadata (e.g. assignmentId). */
+    meta?: unknown;
+    /** Full member record of the moderator who created this activity */
+    moderator?: ToolsOzoneTeamDefs.Member;
+    /** Optional public note, potentially visible to the reporter. */
+    publicNote?: string;
+  }
+  /** Information about the moderator currently assigned to a report. */
+  interface ReportAssignment extends TypedBase {
+    /** When the report was assigned */
+    assignedAt: string;
+    /** DID of the assigned moderator */
+    did: At.DID;
+    /** Full member record of the assigned moderator */
+    moderator?: ToolsOzoneTeamDefs.Member;
+  }
+  interface ReportView extends TypedBase {
+    /** When the report was created */
+    createdAt: string;
+    /** ID of the moderation event that created this report */
+    eventId: number;
+    /** Report ID */
+    id: number;
+    /** DID of the user who made the report */
+    reportedBy: At.DID;
+    /** Full subject view of the reporter account */
+    reporter: ToolsOzoneModerationDefs.SubjectView;
+    /** Type of report */
+    reportType: ComAtprotoModerationDefs.ReasonType;
+    /** Current status of the report */
+    status:
+      | "assigned"
+      | "closed"
+      | "escalated"
+      | "open"
+      | "queued"
+      | (string & {});
+    /** The subject that was reported with full details */
+    subject: ToolsOzoneModerationDefs.SubjectView;
+    /** Array of moderation event IDs representing actions taken on this report (sorted DESC, most recent first) */
+    actionEventIds?: number[];
+    /** Note sent to reporter when report was actioned */
+    actionNote?: string;
+    /** Optional: expanded action events */
+    actions?: ToolsOzoneModerationDefs.ModEventView[];
+    /** Information about moderator currently assigned to this report (if any) */
+    assignment?: ReportAssignment;
+    /** Comment provided by the reporter */
+    comment?: string;
+    /** Whether this report is muted. A report is muted if the reporter was muted or the subject was muted at the time the report was created. */
+    isMuted?: boolean;
+    /** The queue this report is assigned to (if any) */
+    queue?: ToolsOzoneQueueDefs.QueueView;
+    /** When the report was assigned to its current queue */
+    queuedAt?: string;
+    /** Number of other pending reports on the same subject */
+    relatedReportCount?: number;
+    /** Current status of the reported subject */
+    subjectStatus?: ToolsOzoneModerationDefs.SubjectStatusView;
+    /** When the report was last updated */
+    updatedAt?: string;
+  }
+}
+
+/** Get assignments for reports. */
+export declare namespace ToolsOzoneReportGetAssignments {
+  interface Params extends TypedBase {
+    cursor?: string;
+    /**
+     * If specified, returns assignments for these moderators only.
+     * Maximum array length: 50
+     */
+    dids?: At.DID[];
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /**
+     * When true, only returns active assignments.
+     * \@default true
+     */
+    onlyActive?: boolean;
+    /**
+     * If specified, returns assignments for these reports only.
+     * Maximum array length: 50
+     */
+    reportIds?: number[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    assignments: ToolsOzoneReportDefs.AssignmentView[];
+    cursor?: string;
+  }
+}
+
+/** Get historical daily report statistics. Returns a paginated list of daily stat snapshots, newest first. Filter by queue, moderator, or report type. */
+export declare namespace ToolsOzoneReportGetHistoricalStats {
+  interface Params extends TypedBase {
+    /** Pagination cursor. */
+    cursor?: string;
+    /** Latest date to include (inclusive). */
+    endDate?: string;
+    /**
+     * Maximum number of entries to return.
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 30
+     */
+    limit?: number;
+    /** Filter stats by moderator DID. */
+    moderatorDid?: At.DID;
+    /** Filter stats by queue. Use -1 for unqueued reports. */
+    queueId?: number;
+    /** Filter stats by report types. */
+    reportTypes?: string[];
+    /** Earliest date to include (inclusive). */
+    startDate?: string;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    stats: ToolsOzoneReportDefs.HistoricalStats[];
+    cursor?: string;
+  }
+}
+
+/** Get the most recent report. */
+export declare namespace ToolsOzoneReportGetLatestReport {
+  type Input = undefined;
+  interface Output extends TypedBase {
+    report: ToolsOzoneReportDefs.ReportView;
+  }
+  interface Errors extends TypedBase {
+    NotFound: {};
+  }
+}
+
+/** Get live report statistics from the past 24 hours. Filter by queue, moderator, or report type. Omit all parameters for aggregate stats. */
+export declare namespace ToolsOzoneReportGetLiveStats {
+  interface Params extends TypedBase {
+    /** Filter stats by moderator DID. */
+    moderatorDid?: At.DID;
+    /** Filter stats by queue. Use -1 for unqueued reports. */
+    queueId?: number;
+    /** Filter stats by report types. */
+    reportTypes?: string[];
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    /** Statistics for the requested filter. */
+    stats: ToolsOzoneReportDefs.LiveStats;
+  }
+}
+
+/** Get details about a single moderation report by ID. */
+export declare namespace ToolsOzoneReportGetReport {
+  interface Params extends TypedBase {
+    /** The ID of the report to retrieve. */
+    id: number;
+  }
+  type Input = undefined;
+  type Output = ToolsOzoneReportDefs.ReportView;
+  interface Errors extends TypedBase {
+    NotFound: {};
+  }
+}
+
+/** List all activities for a report, sorted most-recent-first. */
+export declare namespace ToolsOzoneReportListActivities {
+  interface Params extends TypedBase {
+    /** ID of the report whose activities to list */
+    reportId: number;
+    cursor?: string;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    activities: ToolsOzoneReportDefs.ReportActivityView[];
+    cursor?: string;
+  }
+}
+
+/** View moderation reports. Reports are individual instances of content being reported, as opposed to subject statuses which aggregate reports at the subject level. */
+export declare namespace ToolsOzoneReportQueryReports {
+  interface Params extends TypedBase {
+    /** Filter by report status. */
+    status:
+      | "assigned"
+      | "closed"
+      | "escalated"
+      | "open"
+      | "queued"
+      | (string & {});
+    /** Filter by the DID of the moderator permanently assigned to the report. */
+    assignedTo?: At.DID;
+    /**
+     * If specified, reports where the subject belongs to the given collections will be returned. When subjectType is set to 'account', this will be ignored.
+     * Maximum array length: 20
+     */
+    collections?: string[];
+    cursor?: string;
+    /** Filter to reports where the subject is this DID or any record owned by this DID. Unlike `subject` (which scopes to a specific account or record), this returns all reports tied to the DID across both account-level and record-level subjects. */
+    did?: At.DID;
+    /**
+     * Filter by muted status. true returns only muted reports, false returns only unmuted reports. Defaults to false.
+     * \@default false
+     */
+    isMuted?: boolean;
+    /**
+     * Minimum: 1
+     * Maximum: 100
+     * \@default 50
+     */
+    limit?: number;
+    /** Filter by queue ID. Use -1 for unassigned reports. */
+    queueId?: number;
+    /** Retrieve reports created after a given timestamp */
+    reportedAfter?: string;
+    /** Retrieve reports created before a given timestamp */
+    reportedBefore?: string;
+    /** Filter by report types (fully qualified string in the format of com.atproto.moderation.defs#reason<name>). */
+    reportTypes?: string[];
+    /** \@default "desc" */
+    sortDirection?: "asc" | "desc";
+    /** \@default "createdAt" */
+    sortField?: "createdAt" | "updatedAt";
+    /** Filter by subject DID or AT-URI. */
+    subject?: string;
+    /** If specified, reports of the given type (account or record) will be returned. */
+    subjectType?: "account" | "record" | (string & {});
+  }
+  type Input = undefined;
+  interface Output extends TypedBase {
+    reports: ToolsOzoneReportDefs.ReportView[];
+    cursor?: string;
+  }
+}
+
+/** Manually reassign a report to a different queue (or unassign it). Records a queueActivity entry on the report. */
+export declare namespace ToolsOzoneReportReassignQueue {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** Target queue ID. Use -1 to unassign from any queue. */
+    queueId: number;
+    /** ID of the report to reassign */
+    reportId: number;
+    /** Optional moderator-only note recorded on the resulting queueActivity as internalNote. */
+    comment?: string;
+  }
+  interface Output extends TypedBase {
+    report: ToolsOzoneReportDefs.ReportView;
+  }
+  interface Errors extends TypedBase {
+    ReportNotFound: {};
+    ReportClosed: {};
+    AlreadyInTargetQueue: {};
+    QueueNotFound: {};
+    QueueDisabled: {};
+  }
+}
+
+/** Recompute report statistics for a date range. Useful for backfilling after failures or data corrections. */
+export declare namespace ToolsOzoneReportRefreshStats {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** End date for recomputation, inclusive (YYYY-MM-DD). */
+    endDate: string;
+    /** Start date for recomputation, inclusive (YYYY-MM-DD). */
+    startDate: string;
+    /** Optional list of queue IDs to recompute. Omit to recompute all groups. */
+    queueIds?: number[];
+  }
+  interface Output extends TypedBase {}
+}
+
+/** Remove report assignment. */
+export declare namespace ToolsOzoneReportUnassignModerator {
+  interface Params extends TypedBase {}
+  interface Input extends TypedBase {
+    /** The ID of the report to unassign. */
+    reportId: number;
+  }
+  type Output = ToolsOzoneReportDefs.AssignmentView;
+  interface Errors extends TypedBase {
+    InvalidAssignment: {};
+  }
 }
 
 /** Add a new URL safety rule */
@@ -8298,6 +9913,30 @@ export declare interface Queries {
     params: AppBskyUnspeccedGetSuggestedUsers.Params;
     output: AppBskyUnspeccedGetSuggestedUsers.Output;
   };
+  "app.bsky.unspecced.getSuggestedUsersForDiscover": {
+    params: AppBskyUnspeccedGetSuggestedUsersForDiscover.Params;
+    output: AppBskyUnspeccedGetSuggestedUsersForDiscover.Output;
+  };
+  "app.bsky.unspecced.getSuggestedUsersForDiscoverSkeleton": {
+    params: AppBskyUnspeccedGetSuggestedUsersForDiscoverSkeleton.Params;
+    output: AppBskyUnspeccedGetSuggestedUsersForDiscoverSkeleton.Output;
+  };
+  "app.bsky.unspecced.getSuggestedUsersForExplore": {
+    params: AppBskyUnspeccedGetSuggestedUsersForExplore.Params;
+    output: AppBskyUnspeccedGetSuggestedUsersForExplore.Output;
+  };
+  "app.bsky.unspecced.getSuggestedUsersForExploreSkeleton": {
+    params: AppBskyUnspeccedGetSuggestedUsersForExploreSkeleton.Params;
+    output: AppBskyUnspeccedGetSuggestedUsersForExploreSkeleton.Output;
+  };
+  "app.bsky.unspecced.getSuggestedUsersForSeeMore": {
+    params: AppBskyUnspeccedGetSuggestedUsersForSeeMore.Params;
+    output: AppBskyUnspeccedGetSuggestedUsersForSeeMore.Output;
+  };
+  "app.bsky.unspecced.getSuggestedUsersForSeeMoreSkeleton": {
+    params: AppBskyUnspeccedGetSuggestedUsersForSeeMoreSkeleton.Params;
+    output: AppBskyUnspeccedGetSuggestedUsersForSeeMoreSkeleton.Output;
+  };
   "app.bsky.unspecced.getSuggestedUsersSkeleton": {
     params: AppBskyUnspeccedGetSuggestedUsersSkeleton.Params;
     output: AppBskyUnspeccedGetSuggestedUsersSkeleton.Output;
@@ -8355,6 +9994,10 @@ export declare interface Queries {
     params: ChatBskyConvoGetConvoForMembers.Params;
     output: ChatBskyConvoGetConvoForMembers.Output;
   };
+  "chat.bsky.convo.getConvoMembers": {
+    params: ChatBskyConvoGetConvoMembers.Params;
+    output: ChatBskyConvoGetConvoMembers.Output;
+  };
   "chat.bsky.convo.getLog": {
     params: ChatBskyConvoGetLog.Params;
     output: ChatBskyConvoGetLog.Output;
@@ -8363,9 +10006,21 @@ export declare interface Queries {
     params: ChatBskyConvoGetMessages.Params;
     output: ChatBskyConvoGetMessages.Output;
   };
+  "chat.bsky.convo.listConvoRequests": {
+    params: ChatBskyConvoListConvoRequests.Params;
+    output: ChatBskyConvoListConvoRequests.Output;
+  };
   "chat.bsky.convo.listConvos": {
     params: ChatBskyConvoListConvos.Params;
     output: ChatBskyConvoListConvos.Output;
+  };
+  "chat.bsky.group.getJoinLinkPreview": {
+    params: ChatBskyGroupGetJoinLinkPreview.Params;
+    output: ChatBskyGroupGetJoinLinkPreview.Output;
+  };
+  "chat.bsky.group.listJoinRequests": {
+    params: ChatBskyGroupListJoinRequests.Params;
+    output: ChatBskyGroupListJoinRequests.Output;
   };
   "chat.bsky.moderation.getActorMetadata": {
     params: ChatBskyModerationGetActorMetadata.Params;
@@ -8572,6 +10227,41 @@ export declare interface Queries {
     params: ToolsOzoneModerationSearchRepos.Params;
     output: ToolsOzoneModerationSearchRepos.Output;
   };
+  "tools.ozone.queue.getAssignments": {
+    params: ToolsOzoneQueueGetAssignments.Params;
+    output: ToolsOzoneQueueGetAssignments.Output;
+  };
+  "tools.ozone.queue.listQueues": {
+    params: ToolsOzoneQueueListQueues.Params;
+    output: ToolsOzoneQueueListQueues.Output;
+  };
+  "tools.ozone.report.getAssignments": {
+    params: ToolsOzoneReportGetAssignments.Params;
+    output: ToolsOzoneReportGetAssignments.Output;
+  };
+  "tools.ozone.report.getHistoricalStats": {
+    params: ToolsOzoneReportGetHistoricalStats.Params;
+    output: ToolsOzoneReportGetHistoricalStats.Output;
+  };
+  "tools.ozone.report.getLatestReport": {
+    output: ToolsOzoneReportGetLatestReport.Output;
+  };
+  "tools.ozone.report.getLiveStats": {
+    params: ToolsOzoneReportGetLiveStats.Params;
+    output: ToolsOzoneReportGetLiveStats.Output;
+  };
+  "tools.ozone.report.getReport": {
+    params: ToolsOzoneReportGetReport.Params;
+    output: ToolsOzoneReportGetReport.Output;
+  };
+  "tools.ozone.report.listActivities": {
+    params: ToolsOzoneReportListActivities.Params;
+    output: ToolsOzoneReportListActivities.Output;
+  };
+  "tools.ozone.report.queryReports": {
+    params: ToolsOzoneReportQueryReports.Params;
+    output: ToolsOzoneReportQueryReports.Output;
+  };
   "tools.ozone.server.getConfig": {
     output: ToolsOzoneServerGetConfig.Output;
   };
@@ -8726,6 +10416,10 @@ export declare interface Procedures {
     input: ChatBskyConvoLeaveConvo.Input;
     output: ChatBskyConvoLeaveConvo.Output;
   };
+  "chat.bsky.convo.lockConvo": {
+    input: ChatBskyConvoLockConvo.Input;
+    output: ChatBskyConvoLockConvo.Output;
+  };
   "chat.bsky.convo.muteConvo": {
     input: ChatBskyConvoMuteConvo.Input;
     output: ChatBskyConvoMuteConvo.Output;
@@ -8742,6 +10436,10 @@ export declare interface Procedures {
     input: ChatBskyConvoSendMessageBatch.Input;
     output: ChatBskyConvoSendMessageBatch.Output;
   };
+  "chat.bsky.convo.unlockConvo": {
+    input: ChatBskyConvoUnlockConvo.Input;
+    output: ChatBskyConvoUnlockConvo.Output;
+  };
   "chat.bsky.convo.unmuteConvo": {
     input: ChatBskyConvoUnmuteConvo.Input;
     output: ChatBskyConvoUnmuteConvo.Output;
@@ -8753,6 +10451,50 @@ export declare interface Procedures {
   "chat.bsky.convo.updateRead": {
     input: ChatBskyConvoUpdateRead.Input;
     output: ChatBskyConvoUpdateRead.Output;
+  };
+  "chat.bsky.group.addMembers": {
+    input: ChatBskyGroupAddMembers.Input;
+    output: ChatBskyGroupAddMembers.Output;
+  };
+  "chat.bsky.group.approveJoinRequest": {
+    input: ChatBskyGroupApproveJoinRequest.Input;
+    output: ChatBskyGroupApproveJoinRequest.Output;
+  };
+  "chat.bsky.group.createGroup": {
+    input: ChatBskyGroupCreateGroup.Input;
+    output: ChatBskyGroupCreateGroup.Output;
+  };
+  "chat.bsky.group.createJoinLink": {
+    input: ChatBskyGroupCreateJoinLink.Input;
+    output: ChatBskyGroupCreateJoinLink.Output;
+  };
+  "chat.bsky.group.disableJoinLink": {
+    input: ChatBskyGroupDisableJoinLink.Input;
+    output: ChatBskyGroupDisableJoinLink.Output;
+  };
+  "chat.bsky.group.editGroup": {
+    input: ChatBskyGroupEditGroup.Input;
+    output: ChatBskyGroupEditGroup.Output;
+  };
+  "chat.bsky.group.editJoinLink": {
+    input: ChatBskyGroupEditJoinLink.Input;
+    output: ChatBskyGroupEditJoinLink.Output;
+  };
+  "chat.bsky.group.enableJoinLink": {
+    input: ChatBskyGroupEnableJoinLink.Input;
+    output: ChatBskyGroupEnableJoinLink.Output;
+  };
+  "chat.bsky.group.rejectJoinRequest": {
+    input: ChatBskyGroupRejectJoinRequest.Input;
+    output: ChatBskyGroupRejectJoinRequest.Output;
+  };
+  "chat.bsky.group.removeMembers": {
+    input: ChatBskyGroupRemoveMembers.Input;
+    output: ChatBskyGroupRemoveMembers.Output;
+  };
+  "chat.bsky.group.requestJoin": {
+    input: ChatBskyGroupRequestJoin.Input;
+    output: ChatBskyGroupRequestJoin.Output;
   };
   "chat.bsky.moderation.updateActorAccess": {
     input: ChatBskyModerationUpdateActorAccess.Input;
@@ -8929,6 +10671,49 @@ export declare interface Procedures {
     input: ToolsOzoneModerationScheduleAction.Input;
     output: ToolsOzoneModerationScheduleAction.Output;
   };
+  "tools.ozone.queue.assignModerator": {
+    input: ToolsOzoneQueueAssignModerator.Input;
+    output: ToolsOzoneQueueAssignModerator.Output;
+  };
+  "tools.ozone.queue.createQueue": {
+    input: ToolsOzoneQueueCreateQueue.Input;
+    output: ToolsOzoneQueueCreateQueue.Output;
+  };
+  "tools.ozone.queue.deleteQueue": {
+    input: ToolsOzoneQueueDeleteQueue.Input;
+    output: ToolsOzoneQueueDeleteQueue.Output;
+  };
+  "tools.ozone.queue.routeReports": {
+    input: ToolsOzoneQueueRouteReports.Input;
+    output: ToolsOzoneQueueRouteReports.Output;
+  };
+  "tools.ozone.queue.unassignModerator": {
+    input: ToolsOzoneQueueUnassignModerator.Input;
+  };
+  "tools.ozone.queue.updateQueue": {
+    input: ToolsOzoneQueueUpdateQueue.Input;
+    output: ToolsOzoneQueueUpdateQueue.Output;
+  };
+  "tools.ozone.report.assignModerator": {
+    input: ToolsOzoneReportAssignModerator.Input;
+    output: ToolsOzoneReportAssignModerator.Output;
+  };
+  "tools.ozone.report.createActivity": {
+    input: ToolsOzoneReportCreateActivity.Input;
+    output: ToolsOzoneReportCreateActivity.Output;
+  };
+  "tools.ozone.report.reassignQueue": {
+    input: ToolsOzoneReportReassignQueue.Input;
+    output: ToolsOzoneReportReassignQueue.Output;
+  };
+  "tools.ozone.report.refreshStats": {
+    input: ToolsOzoneReportRefreshStats.Input;
+    output: ToolsOzoneReportRefreshStats.Output;
+  };
+  "tools.ozone.report.unassignModerator": {
+    input: ToolsOzoneReportUnassignModerator.Input;
+    output: ToolsOzoneReportUnassignModerator.Output;
+  };
   "tools.ozone.safelink.addRule": {
     input: ToolsOzoneSafelinkAddRule.Input;
     output: ToolsOzoneSafelinkAddRule.Output;
@@ -8993,6 +10778,11 @@ export declare interface Procedures {
 }
 
 export declare interface Subscriptions {
+  "chat.bsky.moderation.subscribeModEvents": {
+    params: ChatBskyModerationSubscribeModEvents.Params;
+    message: ChatBskyModerationSubscribeModEvents.Message;
+    errors: ChatBskyModerationSubscribeModEvents.Errors;
+  };
   "com.atproto.label.subscribeLabels": {
     params: ComAtprotoLabelSubscribeLabels.Params;
     message: ComAtprotoLabelSubscribeLabels.Message;
