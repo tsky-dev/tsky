@@ -34,5 +34,10 @@
     "*.{js,ts,cjs,mjs,json}": [
       "biome check --write --"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "protobufjs": ">=7.5.6"
+    }
   }
 }
