@@ -18,6 +18,7 @@
       "package.json",
       "tsconfig.json",
       "packages/lexicons/src/lib/lexicons.ts",
+      "packages/lexicons/lexicons/",
       "docs/api/"
     ]
   },
